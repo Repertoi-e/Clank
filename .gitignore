@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+# VS
+.vs/
+Dependencies/
+bin/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
