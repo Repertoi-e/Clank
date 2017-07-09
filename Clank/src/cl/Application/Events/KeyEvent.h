@@ -15,7 +15,7 @@ namespace cl {
 		KeyEvent(EventType type, s32 button, s32 mods);        
 
 		const s32 GetButton() const { return m_Button; }
-		const bool IsModifier(s32 mod) const { return (m_Mods & mod); };
+		const s32 IsModifier(s32 mod) const { return (m_Mods & mod); };
 	};
 
 	class API KeyPressedEvent : public KeyEvent
@@ -25,7 +25,7 @@ namespace cl {
 	public:
 		KeyPressedEvent(s32 button, s32 mods, bool repeat);         
 
-		const bool Repeat() const { return m_Repeat; }
+		const s32 Repeat() const { return m_Repeat; }
 		static s32 GetStaticType() { return EventType::KEY_PRESSED; }
 	};
 	

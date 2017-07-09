@@ -50,6 +50,7 @@ namespace cl {
 			QueryPerformanceCounter(&current);
 			time.Cycles = current.QuadPart - m_Start.QuadPart;
 			time.Frequency = m_Frequency;
+			return time;
 		}
 	};
 
@@ -75,6 +76,7 @@ namespace cl {
 			Time time;
 			time.Cycles = 1;
 			time.Frequency = m_Difference * 0.001f;
+			return time;
 		}
 	};
 }

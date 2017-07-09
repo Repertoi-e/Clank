@@ -21,11 +21,11 @@ namespace cl {
 	class API WindowFocusEvent : public Event
 	{
 	private:
-		bool m_Focused;        
+		s32 m_Focused;        
 	public:
 		WindowFocusEvent(bool focused);
 
-		const bool Focused() const { return m_Focused; }
+		const s32 Focused() const { return m_Focused; }
 
 		static s32 GetStaticType() { return EventType::WINDOW_FOCUS; }
 	};

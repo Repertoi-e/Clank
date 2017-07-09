@@ -4,6 +4,7 @@
 
 #include "cl/Graphics/Context.h"
 #include "cl/Utils/Singleton.h"
+#include "cl/Utils/Time.h"
 
 #include "Events/Events.h"
 
@@ -23,10 +24,13 @@ namespace cl {
     private:
         HINSTANCE m_hInstance;
         HWND m_hWnd;
+
+		BOOL m_bWindowFocused;
         
         String m_sName;
         ApplicationSettings m_AppSettings;
 
+		Timer* m_pLoopTimer;
         BOOL m_bClosed;
 
 		Context* m_pContext;

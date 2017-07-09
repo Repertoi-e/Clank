@@ -17,7 +17,7 @@ namespace cl {
 		{
 			if (cast(s32) T::GetStaticType() & cast(s32) m_Event.GetType())
 			{
-				bool handled = func(*cast(T*) &m_Event);
+				BOOL handled = func(*cast(T*) &m_Event);
 				m_Event.m_Handled = handled;
 			}
 		}

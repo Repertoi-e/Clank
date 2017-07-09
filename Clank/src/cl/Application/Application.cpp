@@ -25,20 +25,61 @@ namespace cl {
 
 	void Application::Start()
 	{
+		m_pLoopTimer = new Timer();
+		float32 timer = 0.0f;
+		float32 updateTimer = m_pLoopTimer->Elapsed().Millis();
+		float32 updateTick = 1000.f / 60.f;
+		u32 frames = 0;
+		// s32 curr = 0;
+		// const s32 fpsSamplesMax = 64;
+		// float32 fpsSamples[fpsSamplesMax] = { 0 };
+		u32 updates = 0;
+		DeltaTime delta(m_pLoopTimer->Elapsed().Millis());
 		while (!m_bClosed)
 		{
-			static float32 timer = 0.0f;
-			timer += 0.2f;
-			DoWindowMessages();
-	
-			static float32 t;
-			t = (sin(timer / 10) + 1) / 2;
+			// m_Window->Clear();
+			float32 now = m_pLoopTimer->Elapsed().Millis();
+			if (now - updateTimer > updateTick)
+			{
+				delta.Update(now);
+				// Update(delta);
+				updates++;
+				updateTimer += updateTick;
 
-			float32 fcolor[4] = { blue.r * t, blue.g * t, blue.b * t, blue.a };
-			m_pContext->GetDeviceContext()->ClearRenderTargetView(m_pContext->GetBackbuffer(), fcolor);
-			
-			m_pContext->GetSwapChain()->Present(0, 0);
-			Sleep(1);
+				static float32 timer = 0.0f;
+				timer += 0.2f;
+				DoWindowMessages();
+
+				static float32 t;
+				t = (sin(timer / 10) + 1) / 2;
+
+				float32 fcolor[4] = { blue.r * t, blue.g * t, blue.b * t, blue.a };
+				m_pContext->GetDeviceContext()->ClearRenderTargetView(m_pContext->GetBackbuffer(), fcolor);
+
+				m_pContext->GetSwapChain()->Present(0, 0);
+				// m_FPS = 0;
+				// fpsSamples[curr % fpsSamplesMax] = float32(frames * m_UPS);
+				// for (s32 i = 0; i < fpsSamplesMax; i++)
+				// 	m_FPS += fpsSamples[i];
+				// m_FPS /= fpsSamplesMax;
+				// curr = curr == fpsSamplesMax + 1 ? 0 : curr + 1;
+				frames = 0;
+			}
+			// {
+			// 	TIMER frametime;
+			// 	Render();
+			// 	frames++;
+			// 	m_FrameTime = frametime.ElapsedMillis();
+			// }
+			// m_Window->Update();
+			if (m_pLoopTimer->Elapsed().Seconds() - timer > 1.f)
+			{
+				timer += 1.f;
+				std::cout << updates << std::endl;
+				updates = 0;
+			}
+			if (!m_bWindowFocused)
+				Sleep(1);
 		}
 	}
 
@@ -59,6 +100,12 @@ namespace cl {
 
 	void Application::DoEvent(Event& event)
 	{
+		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<WindowFocusEvent>([&](WindowFocusEvent& e) -> BOOL
+		{
+			m_bWindowFocused = e.Focused();
+			return FALSE;
+		});
 	}
 
 	void Application::RegisterWindow()
