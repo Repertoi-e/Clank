@@ -259,6 +259,11 @@ namespace cl {
 		vec4& operator*=(const vec4& other);
 		vec4& operator/=(const vec4& other);
 
+		bool operator<(const vec4& other) const;
+		bool operator<=(const vec4& other) const;
+		bool operator>(const vec4& other) const;
+		bool operator>=(const vec4& other) const;
+
 		float32 Dot(const vec4& other);
 
 		vec4& Lerp(const vec4& other, float32 t);

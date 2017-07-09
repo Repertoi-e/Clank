@@ -2,12 +2,12 @@
 
 #include "cl/stdafx.h"
 
-#define GET_MODS GetKeyState(KEY_LSHIFT) < 0 ? MODIFIER_LEFT_SHIFT : 0x0 | \
-				GetKeyState(KEY_RSHIFT) < 0 ? MODIFIER_RIGHT_SHIFT : 0x0 | \
-				GetKeyState(KEY_LCONTROL) < 0 ? MODIFIER_LEFT_CONTROL : 0x0 | \
-				GetKeyState(KEY_RCONTROL) < 0 ? MODIFIER_RIGHT_CONTROL : 0x0 | \
-				GetKeyState(KEY_LMENU) < 0 ? MODIFIER_LEFT_ALT : 0x0 | \
-				GetKeyState(KEY_RMENU) < 0 ? MODIFIER_RIGHT_ALT : 0x0
+#define GET_MODS (GetKeyState(KEY_LSHIFT) < 0 ? MODIFIER_LEFT_SHIFT : 0x0) | \
+				 (GetKeyState(KEY_RSHIFT) < 0 ? MODIFIER_RIGHT_SHIFT : 0x0) | \
+				 (GetKeyState(KEY_LCONTROL) < 0 ? MODIFIER_LEFT_CONTROL : 0x0) | \
+				 (GetKeyState(KEY_RCONTROL) < 0 ? MODIFIER_RIGHT_CONTROL : 0x0) | \
+				 (GetKeyState(KEY_LMENU) < 0 ? MODIFIER_LEFT_ALT : 0x0) | \
+				 (GetKeyState(KEY_RMENU) < 0 ? MODIFIER_RIGHT_ALT : 0x0)
 
 #define MOUSE_LEFT	       0x00
 #define MOUSE_MIDDLE       0x01

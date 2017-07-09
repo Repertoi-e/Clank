@@ -2,6 +2,10 @@
 
 #include "cl/stdafx.h"
 
+#ifdef MOUSE_MOVED
+#undef MOUSE_MOVED
+#endif
+
 namespace cl { 
 
 	enum EventType : s32
