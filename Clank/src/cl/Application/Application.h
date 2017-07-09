@@ -26,7 +26,10 @@ namespace cl {
         HWND m_hWnd;
 
 		BOOL m_bWindowFocused;
-        
+
+		DWORD m_UpdatesPerSecond;
+		float32 m_FramesPerSecond, m_Frametime;
+
         String m_sName;
         ApplicationSettings m_AppSettings;
 
@@ -39,13 +42,10 @@ namespace cl {
 
 		void RegisterWindow();
 		void DoWindow();
-
 		void DoD3DContext();
-
-		void Start();
+		void DoCycle();
 
         void DoWindowMessages();
-
         void DoEvent(Event& event);
 
         inline String& GetName() { return m_sName; }

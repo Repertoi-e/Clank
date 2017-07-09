@@ -18,7 +18,7 @@ int main()
 
 	cl::g_Application.DoD3DContext();
 
-	cl::g_Application.Start();
+	cl::g_Application.DoCycle();
 	
 	return 0;
 }

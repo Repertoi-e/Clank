@@ -43,4 +43,4 @@
 
 #define NULLPTR 0
 #define cast(x) (x)  
-#define str(x) std::to_string(x)
+#define to_str(x) std::to_string(x)

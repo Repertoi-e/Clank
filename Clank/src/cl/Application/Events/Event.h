@@ -27,14 +27,14 @@ namespace cl {
 		friend class EventDispatcher;
 	private:
 		EventType m_Type;     
-		BOOL m_Handled;     
+		bool m_Handled;     
 	public:
 		Event(const EventType& type)     
 			: m_Type(type)
 		{
 		}
 
-		const BOOL IsHandled() const { return m_Handled; }
+		const bool IsHandled() const { return m_Handled; }
 
 		const EventType& GetType() const { return m_Type; }
 	};
