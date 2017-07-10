@@ -5,7 +5,6 @@ int main()
 	cl::g_Application.GetName() = "Clank Test";
 
 	cl::ApplicationSettings settings;
-	cl::g_Application.GetSettings(&settings);
 	settings.WIDTH = 800;
 	settings.HEIGHT = 600;
 	settings.VSYNC = FALSE;
