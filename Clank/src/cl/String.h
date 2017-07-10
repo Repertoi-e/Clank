@@ -1,10 +1,9 @@
 #pragma once
 
-#include "cl/stdafx.h"
+#include "cl/api.h"
 
 typedef std::wstring String;
 
 namespace cl {
 
-	
 }

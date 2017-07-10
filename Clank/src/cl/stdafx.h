@@ -30,17 +30,14 @@
 #include "String.h"
 #include "types.h"
 
-// Define common macros 
-#ifdef _LIB
-	#ifdef _DLL
-		#define API __declspec(dllexport)
-	#else
-		#define API __declspec(dllimport)
-	#endif
-#endif
+#include "api.h"
 
+// Define common macros 
 #define BIT(x) (1 << x)
 
 #define NULLPTR 0
 #define cast(x) (x)  
 #define to_str(x) std::to_string(x)
+
+#pragma warning(disable: 4251)
+

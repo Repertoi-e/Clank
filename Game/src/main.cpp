@@ -5,7 +5,6 @@ int main()
 	cl::g_Application.GetName() = L"Clank Test Çava? Нищо, добре съм! Clank Test И ОТНОВО ПОВТАРЯМЕ Oui croissant"; 
 
 	cl::ApplicationSettings settings;
-	ZeroMemory(&settings, sizeof(settings));
 	settings.WIDTH = 800;
 	settings.HEIGHT = 600;
 	settings.VSYNC = FALSE;
@@ -13,10 +12,7 @@ int main()
 	settings.WINDOW_STYLE = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
 	cl::g_Application.SetSettings(&settings);
 
-	cl::g_Application.RegisterWindow();
 	cl::g_Application.DoWindow();
-
-	cl::g_Application.DoD3DContext();
 
 	cl::CycleInfo info;
 	ZeroMemory(&info, sizeof(info));

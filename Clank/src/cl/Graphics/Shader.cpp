@@ -6,6 +6,7 @@
 namespace cl {
 	
 	Shader::Shader()
+		: m_pVS(NULLPTR), m_pPS(NULLPTR)
 	{
 	}
 	

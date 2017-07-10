@@ -4,6 +4,7 @@
 namespace cl {
 
 	Context::Context()
+		: m_pSwapChain(NULLPTR), m_pDevice(NULLPTR), m_pDeviceContext(NULLPTR), m_pBackbuffer(NULLPTR)
 	{
 	}
 

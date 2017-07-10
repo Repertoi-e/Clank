@@ -7,6 +7,14 @@
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
+struct FPSInfo
+{
+	static const s32 MaxSamples = 64;
+
+	s32 It;
+	float32 FpsSamples[MaxSamples] = { 0.0f };
+} g_FpsInfo;
+
 namespace cl {
 
 	Application& g_Application = Application::Instance();
@@ -21,20 +29,12 @@ namespace cl {
 	{
 	}
 
-	struct FPSInfo
-	{
-		static const s32 MaxSamples = 64;
-
-		s32 It;
-		float32 FpsSamples[MaxSamples] = { 0.0f };
-	} g_FpsInfo;
-
 	void Application::DoFPS(CycleInfo& info)
 	{
-		g_FpsInfo.FpsSamples[g_FpsInfo.It % g_FpsInfo.MaxSamples] = float32(info.Frames * m_UpdatesPerSecond);
+		g_FpsInfo.FpsSamples[g_FpsInfo.It % g_FpsInfo.MaxSamples] = float32(info.Frames * m_CycleInfo.m_UpdatesPerSecond);
 		for (s32 i = 0; i < g_FpsInfo.MaxSamples; i++)
-			m_FramesPerSecond += g_FpsInfo.FpsSamples[i];
-		m_FramesPerSecond /= g_FpsInfo.MaxSamples;
+			m_CycleInfo.m_FramesPerSecond += g_FpsInfo.FpsSamples[i];
+		m_CycleInfo.m_FramesPerSecond /= g_FpsInfo.MaxSamples;
 		g_FpsInfo.It = g_FpsInfo.It == g_FpsInfo.MaxSamples + 1 ? 0 : g_FpsInfo.It + 1;
 		info.Frames = 0;
 	}
@@ -55,33 +55,34 @@ namespace cl {
 				m_CycleInfo.UpdateDeltaTime->Update(now);
 				{
 					DoWindowMessages();
-				
+				//
 					elapsed++;
 					colort = (sin(elapsed / 10) + 1) / 2;
+				//
 				}
 				m_CycleInfo.Updates++;
 				m_CycleInfo.UpdateTimer += m_CycleInfo.UpdateTick;
 				
 				DoFPS(m_CycleInfo);
 
-				SetWindowTitle(String(m_sName + L" | FPS: " + std::to_wstring(m_FramesPerSecond)).c_str());
+				SetWindowTitle(String(m_sName + L" | FPS: " + std::to_wstring(m_CycleInfo.m_FramesPerSecond)).c_str());
 			}
 			{
 				Timer frametimer;
 
+				//
 				float32 fcolor[4] = { blue.r * colort, blue.g * colort, blue.b * colort, blue.a };
 				m_pContext->GetDeviceContext()->ClearRenderTargetView(m_pContext->GetBackbuffer(), fcolor);
-
+				//
+				m_CycleInfo.m_Frametime = frametimer.Elapsed().Millis();
 				m_CycleInfo.Frames++;
-				m_Frametime = frametimer.Elapsed().Millis();
 
-				m_pContext->GetSwapChain()->Present(0, 0);
+				m_pContext->Present();
 			}
 			if (m_CycleInfo.Timer->Elapsed().Seconds() - m_CycleInfo.ElapsedSeconds > 1.f)
 			{
 				m_CycleInfo.ElapsedSeconds += 1.f;
-				m_UpdatesPerSecond = m_CycleInfo.Updates;
-				std::cout << m_CycleInfo.Updates << std::endl;
+				m_CycleInfo.m_UpdatesPerSecond = m_CycleInfo.Updates;
 				m_CycleInfo.Updates = 0;
 			}
 			if (!m_bWindowFocused)
@@ -114,7 +115,7 @@ namespace cl {
 		});
 	}
 
-	void Application::RegisterWindow()
+	void Application::DoWindow()
 	{
 		m_hInstance = (HINSTANCE)&__ImageBase;;
 
@@ -137,10 +138,7 @@ namespace cl {
 			MessageBox(NULL, L"Failed to register window", NULL, NULL);
 			return;
 		}
-	}
 
-	void Application::DoWindow()
-	{
 		RECT r = { 0, 0, m_AppSettings.WIDTH, m_AppSettings.HEIGHT };
 		AdjustWindowRect(&r, m_AppSettings.WINDOW_STYLE, false);
 		s32 width = r.right - r.left;
@@ -156,10 +154,7 @@ namespace cl {
 		}
 
 		ShowWindow(m_hWnd, SW_SHOW);
-	}
 
-	void Application::DoD3DContext()
-	{
 		m_pContext = new Context();
 		m_pContext->Create(m_hWnd);
 	}

@@ -27,6 +27,8 @@ namespace cl {
 		float32 UpdateTimer;
 		float32 UpdateTick;
 		u32 Frames, Updates;
+		s32 m_UpdatesPerSecond;
+		float32 m_FramesPerSecond, m_Frametime;
 	};
 
     class API Application : public Singleton<Application>
@@ -36,9 +38,6 @@ namespace cl {
         HWND m_hWnd;
 
 		BOOL m_bWindowFocused;
-
-		s32 m_UpdatesPerSecond;
-		float32 m_FramesPerSecond, m_Frametime;
 
         String m_sName;
         ApplicationSettings m_AppSettings;
@@ -50,17 +49,11 @@ namespace cl {
     public:
         Application();
 
-		void RegisterWindow();
 		void DoWindow();
-		void DoD3DContext();
 		void DoCycle();
 
         void DoWindowMessages();
         void DoEvent(Event& event);
-
-		inline s32 GetUPS() { return m_UpdatesPerSecond; }
-		inline float32 GetFPS() { return m_FramesPerSecond; }
-		inline float32 GetFrametime() { return m_Frametime; }
 
         inline String& GetName() { return m_sName; }
         inline void GetSettings(ApplicationSettings* settings) { *settings = m_AppSettings; }

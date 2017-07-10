@@ -20,9 +20,11 @@ namespace cl {
 
 		void Create(HWND hWnd);
 
-		IDXGISwapChain* GetSwapChain() { return m_pSwapChain; }
-		ID3D11Device* GetDevice() { return m_pDevice; }
-		ID3D11DeviceContext* GetDeviceContext() { return m_pDeviceContext; }
-		ID3D11RenderTargetView* GetBackbuffer() { return m_pBackbuffer; }
+		inline IDXGISwapChain* GetSwapChain() { return m_pSwapChain; }
+		inline ID3D11Device* GetDevice() { return m_pDevice; }
+		inline ID3D11DeviceContext* GetDeviceContext() { return m_pDeviceContext; }
+		inline ID3D11RenderTargetView* GetBackbuffer() { return m_pBackbuffer; }
+
+		inline void Present() { m_pSwapChain->Present(0, 0); }
 	};
 }
