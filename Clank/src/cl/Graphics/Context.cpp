@@ -54,8 +54,8 @@ namespace cl {
 
 		viewport.TopLeftX = 0;
 		viewport.TopLeftY = 0;
-		viewport.Width = rect.right - rect.left;
-		viewport.Height = rect.bottom - rect.top;
+		viewport.Width = cast(FLOAT) (rect.right - rect.left);
+		viewport.Height = cast(FLOAT) (rect.bottom - rect.top);
 
 		m_pDeviceContext->RSSetViewports(1, &viewport);
 	}

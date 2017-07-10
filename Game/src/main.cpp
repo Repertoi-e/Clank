@@ -1,10 +1,11 @@
-#include <Clank.h>
+﻿#include <Clank.h>
 
 int main()
 {
-	cl::g_Application.GetName() = "Clank Test";
+	cl::g_Application.GetName() = L"Clank Test Çava? Нищо, добре съм! Clank Test И ОТНОВО ПОВТАРЯМЕ Oui croissant"; 
 
 	cl::ApplicationSettings settings;
+	ZeroMemory(&settings, sizeof(settings));
 	settings.WIDTH = 800;
 	settings.HEIGHT = 600;
 	settings.VSYNC = FALSE;
@@ -16,6 +17,11 @@ int main()
 	cl::g_Application.DoWindow();
 
 	cl::g_Application.DoD3DContext();
+
+	cl::CycleInfo info;
+	ZeroMemory(&info, sizeof(info));
+	info.UpdateTick = 1000.0f / 60.0f;
+	cl::g_Application.SetCycleInfo(&info);
 
 	cl::g_Application.DoCycle();
 	

@@ -19,6 +19,16 @@ namespace cl {
         DWORD WINDOW_STYLE;
     };
 
+	struct API CycleInfo
+	{
+		Timer* Timer;
+		DeltaTime* UpdateDeltaTime;
+		float32 ElapsedSeconds;
+		float32 UpdateTimer;
+		float32 UpdateTick;
+		u32 Frames, Updates;
+	};
+
     class API Application : public Singleton<Application>
 	{
     private:
@@ -27,13 +37,13 @@ namespace cl {
 
 		BOOL m_bWindowFocused;
 
-		DWORD m_UpdatesPerSecond;
+		s32 m_UpdatesPerSecond;
 		float32 m_FramesPerSecond, m_Frametime;
 
         String m_sName;
         ApplicationSettings m_AppSettings;
+		CycleInfo m_CycleInfo;
 
-		Timer* m_pLoopTimer;
         BOOL m_bClosed;
 
 		Context* m_pContext;
@@ -48,13 +58,22 @@ namespace cl {
         void DoWindowMessages();
         void DoEvent(Event& event);
 
+		inline s32 GetUPS() { return m_UpdatesPerSecond; }
+		inline float32 GetFPS() { return m_FramesPerSecond; }
+		inline float32 GetFrametime() { return m_Frametime; }
+
         inline String& GetName() { return m_sName; }
         inline void GetSettings(ApplicationSettings* settings) { *settings = m_AppSettings; }
         inline void SetSettings(ApplicationSettings* settings) { m_AppSettings = *settings; }
 
+		inline void GetCycleInfo(CycleInfo* info) { *info = m_CycleInfo; }
+		inline void SetCycleInfo(CycleInfo* info) { m_CycleInfo = *info; }
+
         void SetWindowTitle(LPCWSTR title);
 
         LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	private:
+		void DoFPS(CycleInfo& info);
     };
 
     extern API Application& g_Application;

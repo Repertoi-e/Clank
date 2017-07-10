@@ -21,49 +21,50 @@ namespace cl {
 	{
 	}
 
+	struct FPSInfo
+	{
+		static const s32 MaxSamples = 64;
+
+		s32 It;
+		float32 FpsSamples[MaxSamples] = { 0.0f };
+	} g_FpsInfo;
+
+	void Application::DoFPS(CycleInfo& info)
+	{
+		g_FpsInfo.FpsSamples[g_FpsInfo.It % g_FpsInfo.MaxSamples] = float32(info.Frames * m_UpdatesPerSecond);
+		for (s32 i = 0; i < g_FpsInfo.MaxSamples; i++)
+			m_FramesPerSecond += g_FpsInfo.FpsSamples[i];
+		m_FramesPerSecond /= g_FpsInfo.MaxSamples;
+		g_FpsInfo.It = g_FpsInfo.It == g_FpsInfo.MaxSamples + 1 ? 0 : g_FpsInfo.It + 1;
+		info.Frames = 0;
+	}
+
 	vec4 blue = { 0.0f, 0.2f, 0.4f, 1.0f };
 	float32 elapsed = 0, colort;
 
 	void Application::DoCycle()
 	{
-		m_pLoopTimer = new Timer();
-		float32 timer = 0.0f;
-		float32 updateTimer = m_pLoopTimer->Elapsed().Millis();
-		float32 updateTick = 1000.f / 60.f;
-		u32 frames = 0;
-		s32 curr = 0;
-		const s32 fpsSamplesMax = 64;
-		float32 fpsSamples[fpsSamplesMax] = { 0 };
-		u32 updates = 0;
-		DeltaTime delta(m_pLoopTimer->Elapsed().Millis());
+		m_CycleInfo.Timer = new Timer();
+		m_CycleInfo.UpdateTimer = m_CycleInfo.Timer->Elapsed().Millis();
+		m_CycleInfo.UpdateDeltaTime = new DeltaTime(m_CycleInfo.Timer->Elapsed().Millis());
 		while (!m_bClosed)
 		{
-			float32 now = m_pLoopTimer->Elapsed().Millis();
-			if (now - updateTimer > updateTick)
+			float32 now = m_CycleInfo.Timer->Elapsed().Millis();
+			if (now - m_CycleInfo.UpdateTimer > m_CycleInfo.UpdateTick)
 			{
-				delta.Update(now);
-				// Update(delta);
-				updates++;
-				updateTimer += updateTick;
+				m_CycleInfo.UpdateDeltaTime->Update(now);
+				{
+					DoWindowMessages();
+				
+					elapsed++;
+					colort = (sin(elapsed / 10) + 1) / 2;
+				}
+				m_CycleInfo.Updates++;
+				m_CycleInfo.UpdateTimer += m_CycleInfo.UpdateTick;
+				
+				DoFPS(m_CycleInfo);
 
-				DoWindowMessages();
-
-				elapsed++;
-				colort = (sin(elapsed / 10) + 1) / 2;
-
-				m_FramesPerSecond = 0;
-				fpsSamples[curr % fpsSamplesMax] = float32(frames * m_UpdatesPerSecond);
-				for (s32 i = 0; i < fpsSamplesMax; i++)
-					m_FramesPerSecond += fpsSamples[i];
-				m_FramesPerSecond /= fpsSamplesMax;
-				curr = curr == fpsSamplesMax + 1 ? 0 : curr + 1;
-
-				frames = 0;
-
-				std::wstringstream wss;
-				wss << std::wstring(m_sName.begin(), m_sName.end()) << " | FPS: " << m_FramesPerSecond;
-
-				SetWindowTitle(wss.str().c_str());
+				SetWindowTitle(String(m_sName + L" | FPS: " + std::to_wstring(m_FramesPerSecond)).c_str());
 			}
 			{
 				Timer frametimer;
@@ -71,20 +72,20 @@ namespace cl {
 				float32 fcolor[4] = { blue.r * colort, blue.g * colort, blue.b * colort, blue.a };
 				m_pContext->GetDeviceContext()->ClearRenderTargetView(m_pContext->GetBackbuffer(), fcolor);
 
-				frames++;
+				m_CycleInfo.Frames++;
 				m_Frametime = frametimer.Elapsed().Millis();
 
 				m_pContext->GetSwapChain()->Present(0, 0);
 			}
-			if (m_pLoopTimer->Elapsed().Seconds() - timer > 1.f)
+			if (m_CycleInfo.Timer->Elapsed().Seconds() - m_CycleInfo.ElapsedSeconds > 1.f)
 			{
-				timer += 1.f;
-				m_UpdatesPerSecond = updates;
-				std::cout << updates << std::endl;
-				updates = 0;
+				m_CycleInfo.ElapsedSeconds += 1.f;
+				m_UpdatesPerSecond = m_CycleInfo.Updates;
+				std::cout << m_CycleInfo.Updates << std::endl;
+				m_CycleInfo.Updates = 0;
 			}
 			if (!m_bWindowFocused)
-				Sleep(1);
+				Sleep(5);
 		}
 	}
 

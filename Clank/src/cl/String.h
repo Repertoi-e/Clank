@@ -2,9 +2,9 @@
 
 #include "cl/stdafx.h"
 
-typedef std::string String;
+typedef std::wstring String;
 
 namespace cl {
 
-
+	
 }
