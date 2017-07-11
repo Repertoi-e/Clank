@@ -66,7 +66,7 @@ namespace cl {
 
         LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	private:
-		void DoFPS(CycleInfo& info);
+		void DoFPS();
     };
 
     extern API Application& g_Application;

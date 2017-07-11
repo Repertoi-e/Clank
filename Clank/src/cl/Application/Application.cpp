@@ -31,14 +31,14 @@ namespace cl {
 	{
 	}
 
-	void Application::DoFPS(CycleInfo& info)
+	void Application::DoFPS()
 	{
 		g_FpsInfo.FpsSamples[g_FpsInfo.It % g_FpsInfo.MaxSamples] = float32(info.Frames * m_CycleInfo.m_UpdatesPerSecond);
 		for (s32 i = 0; i < g_FpsInfo.MaxSamples; i++)
 			m_CycleInfo.m_FramesPerSecond += g_FpsInfo.FpsSamples[i];
 		m_CycleInfo.m_FramesPerSecond /= g_FpsInfo.MaxSamples;
 		g_FpsInfo.It = g_FpsInfo.It == g_FpsInfo.MaxSamples + 1 ? 0 : g_FpsInfo.It + 1;
-		info.Frames = 0;
+		m_CycleInfo.Frames = 0;
 	}
 
 	vec4 blue = { 0.0f, 0.2f, 0.4f, 1.0f };
@@ -100,7 +100,7 @@ namespace cl {
 				m_CycleInfo.Updates++;
 				m_CycleInfo.UpdateTimer += m_CycleInfo.UpdateTick;
 				
-				DoFPS(m_CycleInfo);
+				DoFPS();
 
 				SetWindowTitle(String(m_sName + L" | FPS: " + std::to_wstring(m_CycleInfo.m_FramesPerSecond)).c_str());
 			}
