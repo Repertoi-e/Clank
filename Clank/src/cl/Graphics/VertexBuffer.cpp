@@ -4,7 +4,7 @@
 namespace cl {
 
 	VertexBuffer::VertexBuffer()
-		: m_pVBuffer(NULLPTR)
+		: m_pVBuffer(NULLPTR), m_pMappedSubresource(new D3D11_MAPPED_SUBRESOURCE()), m_pDesc(new D3D11_BUFFER_DESC), m_pInputLayout(NULLPTR)
 	{
 	}
 
@@ -13,22 +13,58 @@ namespace cl {
 		Destroy();
 	}
 
-	void VertexBuffer::Create(BufferUsage usage, u32 size, BufferCPUAccess access, ID3D11Device* device)
+	void VertexBuffer::Create(BufferUsage usage, u32 size, BufferCPUA access, ID3D11Device* device)
 	{
-		D3D11_BUFFER_DESC bd;
-		ZeroMemory(&bd, sizeof(bd));
+		ZeroMemory(m_pDesc, sizeof(D3D11_BUFFER_DESC));
 
-		bd.Usage = BufferUsageToD3D(usage);
-		bd.ByteWidth = size;
-		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		bd.CPUAccessFlags = BufferCPUAccessToD3D(access);
+		m_pDesc->Usage = BufferUsageToD3D(usage);
+		m_pDesc->ByteWidth = size;
+		m_pDesc->BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		m_pDesc->CPUAccessFlags = BufferCPUAToD3D(access);
 
-		device->CreateBuffer(&bd, NULL, &m_pVBuffer);
+		device->CreateBuffer(m_pDesc, NULL, &m_pVBuffer);
 	}
 
 	void VertexBuffer::Destroy()
 	{
 		m_pVBuffer->Release();
+	}
+
+	void VertexBuffer::SetInputLayout(InputLayout layout, void* vsbuffer, u32 vsbufferSize, ID3D11Device* device, ID3D11DeviceContext* devcon)
+	{
+		m_Layout = std::move(layout);
+
+		if (m_pInputLayout)
+			m_pInputLayout->Release();
+
+		const std::vector<InputElement>& elements = m_Layout.GetElements();
+
+		D3D11_INPUT_ELEMENT_DESC* ied = new D3D11_INPUT_ELEMENT_DESC[elements.size()];
+		for (u32 i = 0; i < elements.size(); i++)
+		{
+			const InputElement& element = elements[i];
+			ied[i] = { element.name, 0, element.type, 0, element.offset, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		}
+		device->CreateInputLayout(ied, 2, vsbuffer, vsbufferSize, &m_pInputLayout);
+	}
+
+	void* VertexBuffer::Map(BufferMapCPUA access, ID3D11DeviceContext* devcon)
+	{
+		devcon->Map(m_pVBuffer, NULL, BufferMapCPUAToD3D(access), NULL, m_pMappedSubresource);
+		
+		return m_pMappedSubresource->pData;
+	}
+
+	void VertexBuffer::Unmap(ID3D11DeviceContext* devcon)
+	{
+		devcon->Unmap(m_pVBuffer, NULL);
+	}
+
+	void VertexBuffer::Bind(u32 stride, u32 offset, D3D_PRIMITIVE_TOPOLOGY topology, ID3D11DeviceContext* devcon)
+	{
+		devcon->IASetVertexBuffers(0, 1, &m_pVBuffer, &stride, &offset);
+		devcon->IASetPrimitiveTopology(topology);
+		devcon->IASetInputLayout(m_pInputLayout);
 	}
 
 	D3D11_USAGE VertexBuffer::BufferUsageToD3D(BufferUsage usage)
@@ -47,15 +83,33 @@ namespace cl {
 		return D3D11_USAGE_DEFAULT;
 	}
 
-	u32 VertexBuffer::BufferCPUAccessToD3D(BufferCPUAccess access)
+	D3D11_CPU_ACCESS_FLAG VertexBuffer::BufferCPUAToD3D(BufferCPUA access)
 	{
 		switch (access)
 		{
-		case BufferCPUAccess::READ:
+		case BufferCPUA::READ:
 			return D3D11_CPU_ACCESS_READ;
-		case BufferCPUAccess::WRITE:
+		case BufferCPUA::WRITE:
 			return D3D11_CPU_ACCESS_WRITE;
 		}
-		return 0;
+		return D3D11_CPU_ACCESS_READ;
+	}
+
+	D3D11_MAP VertexBuffer::BufferMapCPUAToD3D(BufferMapCPUA access)
+	{
+		switch (access)
+		{
+		case BufferMapCPUA::READ:
+			return D3D11_MAP_READ;
+		case BufferMapCPUA::WRITE:
+			return D3D11_MAP_WRITE;
+		case BufferMapCPUA::READ_WRITE:
+			return D3D11_MAP_READ_WRITE;
+		case BufferMapCPUA::WRITE_DISCARD:
+			return D3D11_MAP_WRITE_DISCARD;
+		case BufferMapCPUA::WRITE_NO_OVERWRITE:
+			return D3D11_MAP_WRITE_NO_OVERWRITE;
+		}
+		return D3D11_MAP_READ;
 	}
 }

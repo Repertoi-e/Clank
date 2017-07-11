@@ -3,11 +3,15 @@
 
 #include <d3dcompiler.h>
 
+#include <fstream>
+
 namespace cl {
 	
 	Shader::Shader()
 		: m_pVS(NULLPTR), m_pPS(NULLPTR)
 	{
+		m_Data.vs = NULLPTR;
+		m_Data.ps = NULLPTR;
 	}
 	
 	Shader::~Shader()
@@ -16,14 +20,28 @@ namespace cl {
 		m_pPS->Release();
 	}
 	
-	void Shader::Create(LPCWSTR source, ID3D11Device* device)
+	void Shader::Create(LPCWSTR vertSrc, LPCWSTR fragSrc, ID3D11Device* device)
 	{
-		ID3D10Blob *VS, *PS;
-		D3DCompileFromFile(source, 0, 0, "VShader", "vs_4_0", 0, 0, &VS, 0);
-		D3DCompileFromFile(source, 0, 0, "PShader", "ps_4_0", 0, 0, &PS, 0);
+		ID3DBlob* errorBlob;
 
-		device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &m_pVS);
-		device->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &m_pPS);
+		D3DCompileFromFile(vertSrc, 0, 0, "main", "vs_4_0", D3DCOMPILE_DEBUG, 0, &m_Data.vs, &errorBlob);
+		if (errorBlob)
+		{
+			if (errorBlob->GetBufferSize())
+				std::cout << "Shader Compile Errors" << std::endl << (const char*)errorBlob->GetBufferPointer() << std::endl;
+			errorBlob->Release();
+		}
+
+		D3DCompileFromFile(fragSrc, 0, 0, "main", "ps_4_0", D3DCOMPILE_DEBUG, 0, &m_Data.ps, &errorBlob);
+		if (errorBlob)
+		{
+			if (errorBlob->GetBufferSize())
+				std::cout << "Shader Compile Errors" << std::endl << (const char*)errorBlob->GetBufferPointer() << std::endl;
+			errorBlob->Release();
+		}
+
+		device->CreateVertexShader(m_Data.vs->GetBufferPointer(), m_Data.vs->GetBufferSize(), NULL, &m_pVS);
+		device->CreatePixelShader(m_Data.ps->GetBufferPointer(), m_Data.ps->GetBufferSize(), NULL, &m_pPS);
 	}
 
 	void Shader::Bind(ID3D11DeviceContext * devcon)

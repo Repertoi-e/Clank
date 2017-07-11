@@ -2,18 +2,12 @@
 #include "Application.h"
 
 #include "cl/Maths/maths.h"
+#include "cl/Graphics/VertexBuffer.h"
+#include "cl/Graphics/Shader.h"
 
 #include <Windowsx.h>
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
-
-struct FPSInfo
-{
-	static const s32 MaxSamples = 64;
-
-	s32 It;
-	float32 FpsSamples[MaxSamples] = { 0.0f };
-} g_FpsInfo;
 
 namespace cl {
 
@@ -24,8 +18,16 @@ namespace cl {
 		return g_Application.WndProc(hWnd, message, wParam, lParam);
 	}
 
+	struct FPSInfo
+	{
+		static const s32 MaxSamples = 64;
+
+		s32 It;
+		float32 FpsSamples[MaxSamples] = { 0.0f };
+	} g_FpsInfo;
+
 	Application::Application()
-		: m_bClosed(FALSE)
+		: m_bClosed(FALSE), m_pContext(new Context())
 	{
 	}
 
@@ -41,9 +43,44 @@ namespace cl {
 
 	vec4 blue = { 0.0f, 0.2f, 0.4f, 1.0f };
 	float32 elapsed = 0, colort;
+	Shader* g_Shader;
+	VertexBuffer* g_VBuffer;
+	ID3D11InputLayout* g_Layout;
+
+	struct VERTEX 
+	{ 
+		FLOAT X, Y, Z; 
+		FLOAT R, G, B, A;
+	};
 
 	void Application::DoCycle()
 	{
+		{
+			g_Shader = new Shader();
+			g_Shader->Create(L"res/Vertex.hlsl", L"res/Pixel.hlsl", m_pContext->GetDevice());
+			g_Shader->Bind(m_pContext->GetDeviceContext());
+
+			VERTEX OurVertices[] =
+			{
+				{  0.0f,   0.5f, 0.0f,    1.0f, 0.0f, 0.0f, 1.0f },
+				{  0.45f, -0.5,  0.0f,    0.0f, 1.0f, 0.0f, 1.0f },
+				{ -0.45f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f, 1.0f }
+			};
+
+			g_VBuffer = new VertexBuffer();
+			g_VBuffer->Create(BufferUsage::DYNAMIC, 3 * sizeof(VERTEX), BufferCPUA::WRITE, m_pContext->GetDevice());
+
+			void* data = g_VBuffer->Map(BufferMapCPUA::WRITE_DISCARD, m_pContext->GetDeviceContext());
+			memcpy(data, OurVertices, sizeof(OurVertices));
+			g_VBuffer->Unmap(m_pContext->GetDeviceContext());
+
+			InputLayout ila;
+			ila.Push<vec3>("POSITION");
+			ila.Push<vec4>("COLOR");
+
+			ID3D10Blob* vsData = g_Shader->GetData().vs;
+			g_VBuffer->SetInputLayout(ila, vsData->GetBufferPointer(), vsData->GetBufferSize(), m_pContext->GetDevice(), m_pContext->GetDeviceContext());
+		}
 		m_CycleInfo.Timer = new Timer();
 		m_CycleInfo.UpdateTimer = m_CycleInfo.Timer->Elapsed().Millis();
 		m_CycleInfo.UpdateDeltaTime = new DeltaTime(m_CycleInfo.Timer->Elapsed().Millis());
@@ -73,6 +110,9 @@ namespace cl {
 				//
 				float32 fcolor[4] = { blue.r * colort, blue.g * colort, blue.b * colort, blue.a };
 				m_pContext->GetDeviceContext()->ClearRenderTargetView(m_pContext->GetBackbuffer(), fcolor);
+			
+				g_VBuffer->Bind(sizeof(VERTEX), 0, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pContext->GetDeviceContext());
+				m_pContext->GetDeviceContext()->Draw(3, 0);
 				//
 				m_CycleInfo.m_Frametime = frametimer.Elapsed().Millis();
 				m_CycleInfo.Frames++;
@@ -155,7 +195,6 @@ namespace cl {
 
 		ShowWindow(m_hWnd, SW_SHOW);
 
-		m_pContext = new Context();
 		m_pContext->Create(m_hWnd);
 	}
 
