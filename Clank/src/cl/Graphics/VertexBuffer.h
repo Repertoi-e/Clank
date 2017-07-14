@@ -116,15 +116,15 @@ namespace cl {
 		VertexBuffer();
 		~VertexBuffer();
 
-		void Create(BufferUsage usage, u32 size, BufferCPUA access, ID3D11Device* device);
+		void Create(BufferUsage usage, u32 size, BufferCPUA access);
 		void Destroy();
 		
-		void SetInputLayout(InputLayout layout, void* vsbuffer, u32 vsbufferSize, ID3D11Device* device, ID3D11DeviceContext* devcon);
+		void SetInputLayout(InputLayout layout, void* vsbuffer, u32 vsbufferSize);
 
-		void* Map(BufferMapCPUA access, ID3D11DeviceContext* devcon);
-		void Unmap(ID3D11DeviceContext* devcon);
+		void* Map(BufferMapCPUA access);
+		void Unmap();
 
-		void Bind(u32 stride, u32 offset, D3D_PRIMITIVE_TOPOLOGY topology, ID3D11DeviceContext* devcon);
+		void Bind(u32 stride, u32 offset, D3D_PRIMITIVE_TOPOLOGY topology);
 
 		static D3D11_USAGE BufferUsageToD3D(BufferUsage usage);
 		static D3D11_CPU_ACCESS_FLAG BufferCPUAToD3D(BufferCPUA access);

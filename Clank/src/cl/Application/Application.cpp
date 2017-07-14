@@ -27,13 +27,13 @@ namespace cl {
 	} g_FpsInfo;
 
 	Application::Application()
-		: m_bClosed(FALSE), m_pContext(new Context())
+		: m_bClosed(FALSE)
 	{
 	}
 
 	void Application::DoFPS()
 	{
-		g_FpsInfo.FpsSamples[g_FpsInfo.It % g_FpsInfo.MaxSamples] = float32(info.Frames * m_CycleInfo.m_UpdatesPerSecond);
+		g_FpsInfo.FpsSamples[g_FpsInfo.It % g_FpsInfo.MaxSamples] = float32(m_CycleInfo.Frames * m_CycleInfo.m_UpdatesPerSecond);
 		for (s32 i = 0; i < g_FpsInfo.MaxSamples; i++)
 			m_CycleInfo.m_FramesPerSecond += g_FpsInfo.FpsSamples[i];
 		m_CycleInfo.m_FramesPerSecond /= g_FpsInfo.MaxSamples;
@@ -41,46 +41,8 @@ namespace cl {
 		m_CycleInfo.Frames = 0;
 	}
 
-	vec4 blue = { 0.0f, 0.2f, 0.4f, 1.0f };
-	float32 elapsed = 0, colort;
-	Shader* g_Shader;
-	VertexBuffer* g_VBuffer;
-	ID3D11InputLayout* g_Layout;
-
-	struct VERTEX 
-	{ 
-		FLOAT X, Y, Z; 
-		FLOAT R, G, B, A;
-	};
-
 	void Application::DoCycle()
 	{
-		{
-			g_Shader = new Shader();
-			g_Shader->Create(L"res/Vertex.hlsl", L"res/Pixel.hlsl", m_pContext->GetDevice());
-			g_Shader->Bind(m_pContext->GetDeviceContext());
-
-			VERTEX OurVertices[] =
-			{
-				{  0.0f,   0.5f, 0.0f,    1.0f, 0.0f, 0.0f, 1.0f },
-				{  0.45f, -0.5,  0.0f,    0.0f, 1.0f, 0.0f, 1.0f },
-				{ -0.45f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f, 1.0f }
-			};
-
-			g_VBuffer = new VertexBuffer();
-			g_VBuffer->Create(BufferUsage::DYNAMIC, 3 * sizeof(VERTEX), BufferCPUA::WRITE, m_pContext->GetDevice());
-
-			void* data = g_VBuffer->Map(BufferMapCPUA::WRITE_DISCARD, m_pContext->GetDeviceContext());
-			memcpy(data, OurVertices, sizeof(OurVertices));
-			g_VBuffer->Unmap(m_pContext->GetDeviceContext());
-
-			InputLayout ila;
-			ila.Push<vec3>("POSITION");
-			ila.Push<vec4>("COLOR");
-
-			ID3D10Blob* vsData = g_Shader->GetData().vs;
-			g_VBuffer->SetInputLayout(ila, vsData->GetBufferPointer(), vsData->GetBufferSize(), m_pContext->GetDevice(), m_pContext->GetDeviceContext());
-		}
 		m_CycleInfo.Timer = new Timer();
 		m_CycleInfo.UpdateTimer = m_CycleInfo.Timer->Elapsed().Millis();
 		m_CycleInfo.UpdateDeltaTime = new DeltaTime(m_CycleInfo.Timer->Elapsed().Millis());
@@ -90,13 +52,10 @@ namespace cl {
 			if (now - m_CycleInfo.UpdateTimer > m_CycleInfo.UpdateTick)
 			{
 				m_CycleInfo.UpdateDeltaTime->Update(now);
-				{
-					DoWindowMessages();
-				//
-					elapsed++;
-					colort = (sin(elapsed / 10) + 1) / 2;
-				//
-				}
+				DoWindowMessages();
+
+				DoUpdate(*m_CycleInfo.UpdateDeltaTime);
+				
 				m_CycleInfo.Updates++;
 				m_CycleInfo.UpdateTimer += m_CycleInfo.UpdateTick;
 				
@@ -107,22 +66,18 @@ namespace cl {
 			{
 				Timer frametimer;
 
-				//
-				float32 fcolor[4] = { blue.r * colort, blue.g * colort, blue.b * colort, blue.a };
-				m_pContext->GetDeviceContext()->ClearRenderTargetView(m_pContext->GetBackbuffer(), fcolor);
-			
-				g_VBuffer->Bind(sizeof(VERTEX), 0, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, m_pContext->GetDeviceContext());
-				m_pContext->GetDeviceContext()->Draw(3, 0);
-				//
+				DoRender();
+
 				m_CycleInfo.m_Frametime = frametimer.Elapsed().Millis();
 				m_CycleInfo.Frames++;
 
-				m_pContext->Present();
+				Context::Instance().Present();
 			}
 			if (m_CycleInfo.Timer->Elapsed().Seconds() - m_CycleInfo.ElapsedSeconds > 1.f)
 			{
 				m_CycleInfo.ElapsedSeconds += 1.f;
 				m_CycleInfo.m_UpdatesPerSecond = m_CycleInfo.Updates;
+				DoTick();
 				m_CycleInfo.Updates = 0;
 			}
 			if (!m_bWindowFocused)
@@ -153,6 +108,45 @@ namespace cl {
 			m_bWindowFocused = e.Focused();
 			return FALSE;
 		});
+
+		for (std::vector<Layer*>::iterator it = m_Layers.begin(); it != m_Layers.end(); it++)
+			(*it)->Event(event);
+	}
+
+	void Application::DoRender()
+	{
+		for (std::vector<Layer*>::iterator it = m_Layers.begin(); it != m_Layers.end(); it++)
+			(*it)->Render();
+	}
+
+	void Application::DoUpdate(const DeltaTime& dt)
+	{
+		for (std::vector<Layer*>::iterator it = m_Layers.begin(); it != m_Layers.end(); it++)
+			(*it)->Update(dt);
+	}
+
+	void Application::DoTick()
+	{
+		for (std::vector<Layer*>::iterator it = m_Layers.begin(); it != m_Layers.end(); it++)
+			(*it)->Tick();
+	}
+
+	Layer* Application::PushLayer(Layer* layer)
+	{
+		m_Layers.push_back(layer);
+		layer->Init(&Context::Instance());
+		
+		return layer;
+	}
+
+	void Application::PopLayer(Layer* layer)
+	{
+		for (u32 i = 0; i < m_Layers.size(); i++)
+			if (m_Layers[i] == layer)
+			{
+				m_Layers.erase(m_Layers.begin() + i);
+				delete layer;
+			}
 	}
 
 	void Application::DoWindow()
@@ -195,7 +189,7 @@ namespace cl {
 
 		ShowWindow(m_hWnd, SW_SHOW);
 
-		m_pContext->Create(m_hWnd);
+		Context::Instance().Create(m_hWnd);
 	}
 
 	void Application::SetWindowTitle(LPCWSTR title)

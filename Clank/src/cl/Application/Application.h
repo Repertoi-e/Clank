@@ -6,6 +6,8 @@
 #include "cl/Utils/Singleton.h"
 #include "cl/Utils/Time.h"
 
+#include "cl/Graphics/Layers/Layer.h"
+
 #include "Events/Events.h"
 
 #include <Windows.h>
@@ -45,7 +47,7 @@ namespace cl {
 
         BOOL m_bClosed;
 
-		Context* m_pContext;
+		std::vector<Layer*> m_Layers;
     public:
         Application();
 
@@ -54,13 +56,21 @@ namespace cl {
 
         void DoWindowMessages();
         void DoEvent(Event& event);
+		void DoRender();
+		void DoUpdate(const DeltaTime& dt);
+		void DoTick();
 
-        inline String& GetName() { return m_sName; }
-        inline void GetSettings(ApplicationSettings* settings) { *settings = m_AppSettings; }
-        inline void SetSettings(ApplicationSettings* settings) { m_AppSettings = *settings; }
+		Layer* PushLayer(Layer* layer);
+		void PopLayer(Layer* layer);
 
-		inline void GetCycleInfo(CycleInfo* info) { *info = m_CycleInfo; }
-		inline void SetCycleInfo(CycleInfo* info) { m_CycleInfo = *info; }
+        inline const String& GetName() const { return m_sName; }
+		inline void SetName(const String& name) { m_sName = name; }
+
+		inline ApplicationSettings& GetSettings() { return m_AppSettings; }
+		inline void SetSettings(ApplicationSettings settings) { m_AppSettings = std::move(settings); }
+		
+		inline CycleInfo& GetCycleInfo() { return m_CycleInfo; }
+		inline void SetCycleInfo(CycleInfo info) { m_CycleInfo = std::move(info); }
 
         void SetWindowTitle(LPCWSTR title);
 

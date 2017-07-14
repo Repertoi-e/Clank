@@ -16,3 +16,5 @@ typedef u8		 byte;
 
 typedef float    float32;
 typedef double   float64;
+
+typedef wchar_t wchar;

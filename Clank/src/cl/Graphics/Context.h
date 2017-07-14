@@ -2,11 +2,13 @@
 
 #include "cl/stdafx.h"
 
+#include "cl/Utils/Singleton.h"
+
 #include <d3d11.h>
 
 namespace cl {
 
-	class Context
+	class Context : public Singleton<Context>
 	{
 	private:
 		IDXGISwapChain* m_pSwapChain;

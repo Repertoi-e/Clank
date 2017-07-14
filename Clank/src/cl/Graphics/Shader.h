@@ -22,13 +22,13 @@ namespace cl {
 		Shader();
 		~Shader();
 
-		void Create(LPCWSTR vertSrc, LPCWSTR fragSrc, ID3D11Device* device);
+		void Create(LPCWSTR vertSrc, LPCWSTR fragSrc);
 
 		inline Data& GetData() { return m_Data; }
 
 		inline ID3D11VertexShader* GetVS() { return m_pVS; }
 		inline ID3D11PixelShader* GetPS() { return m_pPS; }
 
-		void Bind(ID3D11DeviceContext* devcon);
+		void Bind();
 	};
 }

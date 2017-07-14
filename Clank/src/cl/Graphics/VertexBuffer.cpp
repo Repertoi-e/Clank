@@ -1,6 +1,8 @@
 #include "cl/stdafx.h"
 #include "VertexBuffer.h"
 
+#include "Context.h"
+
 namespace cl {
 
 	VertexBuffer::VertexBuffer()
@@ -13,7 +15,7 @@ namespace cl {
 		Destroy();
 	}
 
-	void VertexBuffer::Create(BufferUsage usage, u32 size, BufferCPUA access, ID3D11Device* device)
+	void VertexBuffer::Create(BufferUsage usage, u32 size, BufferCPUA access)
 	{
 		ZeroMemory(m_pDesc, sizeof(D3D11_BUFFER_DESC));
 
@@ -22,7 +24,7 @@ namespace cl {
 		m_pDesc->BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		m_pDesc->CPUAccessFlags = BufferCPUAToD3D(access);
 
-		device->CreateBuffer(m_pDesc, NULL, &m_pVBuffer);
+		Context::Instance().GetDevice()->CreateBuffer(m_pDesc, NULL, &m_pVBuffer);
 	}
 
 	void VertexBuffer::Destroy()
@@ -30,7 +32,7 @@ namespace cl {
 		m_pVBuffer->Release();
 	}
 
-	void VertexBuffer::SetInputLayout(InputLayout layout, void* vsbuffer, u32 vsbufferSize, ID3D11Device* device, ID3D11DeviceContext* devcon)
+	void VertexBuffer::SetInputLayout(InputLayout layout, void* vsbuffer, u32 vsbufferSize)
 	{
 		m_Layout = std::move(layout);
 
@@ -45,26 +47,26 @@ namespace cl {
 			const InputElement& element = elements[i];
 			ied[i] = { element.name, 0, element.type, 0, element.offset, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		}
-		device->CreateInputLayout(ied, 2, vsbuffer, vsbufferSize, &m_pInputLayout);
+		Context::Instance().GetDevice()->CreateInputLayout(ied, 2, vsbuffer, vsbufferSize, &m_pInputLayout);
 	}
 
-	void* VertexBuffer::Map(BufferMapCPUA access, ID3D11DeviceContext* devcon)
+	void* VertexBuffer::Map(BufferMapCPUA access)
 	{
-		devcon->Map(m_pVBuffer, NULL, BufferMapCPUAToD3D(access), NULL, m_pMappedSubresource);
+		Context::Instance().GetDeviceContext()->Map(m_pVBuffer, NULL, BufferMapCPUAToD3D(access), NULL, m_pMappedSubresource);
 		
 		return m_pMappedSubresource->pData;
 	}
 
-	void VertexBuffer::Unmap(ID3D11DeviceContext* devcon)
+	void VertexBuffer::Unmap()
 	{
-		devcon->Unmap(m_pVBuffer, NULL);
+		Context::Instance().GetDeviceContext()->Unmap(m_pVBuffer, NULL);
 	}
 
-	void VertexBuffer::Bind(u32 stride, u32 offset, D3D_PRIMITIVE_TOPOLOGY topology, ID3D11DeviceContext* devcon)
+	void VertexBuffer::Bind(u32 stride, u32 offset, D3D_PRIMITIVE_TOPOLOGY topology)
 	{
-		devcon->IASetVertexBuffers(0, 1, &m_pVBuffer, &stride, &offset);
-		devcon->IASetPrimitiveTopology(topology);
-		devcon->IASetInputLayout(m_pInputLayout);
+		Context::Instance().GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pVBuffer, &stride, &offset);
+		Context::Instance().GetDeviceContext()->IASetPrimitiveTopology(topology);
+		Context::Instance().GetDeviceContext()->IASetInputLayout(m_pInputLayout);
 	}
 
 	D3D11_USAGE VertexBuffer::BufferUsageToD3D(BufferUsage usage)
