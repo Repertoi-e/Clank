@@ -4,8 +4,8 @@
 
 struct VERTEX
 {
-	FLOAT X, Y, Z;
-	FLOAT R, G, B, A;
+	float32 x, y, z;
+	float32 r, g, b, a;
 };
 
 class TestLayer : public cl::Layer
@@ -20,9 +20,12 @@ private:
 public:
 	TestLayer()
 		: m_Shader(NULLPTR), m_Buffer(NULLPTR)
-	{}
+	{
+	}
+	
 	~TestLayer() 
-	{}
+	{
+	}
 
 	void Init(cl::Context* context) override
 	{
@@ -71,17 +74,19 @@ public:
 
 	void Tick()
 	{
+	
 	}
 };
 
-#define WIDTH				800
-#define HEIGHT				600
-#define FULLSCREEN			FALSE
-#define VSYNC				FALSE
-#define WINDOW_STYLE		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
+#define WIDTH		  800
+#define HEIGHT		  600
+#define FULLSCREEN	  FALSE
+#define VSYNC		  FALSE
+#define WINDOW_STYLE  WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
 
 int main()
 {
+	cl::print("Hello this is /% and this is a per cent: %, and this is /% \n", 10, 5);
 	cl::Timer init;
 	{
 		cl::g_Application.SetName(L"义勇军进行曲");
@@ -96,7 +101,7 @@ int main()
 		info.UpdateTick = 1000.0f / 60.0f;
 		cl::g_Application.SetCycleInfo(info);
 	}
-	LOG_WARN("Init of application took: ", init.Elapsed().Millis(), " ms.\n");
+	LOG_INFO(init.Elapsed().Millis(), " ms\n");
 
 	cl::g_Application.DoCycle();
 	
