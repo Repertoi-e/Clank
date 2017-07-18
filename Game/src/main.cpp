@@ -67,8 +67,16 @@ public:
 
 int main(void)
 {
+	char* l = setlocale(LC_ALL, "");
+	if (l == NULL)
+		printf("Locale not set\n\n");
+	else
+		printf("Locale set to %s\n\n", l);
+
+	print(L"Le pré est vénéneux mais joli en automne\nLes vaches y paissant\nLentement s’empoisonnent\nLe colchique couleur de cerne et de lilas\nY fleurit tes yeux sont comme cette fleur - la\nViolâtres comme leur cerne et comme cet automne\nEt ma vie pour tes yeux lentement s’empoisonne \n\n");
+
 	// Output: Hello this is 10 and this is a per cent: %, and this is /%
-	print("Hello this is /% and this is a per cent: %, and this is /% \n", 10, 5);
+	print("Hello this is /% and this is a per cent: %, and this is /% \n\n", 10, 5);
 	Timer init;
 	{
 		g_Application.SetName(L"义勇军进行曲");
@@ -83,7 +91,9 @@ int main(void)
 		info.UpdateTick = 1000.0f / 60.0f;
 		g_Application.SetCycleInfo(info);
 	}
-	LOG_WARN("Init took ", init.Elapsed().Millis(), " ms\n");
+	LOG_WARN(L"Init took ", init.Elapsed().Millis(), L" ms\n\n");
+
+	print(L"This is chinese! 义勇军进行曲 (if you have the codepage right..)\n\n");
 
 	g_Application.DoCycle();
 

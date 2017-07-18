@@ -9,171 +9,168 @@
 
 namespace cl {
 
-	//@Incomplete: This whole file should support unicode. For now only ASCII
-
-	static char sprintf_buffer[1024 * 10];
+	static wbyte to_wchar_buffer[1024 * 10];
+	static wbyte sprintf_buffer[1024 * 10];
 
 	template <typename T>
-	static const char* to_string(const T& t)
+	static const wchar* to_string(const T& t)
 	{
-		return typeid(T).name();
+		const char* c = typeid(T).name();
+
+		mbstowcs(to_wchar_buffer, c, strlen(c) + 1);
+		return to_wchar_buffer;
 	}
 
 	template <>
-	static const char* to_string<char>(const char& t)
+	static const wchar* to_string<wchar>(const wchar& t)
 	{
 		return &t;
 	}
 
 	template <>
-	static const char* to_string<char*>(char* const& t)
+	static const wchar* to_string<const char*>(const char* const& t)
+	{
+		mbstowcs(to_wchar_buffer, t, strlen(t) + 1);
+		return to_wchar_buffer;
+	}
+
+	template <>
+	static const wchar* to_string<wchar*>(wchar* const& t)
 	{
 		return t;
 	}
 
 	template <>
-	static const char* to_string<unsigned char*>(unsigned char* const& t)
-	{
-		return cast(const char*) t;
-	}
-
-	template <>
-	static const char* to_string<char const*>(char const* const& t)
+	static const wchar* to_string<wchar const*>(wchar const* const& t)
 	{
 		return t;
 	}
 
 	template <>
-	static const char* to_string<unsigned char const*>(unsigned char const* const& t)
+	static const wchar* to_string<bool>(const bool& t)
 	{
-		return cast(const char*) t;
+		return t ? L"true" : L"false";
 	}
 
 	template <>
-	static const char* to_string<bool>(const bool& t)
+	static const wchar* to_string<s8>(const s8& t)
 	{
-		return t ? "true" : "false";
-	}
-
-	template <>
-	static const char* to_string<s8>(const s8& t)
-	{
-		sprintf(sprintf_buffer, "%d", t);
+		swprintf(sprintf_buffer, 1024 * 10, L"%d", t);
 		return sprintf_buffer;
 	}
 
 	template <>
-	static const char* to_string<s16>(const s16& t)
+	static const wchar* to_string<s16>(const s16& t)
 	{
-		sprintf(sprintf_buffer, "%d", t);
+		swprintf(sprintf_buffer, 1024 * 10, L"%d", t);
 		return sprintf_buffer;
 	}
 
 	template <>
-	static const char* to_string<s32>(const s32& t)
+	static const wchar* to_string<s32>(const s32& t)
 	{
-		sprintf(sprintf_buffer, "%ld", t);
+		swprintf(sprintf_buffer, 1024 * 10, L"%ld", t);
 		return sprintf_buffer;
 	}
 
 	template <>
-	static const char* to_string<s64>(const s64& t)
+	static const wchar* to_string<s64>(const s64& t)
 	{
-		sprintf(sprintf_buffer, "%lld", t);
+		swprintf(sprintf_buffer, 1024 * 10, L"%lld", t);
 		return sprintf_buffer;
 	}
 
 	template <>
-	static const char* to_string<u8>(const u8& t)
+	static const wchar* to_string<u8>(const u8& t)
 	{
-		sprintf(sprintf_buffer, "%u", t);
+		swprintf(sprintf_buffer, 1024 * 10, L"%u", t);
 		return sprintf_buffer;
 	}
 	template <>
-	static const char* to_string<u16>(const u16& t)
+	static const wchar* to_string<u16>(const u16& t)
 	{
-		sprintf(sprintf_buffer, "%u", t);
-		return sprintf_buffer;
-	}
-
-	template <>
-	static const char* to_string<u32>(const u32& t)
-	{
-		sprintf(sprintf_buffer, "%lu", t);
+		swprintf(sprintf_buffer, 1024 * 10, L"%u", t);
 		return sprintf_buffer;
 	}
 
 	template <>
-	static const char* to_string<u64>(const u64& t)
+	static const wchar* to_string<u32>(const u32& t)
 	{
-		sprintf(sprintf_buffer, "%llu", t);
+		swprintf(sprintf_buffer, 1024 * 10, L"%lu", t);
 		return sprintf_buffer;
 	}
 
 	template <>
-	static const char* to_string<long>(const long& t)
+	static const wchar* to_string<u64>(const u64& t)
 	{
-		sprintf(sprintf_buffer, "%ld", t);
+		swprintf(sprintf_buffer, 1024 * 10, L"%llu", t);
 		return sprintf_buffer;
 	}
 
 	template <>
-	static const char* to_string<unsigned long>(const unsigned long& t)
+	static const wchar* to_string<long>(const long& t)
 	{
-		sprintf(sprintf_buffer, "%lu", t);
+		swprintf(sprintf_buffer, 1024 * 10, L"%ld", t);
 		return sprintf_buffer;
 	}
 
 	template <>
-	static const char* to_string<float32>(const float32& t)
+	static const wchar* to_string<unsigned long>(const unsigned long& t)
 	{
-		sprintf(sprintf_buffer, "%f", t);
+		swprintf(sprintf_buffer, 1024 * 10, L"%lu", t);
 		return sprintf_buffer;
 	}
 
 	template <>
-	static const char* to_string<float64>(const float64& t)
+	static const wchar* to_string<float32>(const float32& t)
 	{
-		sprintf(sprintf_buffer, "%f", t);
+		swprintf(sprintf_buffer, 1024 * 10, L"%f", t);
+		return sprintf_buffer;
+	}
+
+	template <>
+	static const wchar* to_string<float64>(const float64& t)
+	{
+		swprintf(sprintf_buffer, 1024 * 10, L"%f", t);
 		return sprintf_buffer;
 	}
 
 	template <typename T>
-	void print_sequence_internal(byte* buffer, s32& index, T&& t)
+	void print_sequence_internal(wbyte* buffer, s32& index, T&& t)
 	{
-		const char* string = to_string<T>(t);
-		s32 len = strlen(string);
-		memcpy(&buffer[index], string, len);
+		const wchar* string = to_string<T>(t);
+		s32 len = wcslen(string);
+		wmemcpy(&buffer[index], string, len);
 		index += len;
 	}
 
 	template <typename T, typename... Rest>
-	void print_sequence_internal(byte* buffer, s32& index, T&& first, Rest&&... rest)
+	void print_sequence_internal(wbyte* buffer, s32& index, T&& first, Rest&&... rest)
 	{
-		const char* string = to_string<T>(first);
-		s32 len = std::strlen(string);
-		memcpy(&buffer[index], string, len);
+		const wchar* string = to_string<T>(first);
+		s32 len = wcslen(string);
+		wmemcpy(&buffer[index], string, len);
 		index += len;
 		if (sizeof...(Rest))
 			print_sequence_internal(buffer, index, std::forward<Rest>(rest)...);
 	}
 
 	template <typename... Args>
-	const char* sprint_sequence(Args... args)
+	const wchar* sprint_sequence(Args... args)
 	{
-		byte buffer[1024 * 10];
+		wbyte buffer[1024 * 10];
 		s32 index = 0;
 		print_sequence_internal(buffer, index, std::forward<Args>(args)...);
 
 		buffer[index] = '\0';
 
-		return cast(const char*) buffer;
+		return cast(const wchar*) buffer;
 	}
 
 	template <typename... Args>
 	void print_sequence(s32 level, Args... args)
 	{
-		byte buffer[1024 * 10];
+		wbyte buffer[1024 * 10];
 		s32 index = 0;
 		print_sequence_internal(buffer, index, std::forward<Args>(args)...);
 
@@ -192,25 +189,25 @@ namespace cl {
 			SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 			break;
 		}
-		printf("%s", buffer);
+		wprintf(L"%ls", buffer);
 		SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 	}
 
 	template <typename T>
-	void print_internal(std::vector<const char*>& argsv, T&& t)
+	void print_internal(std::vector<const wchar*>& argsv, T&& t)
 	{
-		const char* ptr = to_string<T>(t);
-		char* result = new char[strlen(ptr) + 1];
-		strcpy(result, ptr);
+		const wchar* ptr = to_string<T>(t);
+		wchar* result = new wchar[wcslen(ptr) + 1];
+		wcscpy(result, ptr);
 		argsv.push_back(result);
 	}
 
 	template <typename T, typename... Rest>
-	void print_internal(std::vector<const char*>& argsv, T&& first, Rest&&... rest)
+	void print_internal(std::vector<const wchar*>& argsv, T&& first, Rest&&... rest)
 	{
-		const char* ptr = to_string<T>(first);
-		char* result = new char[strlen(ptr) + 1];
-		strcpy(result, ptr);
+		const wchar* ptr = to_string<T>(first);
+		wchar* result = new wchar[wcslen(ptr) + 1];
+		wcscpy(result, ptr);
 		argsv.push_back(result);
 		if (sizeof...(Rest))
 			print_internal(argsv, std::forward<Rest>(rest)...);
@@ -219,19 +216,19 @@ namespace cl {
 	template <typename... Args>
 	void print(Args... args)
 	{
-		char buffer[1024 * 10];
+		wchar buffer[1024 * 10];
 		s32 index = 0;
-		sprint(cast(byte*) buffer, index, std::forward<Args>(args)...);
-		printf("%s", buffer);
+		sprint(cast(wbyte*) buffer, index, std::forward<Args>(args)...);
+		wprintf(L"%ls", buffer);
 	}
 
 	//@Cleanup: Having to pass a reference to a s32 for buffer indexing is
 	// annoying and rarely used but it is there for robustness. Make it
 	// not obligatory.
 	template <typename... Args>
-	void sprint(byte* buffer, s32& index, Args... args)
+	void sprint(wbyte* buffer, s32& index, Args... args)
 	{
-		std::vector<const char*> argsv;
+		std::vector<const wchar*> argsv;
 		print_internal(argsv, std::forward<Args>(args)...);
 
 		s32 args_count = argsv.size();
@@ -240,20 +237,20 @@ namespace cl {
 			return;
 
 		s32 arg = 1;
-		for (const char* ch = argsv[0]; *ch; ch++)
+		for (const wchar* ch = argsv[0]; *ch; ch++)
 		{
 			if (*ch == '%')
 			{
 				if (*(--ch) == '/')
 				{
-					const char* src = [&] {
+					const wchar* src = [&] {
 						if (arg < 0 || arg >= args_count)
-							return "%";
+							return L"%";
 						return argsv[arg++];
 					}();
 
-					s32 size = strlen(src);
-					memcpy(&buffer[index - 1], cast(void*) src, size);
+					s32 size = wcslen(src);
+					wmemcpy(&buffer[index - 1], src, size);
 					index += size - 1;
 					ch++;
 
@@ -265,7 +262,7 @@ namespace cl {
 		} 
 		buffer[index] = '\0';
 
-		for (u32 i = 0; i < args_count; i++)
+		for (s32 i = 0; i < args_count; i++)
 			delete[] argsv[i];
 	}
 }
