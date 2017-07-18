@@ -11,12 +11,12 @@ namespace cl {
 		u64 Cycles;
 		float64 Frequency;
 
-		float32 Millis()
+		float32 Millis(void)
 		{
 			return cast(float32) (Cycles * Frequency) * 1000.0f;
 		}
 
-		float32 Seconds()
+		float32 Seconds(void)
 		{
 			return cast(float32) (Cycles * Frequency);
 		}
@@ -28,7 +28,7 @@ namespace cl {
 		LARGE_INTEGER m_Start;
 		float64 m_Frequency;
 	public:
-		Timer()
+		Timer(void)
 		{
 			LARGE_INTEGER frequency;
 			QueryPerformanceFrequency(&frequency);
@@ -37,12 +37,12 @@ namespace cl {
 			Reset();
 		}
 
-		void Reset()
+		void Reset(void)
 		{
 			QueryPerformanceCounter(&m_Start);
 		}
 
-		Time Elapsed()
+		Time Elapsed(void)
 		{
 			Time time;
 			
@@ -71,7 +71,7 @@ namespace cl {
 			m_LastTime = currentTime;
 		}
 
-		Time Elapsed()
+		Time Elapsed(void)
 		{
 			Time time;
 			time.Cycles = 1;

@@ -34,8 +34,8 @@ namespace cl {
 		{
 		}
 
-		const bool IsHandled() const { return m_Handled; }
+		const bool IsHandled(void) const { return m_Handled; }
 
-		const EventType& GetType() const { return m_Type; }
+		const EventType& GetType(void) const { return m_Type; }
 	};
 }

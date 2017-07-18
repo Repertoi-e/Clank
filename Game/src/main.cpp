@@ -1,80 +1,61 @@
 ﻿#include <Clank.h>
 
-#include <fstream>
+using namespace cl;
 
-struct VERTEX
-{
-	float32 x, y, z;
-	float32 r, g, b, a;
-};
-
-class TestLayer : public cl::Layer
+class TestLayer : public Layer
 {
 private:
 	float32 elapsed = 0, colort;
-	cl::vec4 blue = { 0.0f, 0.2f, 0.4f, 1.0f };
-	
-	cl::Context* m_Context;
-	cl::Shader* m_Shader;
-	cl::VertexBuffer* m_Buffer;
+	vec4 blue = { 0.0f, 0.2f, 0.4f, 1.0f };
+
+	Renderer2D* m_pRenderer;
+	Renderable2D* m_pRenderable;
+	Context* m_pContext;
 public:
-	TestLayer()
-		: m_Shader(NULLPTR), m_Buffer(NULLPTR)
-	{
-	}
-	
-	~TestLayer() 
+	TestLayer(void)
+		: m_pRenderer(new Renderer2D())
 	{
 	}
 
-	void Init(cl::Context* context) override
+	~TestLayer(void)
 	{
-		m_Context = context;
-
-		m_Shader = new cl::Shader();
-		m_Shader->Create(L"res/Vertex.hlsl", L"res/Pixel.hlsl");
-		m_Shader->Bind();
-
-		VERTEX vertices[] =
-		{
-			{ 0.0f,   0.5f, 0.0f,    1.0f, 0.0f, 0.0f, 1.0f },
-			{ 0.45f, -0.5,  0.0f,    0.0f, 1.0f, 0.0f, 1.0f },
-			{ -0.45f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f, 1.0f }
-		};
-
-		m_Buffer = new cl::VertexBuffer();
-		m_Buffer->Create(cl::BufferUsage::DYNAMIC, 3 * sizeof(VERTEX), cl::BufferCPUA::WRITE);
-
-		void* data = m_Buffer->Map(cl::BufferMapCPUA::WRITE_DISCARD);
-		memcpy(data, vertices, sizeof(vertices));
-		m_Buffer->Unmap();
-
-		cl::InputLayout ila;
-		ila.Push<cl::vec3>("POSITION");
-		ila.Push<cl::vec4>("COLOR");
-
-		ID3D10Blob* vsData = m_Shader->GetData().vs;
-		m_Buffer->SetInputLayout(ila , vsData->GetBufferPointer(), vsData->GetBufferSize());
 	}
 
-	void Update(const cl::DeltaTime& dt)
+	void Init(Context* context) override
+	{
+		m_pContext = context;
+
+		Renderer2DSettings settings;
+		settings.MaxQuads = 60000;
+		settings.MaxVertices = settings.MaxQuads * 4;
+		settings.BufferSize = settings.MaxVertices * sizeof(Vertex);
+		settings.MaxIndices = settings.MaxQuads * 6;
+		m_pRenderer->SetSettings(settings);
+
+		m_pRenderer->Create();
+
+		m_pRenderable = new Renderable2D({ 0.5f, 0.5f }, { 0.5f, 0.5f }, 0xff00ffff);
+	}
+
+	void Update(const DeltaTime& dt)
 	{
 		elapsed++;
-		colort = (sin(elapsed / 10) + 1) / 2;
+		colort = (cl::sin(elapsed / 10) + 1) / 2;
 	}
 
-	void Render()
+	void Render(void)
 	{
-		float32 fcolor[4] = { blue.r * colort, blue.g * colort, blue.b * colort, blue.a };
-		m_Context->GetDeviceContext()->ClearRenderTargetView(m_Context->GetBackbuffer(), fcolor);
+		float32 color[4] = { blue.r * colort, blue.g * colort, blue.b * colort, blue.a };
+		m_pContext->GetDeviceContext()->ClearRenderTargetView(m_pContext->GetBackbuffer(), color);
 
-		m_Buffer->Bind(sizeof(VERTEX), 0, D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		m_Context->GetDeviceContext()->Draw(3, 0);
+		m_pRenderer->Begin();
+		m_pRenderer->Submit(m_pRenderable);
+		m_pRenderer->End();
+		m_pRenderer->Present();
 	}
 
-	void Tick()
+	void Tick(void)
 	{
-	
 	}
 };
 
@@ -84,26 +65,27 @@ public:
 #define VSYNC		  FALSE
 #define WINDOW_STYLE  WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
 
-int main()
+int main(void)
 {
-	cl::print("Hello this is /% and this is a per cent: %, and this is /% \n", 10, 5);
-	cl::Timer init;
+	// Output: Hello this is 10 and this is a per cent: %, and this is /%
+	print("Hello this is /% and this is a per cent: %, and this is /% \n", 10, 5);
+	Timer init;
 	{
-		cl::g_Application.SetName(L"义勇军进行曲");
-		cl::g_Application.SetSettings({ WIDTH, HEIGHT, VSYNC, FULLSCREEN, WINDOW_STYLE });
+		g_Application.SetName(L"义勇军进行曲");
+		g_Application.SetSettings({ WIDTH, HEIGHT, VSYNC, FULLSCREEN, WINDOW_STYLE | WS_SIZEBOX });
 
-		cl::g_Application.DoWindow();
+		g_Application.DoWindow();
 
-		cl::g_Application.PushLayer(new TestLayer());
+		g_Application.PushLayer(new TestLayer());
 
-		cl::CycleInfo info;
+		CycleInfo info;
 		ZeroMemory(&info, sizeof(info));
 		info.UpdateTick = 1000.0f / 60.0f;
-		cl::g_Application.SetCycleInfo(info);
+		g_Application.SetCycleInfo(info);
 	}
-	LOG_INFO(init.Elapsed().Millis(), " ms\n");
+	LOG_WARN("Init took ", init.Elapsed().Millis(), " ms\n");
 
-	cl::g_Application.DoCycle();
-	
+	g_Application.DoCycle();
+
 	return 0;
 }

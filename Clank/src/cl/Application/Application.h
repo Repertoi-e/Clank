@@ -49,16 +49,16 @@ namespace cl {
 
 		std::vector<Layer*> m_Layers;
     public:
-        Application();
+        Application(void);
 
-		void DoWindow();
-		void DoCycle();
+		void DoWindow(void);
+		void DoCycle(void);
 
-        void DoWindowMessages();
+        void DoWindowMessages(void);
         void DoEvent(Event& event);
-		void DoRender();
+		void DoRender(void);
 		void DoUpdate(const DeltaTime& dt);
-		void DoTick();
+		void DoTick(void);
 
 		Layer* PushLayer(Layer* layer);
 		void PopLayer(Layer* layer);

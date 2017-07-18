@@ -26,12 +26,12 @@ namespace cl {
 		float32 FpsSamples[MaxSamples] = { 0.0f };
 	} g_FpsInfo;
 
-	Application::Application()
+	Application::Application(void)
 		: m_bClosed(FALSE)
 	{
 	}
 
-	void Application::DoFPS()
+	void Application::DoFPS(void)
 	{
 		g_FpsInfo.FpsSamples[g_FpsInfo.It % g_FpsInfo.MaxSamples] = float32(m_CycleInfo.Frames * m_CycleInfo.m_UpdatesPerSecond);
 		for (s32 i = 0; i < g_FpsInfo.MaxSamples; i++)
@@ -41,7 +41,7 @@ namespace cl {
 		m_CycleInfo.Frames = 0;
 	}
 
-	void Application::DoCycle()
+	void Application::DoCycle(void)
 	{
 		m_CycleInfo.Timer = new Timer();
 		m_CycleInfo.UpdateTimer = m_CycleInfo.Timer->Elapsed().Millis();
@@ -85,7 +85,7 @@ namespace cl {
 		}
 	}
 
-	void Application::DoWindowMessages()
+	void Application::DoWindowMessages(void)
 	{
 		MSG message;
 		while (PeekMessage(&message, NULL, NULL, NULL, PM_REMOVE) > 0)
@@ -113,7 +113,7 @@ namespace cl {
 			(*it)->Event(event);
 	}
 
-	void Application::DoRender()
+	void Application::DoRender(void)
 	{
 		for (std::vector<Layer*>::iterator it = m_Layers.begin(); it != m_Layers.end(); it++)
 			(*it)->Render();
@@ -125,7 +125,7 @@ namespace cl {
 			(*it)->Update(dt);
 	}
 
-	void Application::DoTick()
+	void Application::DoTick(void)
 	{
 		for (std::vector<Layer*>::iterator it = m_Layers.begin(); it != m_Layers.end(); it++)
 			(*it)->Tick();
@@ -149,7 +149,7 @@ namespace cl {
 			}
 	}
 
-	void Application::DoWindow()
+	void Application::DoWindow(void)
 	{
 		m_hInstance = (HINSTANCE)&__ImageBase;;
 

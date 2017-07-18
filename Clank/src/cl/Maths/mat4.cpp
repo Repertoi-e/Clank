@@ -218,7 +218,7 @@
 
 namespace cl { 
 
-	mat4::mat4()
+	mat4::mat4(void)
 	{
 		memset(elements, 0, 4 * 4 * sizeof(float32));
 	}
@@ -245,7 +245,7 @@ namespace cl {
 		rows[3] = row3;
 	}
 
-	mat4 mat4::Identity()
+	mat4 mat4::Identity(void)
 	{
 		return mat4(1.f);
 	}
@@ -295,7 +295,7 @@ namespace cl {
 		return left.Multiply(right);
 	}
 
-	mat4& mat4::Invert()
+	mat4& mat4::Invert(void)
 	{
 		float32 temp[16];
 

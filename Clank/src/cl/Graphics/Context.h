@@ -17,16 +17,16 @@ namespace cl {
 
 		ID3D11RenderTargetView* m_pBackbuffer;
 	public:
-		Context();
-		~Context();
+		Context(void);
+		~Context(void);
 
 		void Create(HWND hWnd);
 
-		inline IDXGISwapChain* GetSwapChain() { return m_pSwapChain; }
-		inline ID3D11Device* GetDevice() { return m_pDevice; }
-		inline ID3D11DeviceContext* GetDeviceContext() { return m_pDeviceContext; }
-		inline ID3D11RenderTargetView* GetBackbuffer() { return m_pBackbuffer; }
+		inline IDXGISwapChain* GetSwapChain(void) { return m_pSwapChain; }
+		inline ID3D11Device* GetDevice(void) { return m_pDevice; }
+		inline ID3D11DeviceContext* GetDeviceContext(void) { return m_pDeviceContext; }
+		inline ID3D11RenderTargetView* GetBackbuffer(void) { return m_pBackbuffer; }
 
-		inline void Present() { m_pSwapChain->Present(0, 0); }
+		inline void Present(void) { m_pSwapChain->Present(0, 0); }
 	};
 }

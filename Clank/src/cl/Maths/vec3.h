@@ -232,15 +232,15 @@ namespace cl {
 		vec3(float32 x, float32 y);
 		vec3(const vec4& other);
 
-		static vec3 Up();
-		static vec3 Down();
-		static vec3 Left();
-		static vec3 Right();
-		static vec3 Zero();
+		static vec3 Up(void);
+		static vec3 Down(void);
+		static vec3 Left(void);
+		static vec3 Right(void);
+		static vec3 Zero(void);
 
-		static vec3 XAxis();
-		static vec3 YAxis();
-		static vec3 ZAxis();
+		static vec3 XAxis(void);
+		static vec3 YAxis(void);
+		static vec3 ZAxis(void);
 
 		vec3& Add(const vec3& other);
 		vec3& Subtract(const vec3& other);
@@ -287,8 +287,8 @@ namespace cl {
 		vec3 Cross(const vec3& other) const;
 		float32 Dot(const vec3& other) const;
 
-		float32 Magnitude() const;
-		vec3 Normalize() const;
+		float32 Magnitude(void) const;
+		vec3 Normalize(void) const;
 		float32 Distance(const vec3& other) const;
 
 		vec3& Lerp(const vec3& other, float32 t);

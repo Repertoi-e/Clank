@@ -228,12 +228,12 @@ namespace cl {
 			vec4 rows[4];
 		};
 
-		mat4();
+		mat4(void);
 		mat4(float32 diagonal);
 		mat4(float32* elements);
 		mat4(const vec4& row0, const vec4& row1, const vec4& row2, const vec4& row3);
 
-		static mat4 Identity();
+		static mat4 Identity(void);
 
 		mat4& Multiply(const mat4& other);
 		friend mat4 operator*(mat4 left, const mat4& right);
@@ -245,7 +245,7 @@ namespace cl {
 		vec4 Multiply(const vec4& other) const;
 		friend vec4 operator*(const mat4& left, const vec4& right);
 
-		mat4& Invert();
+		mat4& Invert(void);
 
 		vec4 GetColumn(int index) const;
 		void SetColumn(u32 index, const vec4& column);

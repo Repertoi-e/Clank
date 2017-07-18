@@ -7,6 +7,7 @@
 #include "cl/Graphics/Shader.h"
 #include "cl/Graphics/VertexBuffer.h"
 #include "cl/Graphics/Layers/Layer.h"
+#include "cl/Graphics/Renderer2D.h"
 
 #include "cl/Utils/Log.h"
 #include "cl/Maths/maths.h"

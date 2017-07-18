@@ -38,7 +38,6 @@ namespace cl {
 		u32 size;
 		u32 count;
 		u32 offset;
-		bool normalized;
 	};
 
 	class API InputLayout
@@ -47,58 +46,58 @@ namespace cl {
 		u32 m_Size;
 		std::vector<InputElement> m_Layout;
 	public:
-		InputLayout()
+		InputLayout(void)
 			: m_Size(0)
 		{
 		}
 
 		template<typename T>
-		void Push(const char* name, u32 count = 1, bool normalized = false)
+		void Push(const char* name, u32 count = 1)
 		{
 		}
 
 		template<>
-		void Push<float>(const char* name, u32 count, bool normalized)
+		void Push<float>(const char* name, u32 count)
 		{
-			Push(name, DXGI_FORMAT_R32_FLOAT, sizeof(float), count, normalized);
+			Push(name, DXGI_FORMAT_R32_FLOAT, sizeof(float), count);
 		}
 
 		template<>
-		void Push<u32>(const char* name, u32 count, bool normalized)
+		void Push<u32>(const char* name, u32 count)
 		{
-			Push(name, DXGI_FORMAT_R32_UINT, sizeof(u32), count, normalized);
+			Push(name, DXGI_FORMAT_R32_UINT, sizeof(u32), count);
 		}
 
 		template<>
-		void Push<byte>(const char* name, u32 count, bool normalized)
+		void Push<byte>(const char* name, u32 count)
 		{
-			Push(name, DXGI_FORMAT_R8G8B8A8_UNORM, sizeof(byte), count, normalized);
+			Push(name, DXGI_FORMAT_R8G8B8A8_UNORM, sizeof(byte), count);
 		}
 
 		template<>
-		void Push<vec2>(const char* name, u32 count, bool normalized)
+		void Push<vec2>(const char* name, u32 count)
 		{
-			Push(name, DXGI_FORMAT_R32G32_FLOAT, sizeof(vec2), count, normalized);
+			Push(name, DXGI_FORMAT_R32G32_FLOAT, sizeof(vec2), count);
 		}
 
 		template<>
-		void Push<vec3>(const char* name, u32 count, bool normalized)
+		void Push<vec3>(const char* name, u32 count)
 		{
-			Push(name, DXGI_FORMAT_R32G32B32_FLOAT, sizeof(vec3), count, normalized);
+			Push(name, DXGI_FORMAT_R32G32B32_FLOAT, sizeof(vec3), count);
 		}
 
 		template<>
-		void Push<vec4>(const char* name, u32 count, bool normalized)
+		void Push<vec4>(const char* name, u32 count)
 		{
-			Push(name, DXGI_FORMAT_R32G32B32A32_FLOAT, sizeof(vec4), count, normalized);
+			Push(name, DXGI_FORMAT_R32G32B32A32_FLOAT, sizeof(vec4), count);
 		}
 
-		inline const std::vector<InputElement>& GetElements() const { return m_Layout; }
-		inline u32 GetSize() const { return m_Size; }
+		inline const std::vector<InputElement>& GetElements(void) const { return m_Layout; }
+		inline u32 GetSize(void) const { return m_Size; }
 	private:
-		void Push(const char* name, DXGI_FORMAT type, u32 size, u32 count, bool normalized)
+		void Push(const char* name, DXGI_FORMAT type, u32 size, u32 count)
 		{
-			m_Layout.push_back({ name, type, size, count, m_Size, normalized });
+			m_Layout.push_back({ name, type, size, count, m_Size });
 			m_Size += size * count;
 		}
 	};

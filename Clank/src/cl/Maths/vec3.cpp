@@ -220,7 +220,7 @@
 
 namespace cl { 
 
-	vec3::vec3()
+	vec3::vec3(void)
 		: x(0.0f), y(0.0f), z(0.0f)
 	{
 	}
@@ -250,42 +250,42 @@ namespace cl {
 	{
 	}
 
-	vec3 vec3::Up()
+	vec3 vec3::Up(void)
 	{
 		return vec3(0.0f, 1.0f, 0.0f);
 	}
 
-	vec3 vec3::Down()
+	vec3 vec3::Down(void)
 	{
 		return vec3(0.0f, -1.0f, 0.0f);
 	}
 
-	vec3 vec3::Left()
+	vec3 vec3::Left(void)
 	{
 		return vec3(-1.0f, 0.0f, 0.0f);
 	}
 
-	vec3 vec3::Right()
+	vec3 vec3::Right(void)
 	{
 		return vec3(1.0f, 1.0f, 0.0f);
 	}
 
-	vec3 vec3::Zero()
+	vec3 vec3::Zero(void)
 	{
 		return vec3(0.0f, 0.0f, 0.0f);
 	}
 
-	vec3 vec3::XAxis()
+	vec3 vec3::XAxis(void)
 	{
 		return vec3(1.0f, 0.0f, 0.0f);
 	}
 
-	vec3 vec3::YAxis()
+	vec3 vec3::YAxis(void)
 	{
 		return vec3(0.0f, 1.0f, 0.0f);
 	}
 
-	vec3 vec3::ZAxis()
+	vec3 vec3::ZAxis(void)
 	{
 		return vec3(0.0f, 0.0f, 1.0f);
 	}
@@ -496,12 +496,12 @@ namespace cl {
 		return x * other.x + y * other.y + z * other.z;
 	}
 
-	float32 vec3::Magnitude() const
+	float32 vec3::Magnitude(void) const
 	{
 		return sqrt(x * x + y * y + z * z);
 	}
 
-	vec3 vec3::Normalize() const
+	vec3 vec3::Normalize(void) const
 	{
 		float32 length = Magnitude();
 		return vec3(x / length, y / length, z / length);

@@ -9,6 +9,8 @@
 
 namespace cl {
 
+	//@Incomplete: This whole file should support unicode. For now only ASCII
+
 	static char sprintf_buffer[1024 * 10];
 
 	template <typename T>
@@ -223,6 +225,9 @@ namespace cl {
 		printf("%s", buffer);
 	}
 
+	//@Cleanup: Having to pass a reference to a s32 for buffer indexing is
+	// annoying and rarely used but it is there for robustness. Make it
+	// not obligatory.
 	template <typename... Args>
 	void sprint(byte* buffer, s32& index, Args... args)
 	{
@@ -264,6 +269,10 @@ namespace cl {
 			delete[] argsv[i];
 	}
 }
+
+//@Incomplete: These macros call the print_sequence procedure. What if you
+// want to log by formatting a string with arguments instead of specifying
+// sequence?..
 
 #ifndef LOG_LEVEL
 #define LOG_LEVEL LOG_LEVEL_INFO

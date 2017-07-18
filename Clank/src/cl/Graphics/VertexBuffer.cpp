@@ -5,12 +5,12 @@
 
 namespace cl {
 
-	VertexBuffer::VertexBuffer()
+	VertexBuffer::VertexBuffer(void)
 		: m_pVBuffer(NULLPTR), m_pMappedSubresource(new D3D11_MAPPED_SUBRESOURCE()), m_pDesc(new D3D11_BUFFER_DESC), m_pInputLayout(NULLPTR)
 	{
 	}
 
-	VertexBuffer::~VertexBuffer()
+	VertexBuffer::~VertexBuffer(void)
 	{
 		Destroy();
 	}
@@ -27,7 +27,7 @@ namespace cl {
 		Context::Instance().GetDevice()->CreateBuffer(m_pDesc, NULL, &m_pVBuffer);
 	}
 
-	void VertexBuffer::Destroy()
+	void VertexBuffer::Destroy(void)
 	{
 		m_pVBuffer->Release();
 	}
@@ -57,16 +57,17 @@ namespace cl {
 		return m_pMappedSubresource->pData;
 	}
 
-	void VertexBuffer::Unmap()
+	void VertexBuffer::Unmap(void)
 	{
 		Context::Instance().GetDeviceContext()->Unmap(m_pVBuffer, NULL);
 	}
 
 	void VertexBuffer::Bind(u32 stride, u32 offset, D3D_PRIMITIVE_TOPOLOGY topology)
 	{
-		Context::Instance().GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pVBuffer, &stride, &offset);
-		Context::Instance().GetDeviceContext()->IASetPrimitiveTopology(topology);
-		Context::Instance().GetDeviceContext()->IASetInputLayout(m_pInputLayout);
+		ID3D11DeviceContext* devcon = Context::Instance().GetDeviceContext();
+		devcon->IASetVertexBuffers(0, 1, &m_pVBuffer, &stride, &offset);
+		devcon->IASetPrimitiveTopology(topology);
+		devcon->IASetInputLayout(m_pInputLayout);
 	}
 
 	D3D11_USAGE VertexBuffer::BufferUsageToD3D(BufferUsage usage)

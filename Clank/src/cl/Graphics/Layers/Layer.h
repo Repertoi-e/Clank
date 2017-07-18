@@ -14,14 +14,14 @@ namespace cl {
 	private:
 		bool m_Visible;
 	public:
-		Layer() {}
-		~Layer() {}
+		Layer(void) {}
+		~Layer(void) {}
 
 		virtual void Init(Context* context) {}
 
-		virtual void Tick() {}
+		virtual void Tick(void) {}
 		virtual void Event(Event& event) {}
-		virtual void Render() {}
+		virtual void Render(void) {}
 		virtual void Update(const DeltaTime& dt) {}
 
 		bool& GetVisibility() { return m_Visible; }

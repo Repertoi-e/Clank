@@ -3,12 +3,12 @@
 
 namespace cl {
 
-	Context::Context()
+	Context::Context(void)
 		: m_pSwapChain(NULLPTR), m_pDevice(NULLPTR), m_pDeviceContext(NULLPTR), m_pBackbuffer(NULLPTR)
 	{
 	}
 
-	Context::~Context()
+	Context::~Context(void)
 	{
 		m_pSwapChain->SetFullscreenState(FALSE, NULL);
 

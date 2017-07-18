@@ -7,7 +7,7 @@ namespace cl {
 	class API ISystem
 	{
 	public:
-		virtual void Start() = 0;
-		virtual void Shutdown() = 0;
+		virtual void Start(void) = 0;
+		virtual void Shutdown(void) = 0;
 	};
 }

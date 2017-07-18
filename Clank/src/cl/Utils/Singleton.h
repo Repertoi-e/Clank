@@ -8,9 +8,9 @@ namespace cl {
 	class Singleton : INoCopy
 	{
 	protected:
-		explicit Singleton() {}
+		explicit Singleton(void) {}
 	public:
-		static T& Instance()
+		static T& Instance(void)
 		{
 			static T instance;
 			return instance;
