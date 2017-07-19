@@ -28,8 +28,15 @@ namespace cl {
 	}
 
 	template <>
+	static const wchar* to_string<String>(const String& t)
+	{
+		return t.c_str();
+	}
+
+	template <>
 	static const wchar* to_string<const char*>(const char* const& t)
 	{
+		//@Bug: When passing a NULL const char* this fails. 
 		mbstowcs(to_wchar_buffer, t, strlen(t) + 1);
 		return to_wchar_buffer;
 	}
@@ -222,9 +229,9 @@ namespace cl {
 		wprintf(L"%ls", buffer);
 	}
 
-	//@Cleanup: Having to pass a reference to a s32 for buffer indexing is
-	// annoying and rarely used but it is there for robustness. Make it
-	// not obligatory.
+	//@Cleanup: Having to pass a reference to a s32 int for buffer indexing is
+	// annoying and rarely used but it is there for completeness. Make it not
+	// obligatory.
 	template <typename... Args>
 	void sprint(wbyte* buffer, s32& index, Args... args)
 	{
@@ -265,11 +272,16 @@ namespace cl {
 		for (s32 i = 0; i < args_count; i++)
 			delete[] argsv[i];
 	}
+
+	void SetLocale(s32 locale)
+	{
+		const char* l = setlocale(locale, "");
+		print(!l ? "Locale not set\n\n" : "Locale set to /%\n\n", l);
+	}
 }
 
 //@Incomplete: These macros call the print_sequence procedure. What if you
-// want to log by formatting a string with arguments instead of specifying
-// sequence?..
+// want the normal print procedure?
 
 #ifndef LOG_LEVEL
 #define LOG_LEVEL LOG_LEVEL_INFO
