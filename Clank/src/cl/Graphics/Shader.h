@@ -22,7 +22,7 @@ namespace cl {
 		Shader(void);
 		~Shader(void);
 
-		void Create(LPCWSTR vertSrc, LPCWSTR fragSrc);
+		void Create(LPCWSTR vertSrc, LPCWSTR pixelSrc);
 
 		inline Data& GetData(void) { return m_Data; }
 

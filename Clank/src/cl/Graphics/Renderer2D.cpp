@@ -23,7 +23,7 @@ namespace cl {
 
 	void Renderer2D::Create(void)
 	{
-		m_pShader->Create(L"res/Vertex.hlsl", L"res/Pixel.hlsl");
+		m_pShader->Create(L"Vertex.cso", L"Pixel.cso");
 		m_pShader->Bind();
 
 		m_pVertexBuffer->Create(BufferUsage::DYNAMIC, BufferBindFlag::VERTEX_BUFFER, m_Settings.BufferSize, BufferCPUA::WRITE);
