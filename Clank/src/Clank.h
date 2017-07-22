@@ -5,7 +5,7 @@
 
 #include "cl/Graphics/Context.h"
 #include "cl/Graphics/Shader.h"
-#include "cl/Graphics/VertexBuffer.h"
+#include "cl/Graphics/Buffer.h"
 #include "cl/Graphics/Layers/Layer.h"
 #include "cl/Graphics/Renderer2D.h"
 

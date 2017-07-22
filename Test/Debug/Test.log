@@ -1,0 +1,36 @@
+﻿  systemclass.cpp
+p:\c++\clank\test\cameraclass.h(11): fatal error C1083: Cannot open include file: 'd3dx10math.h': No such file or directory
+  modelclass.cpp
+p:\c++\clank\test\modelclass.h(12): fatal error C1083: Cannot open include file: 'd3dx10math.h': No such file or directory
+  main.cpp
+p:\c++\clank\test\cameraclass.h(11): fatal error C1083: Cannot open include file: 'd3dx10math.h': No such file or directory
+  graphicsclass.cpp
+p:\c++\clank\test\cameraclass.h(11): fatal error C1083: Cannot open include file: 'd3dx10math.h': No such file or directory
+  d3dclass.cpp
+p:\c++\clank\test\d3dclass.cpp(301): error C2065: 'D3DX_PI': undeclared identifier
+p:\c++\clank\test\d3dclass.cpp(305): error C3861: 'D3DXMatrixPerspectiveFovLH': identifier not found
+p:\c++\clank\test\d3dclass.cpp(308): error C3861: 'D3DXMatrixIdentity': identifier not found
+p:\c++\clank\test\d3dclass.cpp(311): error C3861: 'D3DXMatrixOrthoLH': identifier not found
+p:\c++\clank\test\d3dclass.cpp(428): error C2065: 'D3DXMATRIX': undeclared identifier
+p:\c++\clank\test\d3dclass.cpp(428): error C2065: 'projectionMatrix': undeclared identifier
+p:\c++\clank\test\d3dclass.cpp(428): error C2182: 'GetProjectionMatrix': illegal use of type 'void'
+p:\c++\clank\test\d3dclass.cpp(428): error C2350: 'D3DClass::GetProjectionMatrix' is not a static member
+  p:\c++\clank\test\d3dclass.cpp(428): note: see declaration of 'D3DClass::GetProjectionMatrix'
+p:\c++\clank\test\d3dclass.cpp(429): error C2448: 'D3DClass::GetProjectionMatrix': function-style initializer appears to be a function definition
+p:\c++\clank\test\d3dclass.cpp(435): error C2065: 'D3DXMATRIX': undeclared identifier
+p:\c++\clank\test\d3dclass.cpp(435): error C2065: 'worldMatrix': undeclared identifier
+p:\c++\clank\test\d3dclass.cpp(435): error C2182: 'GetWorldMatrix': illegal use of type 'void'
+p:\c++\clank\test\d3dclass.cpp(435): error C2350: 'D3DClass::GetWorldMatrix' is not a static member
+  p:\c++\clank\test\d3dclass.cpp(435): note: see declaration of 'D3DClass::GetWorldMatrix'
+p:\c++\clank\test\d3dclass.cpp(436): error C2448: 'D3DClass::GetWorldMatrix': function-style initializer appears to be a function definition
+p:\c++\clank\test\d3dclass.cpp(442): error C2065: 'D3DXMATRIX': undeclared identifier
+p:\c++\clank\test\d3dclass.cpp(442): error C2065: 'orthoMatrix': undeclared identifier
+p:\c++\clank\test\d3dclass.cpp(442): error C2182: 'GetOrthoMatrix': illegal use of type 'void'
+p:\c++\clank\test\d3dclass.cpp(442): error C2350: 'D3DClass::GetOrthoMatrix' is not a static member
+  p:\c++\clank\test\d3dclass.cpp(442): note: see declaration of 'D3DClass::GetOrthoMatrix'
+p:\c++\clank\test\d3dclass.cpp(443): error C2448: 'D3DClass::GetOrthoMatrix': function-style initializer appears to be a function definition
+  colorshaderclass.cpp
+p:\c++\clank\test\colorshaderclass.h(12): fatal error C1083: Cannot open include file: 'd3dx10math.h': No such file or directory
+  cameraclass.cpp
+p:\c++\clank\test\cameraclass.h(11): fatal error C1083: Cannot open include file: 'd3dx10math.h': No such file or directory
+  Generating Code...

@@ -1,4 +1,10 @@
-float4 main(float4 position : SV_POSITION, float4 color : COLOR) : SV_TARGET
+struct PShaderIn
 {
-	return color;
+	float4 position : SV_POSITION;
+	float4 color : COLOR;
+};
+
+float4 main(PShaderIn input) : SV_TARGET
+{
+	return input.color;
 }

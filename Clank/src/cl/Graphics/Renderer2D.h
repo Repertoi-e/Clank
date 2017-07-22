@@ -3,7 +3,7 @@
 #include "Renderer.h"
 #include "Shader.h"
 #include "Context.h"
-#include "VertexBuffer.h"
+#include "Buffer.h"
 
 #include "cl/Maths/maths.h"
 #include "cl/Maths2/Rectangle.h"
@@ -48,7 +48,9 @@ namespace cl {
 		Shader* m_pShader;
 
 		Vertex* m_pMap;
-		VertexBuffer* m_pVertexBuffer;
+		Buffer* m_pVertexBuffer;
+		Buffer* m_pIndexBuffer;
+		Buffer* m_pMatrixBuffer;
 		u32 m_Indices;
 
 		Renderer2DSettings m_Settings;

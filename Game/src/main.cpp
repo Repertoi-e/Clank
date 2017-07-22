@@ -34,7 +34,7 @@ public:
 
 		m_pRenderer->Create();
 
-		m_pRenderable = new Renderable2D({ 0.5f, 0.5f }, { 0.5f, 0.5f }, 0xff00ffff);
+		m_pRenderable = new Renderable2D({ 0, 0 }, { 10, 10 }, 0xff00ffff);
 	}
 
 	void Update(const DeltaTime& dt)
@@ -46,7 +46,7 @@ public:
 	void Render(void)
 	{
 		float32 color[4] = { blue.r * colort, blue.g * colort, blue.b * colort, blue.a };
-		m_pContext->GetDeviceContext()->ClearRenderTargetView(m_pContext->GetBackbuffer(), color);
+		m_pContext->GetDeviceContext()->ClearRenderTargetView(m_pContext->GetRenderTargetView(), color);
 
 		m_pRenderer->Begin();
 		m_pRenderer->Submit(m_pRenderable);
@@ -88,12 +88,12 @@ int main(void)
 	}
 	LOG_WARN("Init took ", init.Elapsed().Millis(), " ms\n\n");
 
-	String s = L"Hello this is a string!";
+	String s = L"Hello this is a String!";
 	LOG_WARN(s, "\n\n");
 
-	print(L"This is chinese! 义勇军进行曲 (if you have the codepage right..)\n\n");
+	print(L"This is chinese! 义勇军进行曲 (If you have the codepage right...)\n\n");
 
-	g_Application.DoCycle();
+	g_Application.DoCycle(); 
 
 	return 0;
 }

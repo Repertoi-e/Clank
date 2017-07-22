@@ -2,11 +2,8 @@
 
 #include "cl/stdafx.h"
 
-#include "cl/Graphics/Context.h"
 #include "cl/Utils/Singleton.h"
 #include "cl/Utils/Time.h"
-
-#include "cl/Graphics/Layers/Layer.h"
 
 #include "Events/Events.h"
 
@@ -14,11 +11,13 @@
 
 namespace cl {
 
+	class Layer;
+
     struct API ApplicationSettings
     {
-        WORD WIDTH, HEIGHT;
-        BOOL VSYNC, FULLSCREEN;
-        DWORD WINDOW_STYLE;
+        WORD Width, Height;
+        BOOL VSync, Fullscreen;
+        DWORD WindowStyle;
     };
 
 	struct API CycleInfo

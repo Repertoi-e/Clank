@@ -2,8 +2,8 @@
 #include "Application.h"
 
 #include "cl/Maths/maths.h"
-#include "cl/Graphics/VertexBuffer.h"
-#include "cl/Graphics/Shader.h"
+#include "cl/Graphics/Context.h"
+#include "cl/Graphics/Layers/Layer.h"
 
 #include <Windowsx.h>
 
@@ -43,7 +43,7 @@ namespace cl {
 
 	void Application::DoCycle(void)
 	{
-		m_CycleInfo.Timer = new Timer();
+		m_CycleInfo.Timer = new Timer;
 		m_CycleInfo.UpdateTimer = m_CycleInfo.Timer->Elapsed().Millis();
 		m_CycleInfo.UpdateDeltaTime = new DeltaTime(m_CycleInfo.Timer->Elapsed().Millis());
 		while (!m_bClosed)
@@ -64,6 +64,8 @@ namespace cl {
 				SetWindowTitle(String(m_sName + L" | FPS: " + std::to_wstring(m_CycleInfo.m_FramesPerSecond)).c_str());
 			}
 			{
+				Context::Instance().Clear(vec4(1, 1, 1, 1));
+
 				Timer frametimer;
 
 				DoRender();
@@ -173,12 +175,12 @@ namespace cl {
 			return;
 		}
 
-		RECT r = { 0, 0, m_AppSettings.WIDTH, m_AppSettings.HEIGHT };
-		AdjustWindowRect(&r, m_AppSettings.WINDOW_STYLE, false);
+		RECT r = { 0, 0, m_AppSettings.Width, m_AppSettings.Height };
+		AdjustWindowRect(&r, m_AppSettings.WindowStyle, false);
 		s32 width = r.right - r.left;
 		s32 height = r.bottom - r.top;
 
-		m_hWnd = CreateWindow(L"Clank Engine Application Window", L"Clank Window", m_AppSettings.WINDOW_STYLE,
+		m_hWnd = CreateWindow(L"Clank Engine Application Window", L"Clank Window", m_AppSettings.WindowStyle,
 			GetSystemMetrics(SM_CXSCREEN) / 2 - width / 2,
 			GetSystemMetrics(SM_CYSCREEN) / 2 - height / 2, width, height, NULL, NULL, m_hInstance, NULL);
 		if (!m_hWnd)
@@ -189,7 +191,7 @@ namespace cl {
 
 		ShowWindow(m_hWnd, SW_SHOW);
 
-		Context::Instance().Create(m_hWnd);
+		Context::Instance().Create(m_hWnd, m_AppSettings);
 	}
 
 	void Application::SetWindowTitle(LPCWSTR title)
@@ -211,8 +213,8 @@ namespace cl {
 			WORD width = LOWORD(lParam);
 			WORD height = HIWORD(lParam);
 
-			m_AppSettings.WIDTH = width;
-			m_AppSettings.HEIGHT = height;
+			m_AppSettings.Width = width;
+			m_AppSettings.Height = height;
 
 			DoEvent(WindowResizeEvent(width, height));
 		}

@@ -273,7 +273,7 @@ namespace cl {
 			delete[] argsv[i];
 	}
 
-	void SetLocale(s32 locale)
+	static void SetLocale(s32 locale)
 	{
 		const char* l = setlocale(locale, "");
 		print(!l ? "Locale not set\n\n" : "Locale set to /%\n\n", l);

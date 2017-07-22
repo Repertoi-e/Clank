@@ -433,7 +433,7 @@ namespace cl {
 		elements[index + 3 * 4] = column.w;
 	}
 
-	mat4 mat4::Orthographic(float32 left, float32 right, float32 bottom, float32 top, float32 near, float32 far)
+	mat4 mat4::Orthographic(float32 left, float32 right, float32 bottom, float32 top, float32 _near, float32 _far)
 	{
 		mat4 result = Identity();
 
@@ -441,24 +441,24 @@ namespace cl {
 
 		result.elements[1 + 1 * 4] = 2.f / (top - bottom);
 
-		result.elements[2 + 2 * 4] = 2.f / (near - far);
+		result.elements[2 + 2 * 4] = 2.f / (_near - _far);
 
 		result.elements[3 + 0 * 4] = (left + right) / (left - right);
 		result.elements[3 + 1 * 4] = (bottom + top) / (bottom - top);
-		result.elements[3 + 2 * 4] = (far + near) / (far - near);
+		result.elements[3 + 2 * 4] = (_far + _near) / (_far - _near);
 
 		return result;
 	}
 
-	mat4 mat4::Perspective(float32 fov, float32 aspectRatio, float32 near, float32 far)
+	mat4 mat4::Perspective(float32 fov, float32 aspectRatio, float32 _near, float32 _far)
 	{
 		mat4 result = Identity();
 
 		float32 q = 1.f / tan(toRadians(0.5f * fov));
 		float32 a = q / aspectRatio;
 
-		float32 b = (near + far) / (near - far);
-		float32 c = (2.f * near * far) / (near - far);
+		float32 b = (_near + _far) / (_near - _far);
+		float32 c = (2.f * _near * _far) / (_near - _far);
 
 		result.elements[0 + 0 * 4] = a;
 		result.elements[1 + 1 * 4] = q;

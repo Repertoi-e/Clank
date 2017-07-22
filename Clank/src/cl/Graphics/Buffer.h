@@ -18,6 +18,7 @@ namespace cl {
 
 	enum class BufferCPUA
 	{
+		ZERO,
 		READ,
 		WRITE
 	};
@@ -29,6 +30,16 @@ namespace cl {
 		READ_WRITE,			// Buffer can be read and written to by the CPU.
 		WRITE_DISCARD,		// Previous contents of buffer are erased, and new buffer is opened for writing.
 		WRITE_NO_OVERWRITE	// An advanced flag that allows you to add more data to the buffer even while the GPU is using parts. However, you must not work with the parts the GPU is using.
+	};
+
+	enum class BufferBindFlag
+	{
+		VERTEX_BUFFER,
+		INDEX_BUFFER,
+		CONSTANT_BUFFER,
+		SHADER_RESOURCE,
+		RENDER_TARGET,
+		DEPTH_STENCIL
 	};
 
 	struct API InputElement
@@ -102,31 +113,39 @@ namespace cl {
 		}
 	};
 
-	class API VertexBuffer
+	class API Buffer
 	{
 	private:
-		ID3D11Buffer* m_pVBuffer;
+		ID3D11Buffer* m_pBuffer;
 		D3D11_MAPPED_SUBRESOURCE* m_pMappedSubresource;
 		D3D11_BUFFER_DESC* m_pDesc;
 		ID3D11InputLayout* m_pInputLayout;
 
 		InputLayout m_Layout;
 	public:
-		VertexBuffer();
-		~VertexBuffer();
+		Buffer();
+		~Buffer();
 
-		void Create(BufferUsage usage, u32 size, BufferCPUA access);
+		void Create(BufferUsage usage, BufferBindFlag bindflag, u32 size, BufferCPUA access, D3D11_SUBRESOURCE_DATA* initialData = NULLPTR);
 		void Destroy();
-		
+
 		void SetInputLayout(InputLayout layout, void* vsbuffer, u32 vsbufferSize);
 
 		void* Map(BufferMapCPUA access);
 		void Unmap();
 
-		void Bind(u32 stride, u32 offset, D3D_PRIMITIVE_TOPOLOGY topology);
+		// Bind the buffer as a vertex buffer
+		void BindVB(u32 stride, u32 offset, D3D_PRIMITIVE_TOPOLOGY topology);
+
+		// Bind the buffer as a constant vertex shader buffer
+		void VSSet(u32 position, u32 buffers = 1);
+
+		// Bind the buffer as an index buffer
+		void BindIB(u32 offset = 0, DXGI_FORMAT format = DXGI_FORMAT_R32_UINT);
 
 		static D3D11_USAGE BufferUsageToD3D(BufferUsage usage);
-		static D3D11_CPU_ACCESS_FLAG BufferCPUAToD3D(BufferCPUA access);
+		static u32 BufferCPUAToD3D(BufferCPUA access);
 		static D3D11_MAP BufferMapCPUAToD3D(BufferMapCPUA access);
+		static D3D11_BIND_FLAG BufferBindFlagToD3D(BufferBindFlag bindflag);
 	};
 }
