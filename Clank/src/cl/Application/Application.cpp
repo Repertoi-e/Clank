@@ -189,9 +189,12 @@ namespace cl {
 			return;
 		}
 
-		ShowWindow(m_hWnd, SW_SHOW);
-
 		Context::Instance().Create(m_hWnd, m_AppSettings);
+	}
+
+	void Application::ShowWindow(void)
+	{
+		::ShowWindow(m_hWnd, SW_SHOW);
 	}
 
 	void Application::SetWindowTitle(LPCWSTR title)

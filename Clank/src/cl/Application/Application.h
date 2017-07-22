@@ -51,6 +51,7 @@ namespace cl {
         Application(void);
 
 		void DoWindow(void);
+		void ShowWindow(void);
 		void DoCycle(void);
 
         void DoWindowMessages(void);

@@ -34,7 +34,7 @@ public:
 
 		m_pRenderer->Create();
 
-		m_pRenderable = new Renderable2D({ 0, 0 }, { 10, 10 }, 0xff00ffff);
+		m_pRenderable = new Renderable2D({ 0, 0 }, { 50, 50 }, 0xff00ffff);
 	}
 
 	void Update(const DeltaTime& dt)
@@ -65,7 +65,11 @@ public:
 #define VSYNC		  FALSE
 #define WINDOW_STYLE  WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
 
+#ifdef _DEBUG
 int main(void)
+#else
+int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+#endif
 {
 	SetLocale(LC_ALL);
 
@@ -93,6 +97,7 @@ int main(void)
 
 	print(L"This is chinese! 义勇军进行曲 (If you have the codepage right...)\n\n");
 
+	g_Application.ShowWindow();
 	g_Application.DoCycle(); 
 
 	return 0;
