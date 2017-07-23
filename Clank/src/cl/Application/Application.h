@@ -47,6 +47,11 @@ namespace cl {
         BOOL m_bClosed;
 
 		std::vector<Layer*> m_Layers;
+
+		// FPS Stuff:
+		static const s32 MaxSamples = 64;
+		s32 It;
+		float32 FpsSamples[MaxSamples] = { 0.0f };
     public:
         Application(void);
 

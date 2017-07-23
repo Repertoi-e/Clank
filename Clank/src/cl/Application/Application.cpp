@@ -18,14 +18,6 @@ namespace cl {
 		return g_Application.WndProc(hWnd, message, wParam, lParam);
 	}
 
-	struct FPSInfo
-	{
-		static const s32 MaxSamples = 64;
-
-		s32 It;
-		float32 FpsSamples[MaxSamples] = { 0.0f };
-	} g_FpsInfo;
-
 	Application::Application(void)
 		: m_bClosed(FALSE)
 	{
@@ -33,11 +25,11 @@ namespace cl {
 
 	void Application::DoFPS(void)
 	{
-		g_FpsInfo.FpsSamples[g_FpsInfo.It % g_FpsInfo.MaxSamples] = float32(m_CycleInfo.Frames * m_CycleInfo.m_UpdatesPerSecond);
-		for (s32 i = 0; i < g_FpsInfo.MaxSamples; i++)
-			m_CycleInfo.m_FramesPerSecond += g_FpsInfo.FpsSamples[i];
-		m_CycleInfo.m_FramesPerSecond /= g_FpsInfo.MaxSamples;
-		g_FpsInfo.It = g_FpsInfo.It == g_FpsInfo.MaxSamples + 1 ? 0 : g_FpsInfo.It + 1;
+		FpsSamples[It % MaxSamples] = float32(m_CycleInfo.Frames * m_CycleInfo.m_UpdatesPerSecond);
+		for (s32 i = 0; i < MaxSamples; i++)
+			m_CycleInfo.m_FramesPerSecond += FpsSamples[i];
+		m_CycleInfo.m_FramesPerSecond /= MaxSamples;
+		It = It == MaxSamples + 1 ? 0 : It + 1;
 		m_CycleInfo.Frames = 0;
 	}
 
@@ -55,10 +47,10 @@ namespace cl {
 				DoWindowMessages();
 
 				DoUpdate(*m_CycleInfo.UpdateDeltaTime);
-				
+
 				m_CycleInfo.Updates++;
 				m_CycleInfo.UpdateTimer += m_CycleInfo.UpdateTick;
-				
+
 				DoFPS();
 
 				SetWindowTitle(String(m_sName + L" | FPS: " + std::to_wstring(m_CycleInfo.m_FramesPerSecond)).c_str());
@@ -67,9 +59,9 @@ namespace cl {
 				Context::Instance().Clear(vec4(1, 1, 1, 1));
 
 				Timer frametimer;
-
-				DoRender();
-
+				{
+					DoRender();
+				}
 				m_CycleInfo.m_Frametime = frametimer.Elapsed().Millis();
 				m_CycleInfo.Frames++;
 
@@ -111,33 +103,33 @@ namespace cl {
 			return FALSE;
 		});
 
-		for (std::vector<Layer*>::iterator it = m_Layers.begin(); it != m_Layers.end(); it++)
-			(*it)->Event(event);
+		for (auto a : m_Layers)
+			a->Event(event);
 	}
 
 	void Application::DoRender(void)
 	{
-		for (std::vector<Layer*>::iterator it = m_Layers.begin(); it != m_Layers.end(); it++)
-			(*it)->Render();
+		for (auto a : m_Layers)
+			a->Render();
 	}
 
 	void Application::DoUpdate(const DeltaTime& dt)
 	{
-		for (std::vector<Layer*>::iterator it = m_Layers.begin(); it != m_Layers.end(); it++)
-			(*it)->Update(dt);
+		for (auto a : m_Layers)
+			a->Update(dt);
 	}
 
 	void Application::DoTick(void)
 	{
-		for (std::vector<Layer*>::iterator it = m_Layers.begin(); it != m_Layers.end(); it++)
-			(*it)->Tick();
+		for (auto a : m_Layers)
+			a->Tick();
 	}
 
 	Layer* Application::PushLayer(Layer* layer)
 	{
 		m_Layers.push_back(layer);
 		layer->Init(&Context::Instance());
-		
+
 		return layer;
 	}
 
