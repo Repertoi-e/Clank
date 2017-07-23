@@ -27,6 +27,9 @@ namespace cl {
 		D3DReadFileToBlob(vertSrc, &m_Data.vs);
 		D3DReadFileToBlob(pixelSrc, &m_Data.ps);
 
+		ASSERT(m_Data.vs, "Couldn't read vertex shader file: \"", vertSrc,"\"");
+		ASSERT(m_Data.ps, "Couldn't read pixel shader file: \"", pixelSrc, "\"");
+
 		HR(Context::Instance().GetDevice()->CreateVertexShader(m_Data.vs->GetBufferPointer(), m_Data.vs->GetBufferSize(), NULL, &m_pVS));
 		HR(Context::Instance().GetDevice()->CreatePixelShader(m_Data.ps->GetBufferPointer(), m_Data.ps->GetBufferSize(), NULL, &m_pPS));
 	}
