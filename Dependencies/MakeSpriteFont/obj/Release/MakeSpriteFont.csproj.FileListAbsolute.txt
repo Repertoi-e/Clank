@@ -1,0 +1,5 @@
+P:\C++\Clank\Dependencies\MakeSpriteFont\bin\Release\MakeSpriteFont.exe
+P:\C++\Clank\Dependencies\MakeSpriteFont\bin\Release\MakeSpriteFont.pdb
+P:\C++\Clank\Dependencies\MakeSpriteFont\obj\Release\MakeSpriteFont.csprojResolveAssemblyReference.cache
+P:\C++\Clank\Dependencies\MakeSpriteFont\obj\Release\MakeSpriteFont.exe
+P:\C++\Clank\Dependencies\MakeSpriteFont\obj\Release\MakeSpriteFont.pdb
