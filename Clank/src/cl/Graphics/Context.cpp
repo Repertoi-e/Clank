@@ -13,34 +13,34 @@ namespace cl {
 	}
 
 	Context::Context(void)
-		: m_pSwapChain(NULLPTR), m_pDevice(NULLPTR), m_pDeviceContext(NULLPTR), m_pRenderTargetView(NULLPTR), m_pSettings(NULLPTR),
-		m_pDepthStencilBuffer(NULLPTR), m_pDepthStencilState(NULLPTR), m_pDepthStencilView(NULLPTR), m_pRasterState(NULLPTR) 
+		: m_SwapChain(NULLPTR), m_Device(NULLPTR), m_DeviceContext(NULLPTR), m_RenderTargetView(NULLPTR), m_Settings(NULLPTR),
+		m_DepthStencilBuffer(NULLPTR), m_DepthStencilState(NULLPTR), m_DepthStencilView(NULLPTR), m_RasterState(NULLPTR) 
 	{
 	}
 
 	Context::~Context(void)
 	{
-		if (m_pSwapChain)
-			m_pSwapChain->SetFullscreenState(FALSE, NULL);
+		if (m_SwapChain)
+			m_SwapChain->SetFullscreenState(FALSE, NULL);
 	
-		SafeRelease(m_pSwapChain);
-		SafeRelease(m_pDevice);
-		SafeRelease(m_pDeviceContext);
-		SafeRelease(m_pRenderTargetView);
-		SafeRelease(m_pDepthStencilBuffer);
-		SafeRelease(m_pDepthStencilState);
-		SafeRelease(m_pDepthStencilView);
-		SafeRelease(m_pRasterState);
+		SafeRelease(m_SwapChain);
+		SafeRelease(m_Device);
+		SafeRelease(m_DeviceContext);
+		SafeRelease(m_RenderTargetView);
+		SafeRelease(m_DepthStencilBuffer);
+		SafeRelease(m_DepthStencilState);
+		SafeRelease(m_DepthStencilView);
+		SafeRelease(m_RasterState);
 	}
 
 	void Context::Create(HWND hWnd, ApplicationSettings& settings)
 	{
 		m_FeatureLevel = D3D_FEATURE_LEVEL_11_0;
 		
-		m_pSettings = &settings;
+		m_Settings = &settings;
 
-		u32 Width = m_pSettings->Width;
-		u32 Height = m_pSettings->Height;
+		u32 Width = m_Settings->Width;
+		u32 Height = m_Settings->Height;
 
 		IDXGIFactory* factory;
 		HR(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory));
@@ -92,8 +92,8 @@ namespace cl {
 			swapChainDesc.BufferDesc.Width = Width;
 			swapChainDesc.BufferDesc.Height = Height;
 			swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			swapChainDesc.BufferDesc.RefreshRate.Numerator = m_pSettings->VSync ? numerator : 0;
-			swapChainDesc.BufferDesc.RefreshRate.Denominator = m_pSettings->VSync ? denominator : 1;
+			swapChainDesc.BufferDesc.RefreshRate.Numerator = m_Settings->VSync ? numerator : 0;
+			swapChainDesc.BufferDesc.RefreshRate.Denominator = m_Settings->VSync ? denominator : 1;
 			swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 			swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 			swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -101,16 +101,16 @@ namespace cl {
 			swapChainDesc.SampleDesc.Quality = 0;
 			swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 			swapChainDesc.OutputWindow = hWnd;
-			swapChainDesc.Windowed = !m_pSettings->Fullscreen;
+			swapChainDesc.Windowed = !m_Settings->Fullscreen;
 			swapChainDesc.Flags = 0;
 		}
 		
 		HR(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &m_FeatureLevel, 1, D3D11_SDK_VERSION, &swapChainDesc,
-			&m_pSwapChain, &m_pDevice, NULL, &m_pDeviceContext));
+			&m_SwapChain, &m_Device, NULL, &m_DeviceContext));
 
 		ID3D11Texture2D* backBufferPtr;
-		HR(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBufferPtr));
-		HR(m_pDevice->CreateRenderTargetView(backBufferPtr, NULL, &m_pRenderTargetView));
+		HR(m_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBufferPtr));
+		HR(m_Device->CreateRenderTargetView(backBufferPtr, NULL, &m_RenderTargetView));
 
 		SafeRelease(backBufferPtr);
 		
@@ -130,7 +130,7 @@ namespace cl {
 			depthBufferDesc.CPUAccessFlags = 0;
 			depthBufferDesc.MiscFlags = 0;
 		}
-		HR(m_pDevice->CreateTexture2D(&depthBufferDesc, NULL, &m_pDepthStencilBuffer));
+		HR(m_Device->CreateTexture2D(&depthBufferDesc, NULL, &m_DepthStencilBuffer));
 
 		D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 		{
@@ -154,8 +154,8 @@ namespace cl {
 			depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 			depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 		}
-		HR(m_pDevice->CreateDepthStencilState(&depthStencilDesc, &m_pDepthStencilState));
-		m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState, 1);
+		HR(m_Device->CreateDepthStencilState(&depthStencilDesc, &m_DepthStencilState));
+		m_DeviceContext->OMSetDepthStencilState(m_DepthStencilState, 1);
 
 		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
 		{
@@ -165,8 +165,8 @@ namespace cl {
 			depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 			depthStencilViewDesc.Texture2D.MipSlice = 0;
 		}
-		HR(m_pDevice->CreateDepthStencilView(m_pDepthStencilBuffer, &depthStencilViewDesc, &m_pDepthStencilView));
-		m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+		HR(m_Device->CreateDepthStencilView(m_DepthStencilBuffer, &depthStencilViewDesc, &m_DepthStencilView));
+		m_DeviceContext->OMSetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
 	
 		D3D11_RASTERIZER_DESC rasterDesc;
 		{
@@ -183,8 +183,8 @@ namespace cl {
 			rasterDesc.ScissorEnable = false;
 			rasterDesc.SlopeScaledDepthBias = 0.0f;
 		}
-		HR(m_pDevice->CreateRasterizerState(&rasterDesc, &m_pRasterState));
-		m_pDeviceContext->RSSetState(m_pRasterState);
+		HR(m_Device->CreateRasterizerState(&rasterDesc, &m_RasterState));
+		m_DeviceContext->RSSetState(m_RasterState);
 
 		D3D11_VIEWPORT viewport;
 		{
@@ -197,7 +197,7 @@ namespace cl {
 			viewport.TopLeftX = 0.0f;
 			viewport.TopLeftY = 0.0f;
 		}
-		m_pDeviceContext->RSSetViewports(1, &viewport);
+		m_DeviceContext->RSSetViewports(1, &viewport);
 
 		float fieldOfView, screenAspect;
 	}
@@ -206,13 +206,13 @@ namespace cl {
 	{
 		float32 c[] = { color.r, color.g, color.b, color.a };
 
-		m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, c);
-		m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		m_DeviceContext->ClearRenderTargetView(m_RenderTargetView, c);
+		m_DeviceContext->ClearDepthStencilView(m_DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}
 
 	void Context::Present(void)
 	{
-		m_pSwapChain->Present(m_pSettings->VSync ? 1 : 0, 0);
+		m_SwapChain->Present(m_Settings->VSync ? 1 : 0, 0);
 	}
 
 	String Context::D3DFeatureLevelToString(D3D_FEATURE_LEVEL level)

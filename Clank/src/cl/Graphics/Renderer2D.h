@@ -4,6 +4,7 @@
 #include "Shader.h"
 #include "Context.h"
 #include "Buffer.h"
+#include "Texture.h"
 
 #include "cl/Maths/maths.h"
 #include "cl/Maths2/Rectangle.h"
@@ -13,6 +14,8 @@ namespace cl {
 	struct API Vertex
 	{
 		vec3 position;
+		vec2 uv;
+		u32 tid;
 		u32 color;
 	};
 
@@ -21,14 +24,25 @@ namespace cl {
 	public:
 		Rectangle bounds;
 		u32 color;
+		Texture* texture;
 	public:
-		Renderable2D(const Rectangle& rectangle, u32 color = 0xff00ffff)
-			: bounds(rectangle), color(color)
+		Renderable2D(const Rectangle& rectangle, u32 color = 0xffffffff)
+			: bounds(rectangle), color(color), texture(NULLPTR)
 		{
 		}
 
-		Renderable2D(const vec2& position, const vec2& size, u32 color = 0xff00ffff)
-			: bounds(position, size), color(color)
+		Renderable2D(const vec2& position, const vec2& size, u32 color = 0xffffffff)
+			: bounds(position, size), color(color), texture(NULLPTR)
+		{
+		}
+
+		Renderable2D(const Rectangle& rectangle, Texture* texture, u32 color = 0xffffffff)
+			: bounds(rectangle), texture(texture), color(color)
+		{
+		}
+
+		Renderable2D(const vec2& position, const vec2& size, Texture* texture, u32 color = 0xffffffff)
+			: bounds(position, size), texture(texture), color(color)
 		{
 		}
 	};
@@ -44,14 +58,14 @@ namespace cl {
 	class API Renderer2D : public Renderer
 	{
 	private:
-		Context* m_pContext;
-		Shader* m_pShader;
+		Context* m_Context;
+		Shader* m_Shader;
 
-		Vertex* m_pMap;
-		Buffer* m_pVertexBuffer;
-		Buffer* m_pIndexBuffer;
-		Buffer* m_pMatrixBuffer;
+		Vertex* m_Map;
+		Buffer* m_VertexBuffer, *m_IndexBuffer, *m_MatrixBuffer;
 		u32 m_Indices;
+
+		std::vector<Texture*> m_Textures;
 
 		Renderer2DSettings m_Settings;
 	public:
@@ -59,6 +73,8 @@ namespace cl {
 		~Renderer2D(void);
 
 		void Create(void);
+
+		u32 HandleTexture(Texture* texture);
 
 		void Begin(void) override;
 		void Submit(Renderable* renderable) override;

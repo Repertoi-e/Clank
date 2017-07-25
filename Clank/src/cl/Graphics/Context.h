@@ -17,20 +17,20 @@ namespace cl {
 		static std::vector<ID3D11BlendState*> s_BlendStates;
 		static std::vector<ID3D11DepthStencilState*> s_DepthStencilStates;
 	private:
-		ApplicationSettings* m_pSettings;
+		ApplicationSettings* m_Settings;
 
 		D3D_FEATURE_LEVEL m_FeatureLevel;
 
-		IDXGISwapChain* m_pSwapChain;
-		ID3D11Device* m_pDevice;
-		ID3D11DeviceContext* m_pDeviceContext;
+		IDXGISwapChain* m_SwapChain;
+		ID3D11Device* m_Device;
+		ID3D11DeviceContext* m_DeviceContext;
 
-		ID3D11RenderTargetView* m_pRenderTargetView;
+		ID3D11RenderTargetView* m_RenderTargetView;
 		
-		ID3D11Texture2D* m_pDepthStencilBuffer;
-		ID3D11DepthStencilState* m_pDepthStencilState;
-		ID3D11DepthStencilView* m_pDepthStencilView;
-		ID3D11RasterizerState* m_pRasterState;
+		ID3D11Texture2D* m_DepthStencilBuffer;
+		ID3D11DepthStencilState* m_DepthStencilState;
+		ID3D11DepthStencilView* m_DepthStencilView;
+		ID3D11RasterizerState* m_RasterState;
 	public:
 		Context(void);
 		~Context(void);
@@ -40,10 +40,10 @@ namespace cl {
 		void Clear(const vec4& color);
 		void Present(void);
 
-		inline IDXGISwapChain* GetSwapChain(void) { return m_pSwapChain; }
-		inline ID3D11Device* GetDevice(void) { return m_pDevice; }
-		inline ID3D11DeviceContext* GetDeviceContext(void) { return m_pDeviceContext; }
-		inline ID3D11RenderTargetView* GetRenderTargetView(void) { return m_pRenderTargetView; }
+		inline IDXGISwapChain* GetSwapChain(void) { return m_SwapChain; }
+		inline ID3D11Device* GetDevice(void) { return m_Device; }
+		inline ID3D11DeviceContext* GetDeviceContext(void) { return m_DeviceContext; }
+		inline ID3D11RenderTargetView* GetRenderTargetView(void) { return m_RenderTargetView; }
 
 		static String D3DFeatureLevelToString(D3D_FEATURE_LEVEL level);
 	};

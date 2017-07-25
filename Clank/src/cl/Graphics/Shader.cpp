@@ -10,7 +10,7 @@
 namespace cl {
 	
 	Shader::Shader(void)
-		: m_pVS(NULLPTR), m_pPS(NULLPTR)
+		: m_VS(NULLPTR), m_PS(NULLPTR)
 	{
 		m_Data.vs = NULLPTR;
 		m_Data.ps = NULLPTR;
@@ -18,8 +18,8 @@ namespace cl {
 	
 	Shader::~Shader(void)
 	{
-		m_pVS->Release();
-		m_pPS->Release();
+		m_VS->Release();
+		m_PS->Release();
 	}
 
 	void Shader::Create(LPCWSTR vertSrc, LPCWSTR pixelSrc)
@@ -30,13 +30,13 @@ namespace cl {
 		ASSERT(m_Data.vs, "Couldn't read vertex shader file: \"", vertSrc,"\"");
 		ASSERT(m_Data.ps, "Couldn't read pixel shader file: \"", pixelSrc, "\"");
 
-		HR(Context::Instance().GetDevice()->CreateVertexShader(m_Data.vs->GetBufferPointer(), m_Data.vs->GetBufferSize(), NULL, &m_pVS));
-		HR(Context::Instance().GetDevice()->CreatePixelShader(m_Data.ps->GetBufferPointer(), m_Data.ps->GetBufferSize(), NULL, &m_pPS));
+		HR(Context::Instance().GetDevice()->CreateVertexShader(m_Data.vs->GetBufferPointer(), m_Data.vs->GetBufferSize(), NULL, &m_VS));
+		HR(Context::Instance().GetDevice()->CreatePixelShader(m_Data.ps->GetBufferPointer(), m_Data.ps->GetBufferSize(), NULL, &m_PS));
 	}
 
 	void Shader::Bind(void)
 	{
-		Context::Instance().GetDeviceContext()->VSSetShader(m_pVS, 0, 0);
-		Context::Instance().GetDeviceContext()->PSSetShader(m_pPS, 0, 0);
+		Context::Instance().GetDeviceContext()->VSSetShader(m_VS, 0, 0);
+		Context::Instance().GetDeviceContext()->PSSetShader(m_PS, 0, 0);
 	}
 }

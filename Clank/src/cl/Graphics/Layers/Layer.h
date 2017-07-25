@@ -15,7 +15,7 @@ namespace cl {
 		bool m_Visible;
 	public:
 		Layer(void) {}
-		~Layer(void) {}
+		virtual ~Layer(void) = default;
 
 		virtual void Init(Context* context) {}
 

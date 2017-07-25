@@ -16,8 +16,8 @@ namespace cl {
 		};
 	private:
 		Data m_Data;
-		ID3D11VertexShader* m_pVS;
-		ID3D11PixelShader* m_pPS;
+		ID3D11VertexShader* m_VS;
+		ID3D11PixelShader* m_PS;
 	public:
 		Shader(void);
 		~Shader(void);
@@ -26,8 +26,8 @@ namespace cl {
 
 		inline Data& GetData(void) { return m_Data; }
 
-		inline ID3D11VertexShader* GetVS(void) { return m_pVS; }
-		inline ID3D11PixelShader* GetPS(void) { return m_pPS; }
+		inline ID3D11VertexShader* GetVS(void) { return m_VS; }
+		inline ID3D11PixelShader* GetPS(void) { return m_PS; }
 
 		void Bind();
 	};

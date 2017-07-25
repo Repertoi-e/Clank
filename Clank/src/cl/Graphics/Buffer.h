@@ -116,17 +116,17 @@ namespace cl {
 	class API Buffer
 	{
 	private:
-		ID3D11Buffer* m_pBuffer;
-		D3D11_MAPPED_SUBRESOURCE* m_pMappedSubresource;
-		D3D11_BUFFER_DESC* m_pDesc;
-		ID3D11InputLayout* m_pInputLayout;
+		ID3D11Buffer* m_Buffer;
+		D3D11_MAPPED_SUBRESOURCE* m_MappedSubresource;
+		D3D11_BUFFER_DESC* m_Desc;
+		ID3D11InputLayout* m_InputLayout;
 
 		InputLayout m_Layout;
 	public:
 		Buffer();
 		~Buffer();
 
-		void Create(BufferUsage usage, BufferBindFlag bindflag, u32 size, BufferCPUA access, D3D11_SUBRESOURCE_DATA* initialData = NULLPTR);
+		void Create(BufferUsage usage, BufferBindFlag bindflag, u32 size, BufferCPUA access, void* initialData = NULLPTR);
 		void Destroy();
 
 		void SetInputLayout(InputLayout layout, void* vsbuffer, u32 vsbufferSize);

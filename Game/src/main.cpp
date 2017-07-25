@@ -8,33 +8,43 @@ private:
 	float32 elapsed = 0, colort;
 	vec4 blue = { 0.0f, 0.2f, 0.4f, 1.0f };
 
-	Renderer2D* m_pRenderer;
-	Renderable2D* m_pRenderable;
-	Context* m_pContext;
+	Renderer2D* m_Renderer;
+	Renderable2D* m_Renderable, *m_Renderable2;
+	Context* m_Context;
 public:
 	TestLayer(void)
-		: m_pRenderer(new Renderer2D())
+		: m_Renderer(new Renderer2D())
 	{
 	}
 
 	~TestLayer(void)
 	{
+		delete m_Renderer;
+		delete m_Renderable;
+		delete m_Renderable2;
 	}
 
 	void Init(Context* context) override
 	{
-		m_pContext = context;
+		m_Context = context;
 
 		Renderer2DSettings settings;
 		settings.MaxQuads = 60000;
 		settings.MaxVertices = settings.MaxQuads * 4;
 		settings.BufferSize = settings.MaxVertices * sizeof(Vertex);
 		settings.MaxIndices = settings.MaxQuads * 6;
-		m_pRenderer->SetSettings(settings);
+		m_Renderer->SetSettings(settings);
 
-		m_pRenderer->Create();
+		m_Renderer->Create();
 
-		m_pRenderable = new Renderable2D({ 0, 0 }, { 50, 50 }, 0xff00ffff);
+		Texture* texture = new Texture;
+		texture->CreateFromFile(L"data/textures/test.dds");
+
+		Texture* texture2 = new Texture;
+		texture2->CreateFromFile(L"data/textures/test2.dds");
+
+		m_Renderable = new Renderable2D({ 0, 0 }, { 50, 50 }, texture /*0xff00ffff*/);
+		m_Renderable2 = new Renderable2D({ -100, 0 }, { 50, 200 }, texture2 /*0xffff00ff*/);
 	}
 
 	void Update(const DeltaTime& dt)
@@ -46,12 +56,13 @@ public:
 	void Render(void)
 	{
 		float32 color[4] = { blue.r * colort, blue.g * colort, blue.b * colort, blue.a };
-		m_pContext->GetDeviceContext()->ClearRenderTargetView(m_pContext->GetRenderTargetView(), color);
+		m_Context->GetDeviceContext()->ClearRenderTargetView(m_Context->GetRenderTargetView(), color);
 
-		m_pRenderer->Begin();
-		m_pRenderer->Submit(m_pRenderable);
-		m_pRenderer->End();
-		m_pRenderer->Present();
+		m_Renderer->Begin();
+		m_Renderer->Submit(m_Renderable);
+		m_Renderer->Submit(m_Renderable2);
+		m_Renderer->End();
+		m_Renderer->Present();
 	}
 
 	void Tick(void)
@@ -63,8 +74,9 @@ public:
 #define HEIGHT		  600
 #define FULLSCREEN	  FALSE
 #define VSYNC		  FALSE
-#define WINDOW_STYLE  WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
+#define WINDOW_STYLE  WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_SIZEBOX | WS_VISIBLE
 
+// Release mode builds without the console
 #ifdef _DEBUG
 int main(void)
 #else
@@ -79,7 +91,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	Timer init;
 	{
 		g_Application.SetName(L"义勇军进行曲");
-		g_Application.SetSettings({ WIDTH, HEIGHT, VSYNC, FULLSCREEN, WINDOW_STYLE | WS_SIZEBOX });
+		g_Application.SetSettings({ WIDTH, HEIGHT, VSYNC, FULLSCREEN, WINDOW_STYLE });
 
 		g_Application.DoWindow();
 
@@ -97,7 +109,6 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 	print(L"This is chinese! 义勇军进行曲 (If you have the codepage right...)\n\n");
 
-	g_Application.ShowWindow();
 	g_Application.DoCycle(); 
 
 	return 0;
