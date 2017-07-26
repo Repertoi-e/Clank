@@ -30,8 +30,11 @@
     <ClInclude Include="src\cl\Application\Events\MouseEvent.h" />
     <ClInclude Include="src\cl\Application\Events\WindowEvent.h" />
     <ClInclude Include="src\cl\dxerr.h" />
+    <ClInclude Include="src\cl\Graphics\Camera.h" />
     <ClInclude Include="src\cl\Graphics\Context.h" />
     <ClInclude Include="src\cl\Graphics\Layers\Layer.h" />
+    <ClInclude Include="src\cl\Graphics\Layers\Layer2D.h" />
+    <ClInclude Include="src\cl\Graphics\OrthographicCamera.h" />
     <ClInclude Include="src\cl\Graphics\Renderer.h" />
     <ClInclude Include="src\cl\Graphics\Renderer2D.h" />
     <ClInclude Include="src\cl\Graphics\Shader.h" />
@@ -61,6 +64,7 @@
     <ClCompile Include="src\cl\Application\Events\WindowEvent.cpp" />
     <ClCompile Include="src\cl\dxerr.cpp" />
     <ClCompile Include="src\cl\Graphics\Context.cpp" />
+    <ClCompile Include="src\cl\Graphics\Layers\Layer2D.cpp" />
     <ClCompile Include="src\cl\Graphics\Renderer2D.cpp" />
     <ClCompile Include="src\cl\Graphics\Shader.cpp" />
     <ClCompile Include="src\cl\Graphics\Buffer.cpp" />

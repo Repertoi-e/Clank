@@ -104,31 +104,31 @@ namespace cl {
 		});
 
 		for (auto a : m_Layers)
-			a->Event(event);
+			a->OnEvent(event);
 	}
 
 	void Application::DoRender(void)
 	{
 		for (auto a : m_Layers)
-			a->Render();
+			a->OnRender();
 	}
 
 	void Application::DoUpdate(const DeltaTime& dt)
 	{
 		for (auto a : m_Layers)
-			a->Update(dt);
+			a->OnUpdate(dt);
 	}
 
 	void Application::DoTick(void)
 	{
 		for (auto a : m_Layers)
-			a->Tick();
+			a->OnTick();
 	}
 
 	Layer* Application::PushLayer(Layer* layer)
 	{
 		m_Layers.push_back(layer);
-		layer->Init(&Context::Instance());
+		layer->OnInit();
 
 		return layer;
 	}

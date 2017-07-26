@@ -5,6 +5,7 @@
 #include "Context.h"
 #include "Buffer.h"
 #include "Texture.h"
+#include "Camera.h"
 
 #include "cl/Maths/maths.h"
 #include "cl/Maths2/Rectangle.h"
@@ -25,25 +26,38 @@ namespace cl {
 		Rectangle bounds;
 		u32 color;
 		Texture* texture;
+		vec2 uvs[4];
 	public:
 		Renderable2D(const Rectangle& rectangle, u32 color = 0xffffffff)
 			: bounds(rectangle), color(color), texture(NULLPTR)
 		{
+			ResetUVs();
 		}
 
 		Renderable2D(const vec2& position, const vec2& size, u32 color = 0xffffffff)
 			: bounds(position, size), color(color), texture(NULLPTR)
 		{
+			ResetUVs();
 		}
 
 		Renderable2D(const Rectangle& rectangle, Texture* texture, u32 color = 0xffffffff)
 			: bounds(rectangle), texture(texture), color(color)
 		{
+			ResetUVs();
 		}
 
 		Renderable2D(const vec2& position, const vec2& size, Texture* texture, u32 color = 0xffffffff)
 			: bounds(position, size), texture(texture), color(color)
 		{
+			ResetUVs();
+		}
+
+		void ResetUVs()
+		{
+			uvs[0] = vec2(0.0f, 0.0f);
+			uvs[1] = vec2(1.0f, 0.0f);
+			uvs[2] = vec2(0.0f, 1.0f);
+			uvs[3] = vec2(1.0f, 1.0f);
 		}
 	};
 
@@ -65,6 +79,8 @@ namespace cl {
 		Buffer* m_VertexBuffer, *m_IndexBuffer, *m_MatrixBuffer;
 		u32 m_Indices;
 
+		Camera* m_Camera;
+
 		std::vector<Texture*> m_Textures;
 
 		Renderer2DSettings m_Settings;
@@ -75,6 +91,8 @@ namespace cl {
 		void Create(void);
 
 		u32 HandleTexture(Texture* texture);
+
+		void SetCamera(Camera* camera);
 
 		void Begin(void) override;
 		void Submit(Renderable* renderable) override;

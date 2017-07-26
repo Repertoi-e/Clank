@@ -1,41 +1,39 @@
 ﻿#include <Clank.h>
 
+#define WIDTH		  800
+#define HEIGHT		  600
+
 using namespace cl;
 
-class TestLayer : public Layer
+class TestLayer : public Layer2D
 {
 private:
 	float32 elapsed = 0, colort;
 	vec4 blue = { 0.0f, 0.2f, 0.4f, 1.0f };
 
-	Renderer2D* m_Renderer;
 	Renderable2D* m_Renderable, *m_Renderable2;
-	Context* m_Context;
 public:
 	TestLayer(void)
-		: m_Renderer(new Renderer2D())
+		: Layer2D(mat4::Orthographic(0, WIDTH, 0, HEIGHT, -1.0f, 1.0f))
 	{
 	}
 
 	~TestLayer(void)
 	{
-		delete m_Renderer;
 		delete m_Renderable;
 		delete m_Renderable2;
 	}
 
-	void Init(Context* context) override
+	void Init(Context* context, Renderer2D* renderer) override
 	{
-		m_Context = context;
-
 		Renderer2DSettings settings;
 		settings.MaxQuads = 60000;
 		settings.MaxVertices = settings.MaxQuads * 4;
 		settings.BufferSize = settings.MaxVertices * sizeof(Vertex);
 		settings.MaxIndices = settings.MaxQuads * 6;
-		m_Renderer->SetSettings(settings);
+		renderer->SetSettings(settings);
 
-		m_Renderer->Create();
+		renderer->Create();
 
 		Texture* texture = new Texture;
 		texture->CreateFromFile(L"data/textures/test.dds");
@@ -47,31 +45,33 @@ public:
 		m_Renderable2 = new Renderable2D({ -100, 0 }, { 50, 200 }, texture2 /*0xffff00ff*/);
 	}
 
-	void Update(const DeltaTime& dt)
+	void OnUpdate(const DeltaTime& dt) override
 	{
 		elapsed++;
 		colort = (cl::sin(elapsed / 10) + 1) / 2;
 	}
-
-	void Render(void)
+	
+	void OnEvent(Event& event) override
 	{
-		float32 color[4] = { blue.r * colort, blue.g * colort, blue.b * colort, blue.a };
-		m_Context->GetDeviceContext()->ClearRenderTargetView(m_Context->GetRenderTargetView(), color);
-
-		m_Renderer->Begin();
-		m_Renderer->Submit(m_Renderable);
-		m_Renderer->Submit(m_Renderable2);
-		m_Renderer->End();
-		m_Renderer->Present();
 	}
 
-	void Tick(void)
+	void OnRender(Context* context, Renderer2D* renderer) override
+	{
+		float32 color[4] = { blue.r * colort, blue.g * colort, blue.b * colort, blue.a };
+		context->GetDeviceContext()->ClearRenderTargetView(context->GetRenderTargetView(), color);
+
+		renderer->Begin();
+		renderer->Submit(m_Renderable);
+		renderer->Submit(m_Renderable2);
+		renderer->End();
+		renderer->Present();
+	}
+
+	void OnTick(void) override
 	{
 	}
 };
 
-#define WIDTH		  800
-#define HEIGHT		  600
 #define FULLSCREEN	  FALSE
 #define VSYNC		  FALSE
 #define WINDOW_STYLE  WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_SIZEBOX | WS_VISIBLE
@@ -85,9 +85,6 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 {
 	SetLocale(LC_ALL);
 
-	print(L"Le pré est vénéneux mais joli en automne\nLes vaches y paissant\nLentement s’empoisonnent\nLe colchique couleur de cerne et de lilas\nY fleurit tes yeux sont comme cette fleur - la\nViolâtres comme leur cerne et comme cet automne\nEt ma vie pour tes yeux lentement s’empoisonne \n\n");
-
-	print("Hello this is /% and this is a per cent: %, and this is /% \n\n", 10, 5);
 	Timer init;
 	{
 		g_Application.SetName(L"义勇军进行曲");
@@ -103,11 +100,6 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 		g_Application.SetCycleInfo(info);
 	}
 	LOG_WARN("Init took ", init.Elapsed().Millis(), " ms\n\n");
-
-	String s = L"Hello this is a String!";
-	LOG_WARN(s, "\n\n");
-
-	print(L"This is chinese! 义勇军进行曲 (If you have the codepage right...)\n\n");
 
 	g_Application.DoCycle(); 
 

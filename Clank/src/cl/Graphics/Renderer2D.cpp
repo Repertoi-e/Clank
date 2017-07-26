@@ -79,6 +79,11 @@ namespace cl {
 		return m_Textures.size() - 1;
 	}
 
+	void Renderer2D::SetCamera(Camera* camera)
+	{
+		m_Camera = camera;
+	}
+
 	void Renderer2D::Begin(void)
 	{
 		m_Map = cast(Vertex*) m_VertexBuffer->Map(BufferMapCPUA::WRITE_DISCARD);
@@ -90,7 +95,8 @@ namespace cl {
 		
 		const Rectangle& bounds = r->bounds;
 		const u32 color = r->color;
-		
+		vec2* uvs = r->uvs;
+
 		u32 tid = 0;
 
 		Texture* texture = r->texture;
@@ -101,25 +107,25 @@ namespace cl {
 		vec2 max = bounds.GetMax();
 
 		m_Map->position = { min.x, min.y, 0.0f };
-		m_Map->uv = vec2(0.0f, 0.0f);
+		m_Map->uv = *uvs++;
 		m_Map->tid = tid;
 		m_Map->color = color;
 		m_Map++;
 
 		m_Map->position = { max.x, min.y, 0.0f };
-		m_Map->uv = vec2(1.0f, 0.0f);
+		m_Map->uv = *uvs++;
 		m_Map->tid = tid;
 		m_Map->color = color;
 		m_Map++;
 
 		m_Map->position = { min.x, max.y, 0.0f };
-		m_Map->uv = vec2(0.0f, 1.0f);
+		m_Map->uv = *uvs++;
 		m_Map->tid = tid;
 		m_Map->color = color;
 		m_Map++;
 
 		m_Map->position = { max.x, max.y, 0.0f };
-		m_Map->uv = vec2(1.0f, 1.0f);
+		m_Map->uv = *uvs++;
 		m_Map->tid = tid;
 		m_Map->color = color;
 		m_Map++;
