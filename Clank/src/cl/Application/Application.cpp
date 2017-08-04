@@ -27,7 +27,7 @@ namespace cl {
 
 	void Application::DoFPS(void)
 	{
-		CycleInfo& info = m_AppSettings.CycleInfo;
+		CycleDesc& info = m_AppSettings.Cycle;
 		info.FpsSamples[info.It % info.MaxSamples] = float32(info.Frames * info.m_UpdatesPerSecond);
 		for (s32 i = 0; i < info.MaxSamples; i++)
 			info.m_FramesPerSecond += info.FpsSamples[i];
@@ -36,9 +36,9 @@ namespace cl {
 		info.Frames = 0;
 	}
 
-	void Application::DoCycle(void)
+	void Application::Start(void)
 	{
-		CycleInfo& info = m_AppSettings.CycleInfo;
+		CycleDesc& info = m_AppSettings.Cycle;
 		while (!m_Closed)
 		{
 			float32 now = info.Timer->Elapsed().Millis();
@@ -54,7 +54,7 @@ namespace cl {
 
 				DoFPS();
 
-				SetWindowTitle(String(m_Name + L" | FPS: " + std::to_wstring(info.m_FramesPerSecond)).c_str());
+				SetWindowTitle(String(m_AppSettings.Name + L" | FPS: " + std::to_wstring(info.m_FramesPerSecond)).c_str());
 			}
 			{
 				Context::Instance().Clear(vec4(1, 1, 1, 1));
@@ -158,7 +158,7 @@ namespace cl {
 		wcex.lpfnWndProc = WndProcBind;
 		wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 		wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wcex.lpszClassName = L"Clank Engine Application Window";
+		wcex.lpszClassName = m_AppSettings.ClassName.c_str();
 		wcex.lpszMenuName = NULL;
 		wcex.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
@@ -173,7 +173,7 @@ namespace cl {
 		s32 width = r.right - r.left;
 		s32 height = r.bottom - r.top;
 
-		m_hWnd = CreateWindow(L"Clank Engine Application Window", L"Clank Window", m_AppSettings.WindowStyle,
+		m_hWnd = CreateWindow(m_AppSettings.ClassName.c_str(), L"Clank Window", m_AppSettings.WindowStyle,
 			GetSystemMetrics(SM_CXSCREEN) / 2 - width / 2,
 			GetSystemMetrics(SM_CYSCREEN) / 2 - height / 2, width, height, NULL, NULL, m_hInstance, NULL);
 		if (!m_hWnd)

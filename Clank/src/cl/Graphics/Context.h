@@ -17,7 +17,7 @@ namespace cl {
 		static std::vector<ID3D11BlendState*> s_BlendStates;
 		static std::vector<ID3D11DepthStencilState*> s_DepthStencilStates;
 	private:
-		ApplicationSettings* m_Settings;
+		ApplicationDesc* m_Settings;
 
 		D3D_FEATURE_LEVEL m_FeatureLevel;
 
@@ -36,7 +36,7 @@ namespace cl {
 		Context(void);
 		~Context(void);
 
-		void Create(HWND hWnd, ApplicationSettings& settings);
+		void Create(HWND hWnd, ApplicationDesc& settings);
 
 		void Clear(const vec4& color);
 		void Present(void);

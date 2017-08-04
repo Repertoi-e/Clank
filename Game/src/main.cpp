@@ -30,16 +30,19 @@ public:
 
 	void Init(Context* context, Renderer2D* renderer) override
 	{
-		Renderer2DSettings settings;
-		settings.MaxQuads = 60000;
-		settings.MaxVertices = settings.MaxQuads * 4;
-		settings.BufferSize = settings.MaxVertices * sizeof(Vertex);
-		settings.MaxIndices = settings.MaxQuads * 6;
-		renderer->SetSettings(settings);
+		Renderer2DSettings rendererSettings;
+		{
+			ZeroMemory(&rendererSettings, sizeof(Renderer2DSettings));
 
+			rendererSettings.MaxQuads = 60000;
+			rendererSettings.MaxVertices = rendererSettings.MaxQuads * 4;
+			rendererSettings.BufferSize = rendererSettings.MaxVertices * sizeof(Vertex);
+			rendererSettings.MaxIndices = rendererSettings.MaxQuads * 6;
+		}
+		renderer->SetSettings(rendererSettings);
 		renderer->Create();
 
-		OrthographicCamera* camera = new OrthographicCamera(m_ProjectionMatrix);
+		OrthographicCamera* camera = new OrthographicCamera(this->m_ProjectionMatrix);
 		renderer->SetCamera(camera);
 
 		TextureSettings textureSettings;
@@ -145,22 +148,22 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
 	Timer init;
 	{
-		g_Application.SetName(L"Game");
-
-		ApplicationSettings settings;
+		ApplicationDesc settings;
 		{
-			ZeroMemory(&settings, sizeof(ApplicationSettings));
+			ZeroMemory(&settings, sizeof(ApplicationDesc));
 
+			settings.Name = L"Game";
+			settings.ClassName = L"Game&&";
 			settings.Width = WIDTH;
 			settings.Height = HEIGHT;
 			settings.VSync = FALSE;
 			settings.Fullscreen = FALSE;
 			settings.WindowStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_SIZEBOX | WS_VISIBLE;
 		
-			settings.CycleInfo.UpdateTick = 1000.0f / 60.0f;
-			settings.CycleInfo.Timer = new Timer;
-			settings.CycleInfo.UpdateTimer = 0.0f;
-			settings.CycleInfo.UpdateDeltaTime = new DeltaTime(0.0f);
+			settings.Cycle.UpdateTick = 1000.0f / 60.0f;
+			settings.Cycle.Timer = new Timer;
+			settings.Cycle.UpdateTimer = 0.0f;
+			settings.Cycle.UpdateDeltaTime = new DeltaTime(0.0f);
 		}
 		g_Application.SetSettings(settings);
 		g_Application.DoWindow();
@@ -169,7 +172,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	}
 	LOG_WARN("Init took ", init.Elapsed().Millis(), " ms\n\n");
 
-	g_Application.DoCycle(); 
+	g_Application.Start(); 
 
 	return 0;
 }

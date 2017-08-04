@@ -13,7 +13,7 @@ namespace cl {
 
 	class Layer;
 
-	struct API CycleInfo
+	struct API CycleDesc
 	{
 		Timer* Timer;
 		DeltaTime* UpdateDeltaTime;
@@ -30,12 +30,14 @@ namespace cl {
 		float32 FpsSamples[MaxSamples] = { 0.0f };
 	};
 
-    struct API ApplicationSettings
+    struct API ApplicationDesc
     {
-        u32 Width, Height;
+		String Name;
+		String ClassName;
+		u32 Width, Height;
         bool VSync, Fullscreen;
         u32 WindowStyle;
-		CycleInfo CycleInfo;
+		CycleDesc Cycle;
     };
 
     class API Application : public Singleton<Application>
@@ -45,11 +47,9 @@ namespace cl {
         HWND m_hWnd;
 
 		BOOL m_WindowFocused;
+		BOOL m_Closed;
 
-        String m_Name;
-        ApplicationSettings m_AppSettings;
-
-        BOOL m_Closed;
+        ApplicationDesc m_AppSettings;
 
 		std::vector<Layer*> m_Layers;
     public:
@@ -57,7 +57,7 @@ namespace cl {
 
 		void DoWindow(void);
 		void ShowWindow(void);
-		void DoCycle(void);
+		void Start(void);
 
         void DoWindowMessages(void);
         void DoEvent(Event& event);
@@ -68,11 +68,8 @@ namespace cl {
 		Layer* PushLayer(Layer* layer);
 		void PopLayer(Layer* layer);
 
-        inline const String& GetName() const { return m_Name; }
-		inline void SetName(const String& name) { m_Name = name; }
-
-		inline const ApplicationSettings& GetSettings() { return m_AppSettings; }
-		inline void SetSettings(const ApplicationSettings& settings) { m_AppSettings = settings; }
+		inline const ApplicationDesc& GetSettings() { return m_AppSettings; }
+		inline void SetSettings(const ApplicationDesc& settings) { m_AppSettings = settings; }
 
         void SetWindowTitle(LPCWSTR title);
 

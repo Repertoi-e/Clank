@@ -33,7 +33,7 @@ namespace cl {
 		SafeRelease(m_RasterState);
 	}
 
-	void Context::Create(HWND hWnd, ApplicationSettings& settings)
+	void Context::Create(HWND hWnd, ApplicationDesc& settings)
 	{
 		m_FeatureLevel = D3D_FEATURE_LEVEL_11_0;
 
