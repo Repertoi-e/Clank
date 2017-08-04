@@ -9,6 +9,8 @@
 #include "cl/Graphics/Layers/Layer.h"
 #include "cl/Graphics/Layers/Layer2D.h"
 #include "cl/Graphics/Renderer2D.h"
+#include "cl/Graphics/Folder.h"
+#include "cl/Graphics/OrthographicCamera.h"
 
 #include "cl/Utils/Log.h"
 #include "cl/Maths/maths.h"

@@ -1,18 +1,13 @@
 #include "cl/stdafx.h"
 #include "Renderer2D.h"
 
-namespace cl {
+#include "Renderable2D.h"
 
-	struct MatrixBufferType
-	{
-		mat4 Model;
-		mat4 View;
-		mat4 Projection;
-	};
+namespace cl {
 
 	Renderer2D::Renderer2D(void)
 		: m_Context(&Context::Instance()), m_Shader(new Shader), m_VertexBuffer(new Buffer), m_Indices(0), 
-		m_MatrixBuffer(new Buffer), m_IndexBuffer(new Buffer)
+		m_MatrixBuffer(new Buffer), m_IndexBuffer(new Buffer), m_Matrices(new Matrices)
 	{
 	}
 
@@ -22,17 +17,23 @@ namespace cl {
 		delete m_VertexBuffer;
 		delete m_IndexBuffer;
 		delete m_MatrixBuffer;
+		delete m_Matrices;
 	}
 
 	void Renderer2D::Create(void)
 	{
+		PushMatrix(mat4::Identity(), true);
+
 		m_Shader->Create(L"VS_R2D.cso", L"PS_R2D.cso");
 		m_Shader->Bind();
 
 		m_VertexBuffer->Create(BufferUsage::DYNAMIC, BufferBindFlag::VERTEX_BUFFER, m_Settings.BufferSize, BufferCPUA::WRITE);
 
+		m_Matrices->View = mat4::Identity();
+		m_Matrices->Projection = mat4::Identity();
+
 		InputLayout layout;
-		layout.Push<vec3>("POSITION");
+		layout.Push<vec4>("POSITION");
 		layout.Push<vec2>("TEXCOORD");
 		layout.Push<u32>("ID");
 		layout.Push<byte>("COLOR", 4);
@@ -58,30 +59,60 @@ namespace cl {
 
 		m_IndexBuffer->Create(BufferUsage::DEFAULT, BufferBindFlag::INDEX_BUFFER, sizeof(u32) * m_Settings.MaxIndices, BufferCPUA::ZERO, indices);
 		
-		m_MatrixBuffer->Create(BufferUsage::DYNAMIC, BufferBindFlag::CONSTANT_BUFFER, sizeof(MatrixBufferType), BufferCPUA::WRITE);
+		m_MatrixBuffer->Create(BufferUsage::DYNAMIC, BufferBindFlag::CONSTANT_BUFFER, sizeof(Matrices), BufferCPUA::WRITE);
+		UpdateMatrixBuffer();
 	}
 
 	u32 Renderer2D::HandleTexture(Texture* texture)
 	{
+		u32 result = 0;
+		bool found = false;
 		for (u32 i = 0; i < m_Textures.size(); i++)
 		{
 			if (m_Textures[i] == texture)
-				return i;
-		}
-		if (m_Textures.size() == 16)
-		{
-			End();
-			Present();
-			Begin();
+			{
+				result = i + 1;
+				found = true;
+				break;
+			}
 		}
 
-		m_Textures.push_back(texture);
-		return m_Textures.size() - 1;
+		if (!found)
+		{
+			if (m_Textures.size() >= 16)
+			{
+				End();
+				Present();
+				Begin();
+			}
+			m_Textures.push_back(texture);
+			result = m_Textures.size();
+		}
+		return result;
 	}
 
 	void Renderer2D::SetCamera(Camera* camera)
 	{
 		m_Camera = camera;
+		m_Matrices->Projection = m_Camera->GetProjectionMatrix();
+		UpdateMatrixBuffer();
+	}
+
+	void Renderer2D::PushMatrix(const mat4& matrix, bool override)
+	{
+		m_TransformationStack.push_back(override ? matrix : m_TransformationStack.back() * matrix);
+		m_TransformationBack = &m_TransformationStack.back();
+	}
+
+	void Renderer2D::PopMatrix()
+	{
+		if (m_TransformationStack.size() <= 1)
+		{	
+			LOG_WARN("Trying to pop matrix but size of stack is <= 1!");
+			return;
+		}
+		m_TransformationStack.pop_back();
+		m_TransformationBack = &m_TransformationStack.back();
 	}
 
 	void Renderer2D::Begin(void)
@@ -89,42 +120,44 @@ namespace cl {
 		m_Map = cast(Vertex*) m_VertexBuffer->Map(BufferMapCPUA::WRITE_DISCARD);
 	}
 
-	void Renderer2D::Submit(Renderable* renderable)
+	void Renderer2D::Submit(Renderable2D* renderable)
 	{
 		Renderable2D* r = (Renderable2D*)renderable; 
 		
 		const Rectangle& bounds = r->bounds;
-		const u32 color = r->color;
-		vec2* uvs = r->uvs;
-
-		u32 tid = 0;
-
-		Texture* texture = r->texture;
-		if (texture)
-			tid = HandleTexture(texture);
-
 		vec2 min = bounds.GetMin();
 		vec2 max = bounds.GetMax();
 
-		m_Map->position = { min.x, min.y, 0.0f };
+		vec2* uvs = r->uvs;
+
+		Texture* texture = r->texture;
+		u32 tid = texture ? HandleTexture(texture) : 0;
+		
+		const u32 color = r->color;
+
+		vec4 vertex = vec4(min.x, min.y, 0.0f, 1.0f);
+		m_Map->position = *m_TransformationBack * vertex;
 		m_Map->uv = *uvs++;
 		m_Map->tid = tid;
 		m_Map->color = color;
 		m_Map++;
 
-		m_Map->position = { max.x, min.y, 0.0f };
+		vertex = vec4(max.x, min.y, 0.0f, 1.0f);
+		m_Map->position = *m_TransformationBack * vertex;
 		m_Map->uv = *uvs++;
 		m_Map->tid = tid;
 		m_Map->color = color;
 		m_Map++;
 
-		m_Map->position = { min.x, max.y, 0.0f };
+		vertex = vec4(min.x, max.y, 0.0f, 1.0f);
+		m_Map->position = *m_TransformationBack * vertex;
 		m_Map->uv = *uvs++;
 		m_Map->tid = tid;
 		m_Map->color = color;
 		m_Map++;
 
-		m_Map->position = { max.x, max.y, 0.0f };
+		vertex = vec4(max.x, max.y, 0.0f, 1.0f);
+		m_Map->position = *m_TransformationBack * vertex;
 		m_Map->uv = *uvs++;
 		m_Map->tid = tid;
 		m_Map->color = color;
@@ -138,20 +171,8 @@ namespace cl {
 		m_VertexBuffer->Unmap();
 	}
 
-	float32 degrees = 0;
 	void Renderer2D::Present(void)
 	{
-		degrees += 1;
-
-		MatrixBufferType matrices;
-		matrices.Model = mat4::Identity(); // mat4::Translate(vec3(0.7f, 0.3, 0)) * mat4::Rotate(degrees, vec3(0, 0, 1)); // mat4::Rotate(degrees, vec3(0, 0, 1));
-		matrices.View = mat4::Identity();
-		matrices.Projection = mat4::Orthographic(-400, 400, -300, 300, -1.0f, 1.0f);
-
-		void* matData = m_MatrixBuffer->Map(BufferMapCPUA::WRITE_DISCARD);
-		memcpy(matData, &matrices, sizeof(MatrixBufferType));
-		m_MatrixBuffer->Unmap();
-
 		m_MatrixBuffer->VSSet(0);
 
 		for (u32 i = 0; i < m_Textures.size(); i++)
@@ -165,5 +186,12 @@ namespace cl {
 			m_Textures[i]->Unbind(i);
 
 		m_Indices = 0;
+	}
+
+	void Renderer2D::UpdateMatrixBuffer()
+	{
+		void* matData = m_MatrixBuffer->Map(BufferMapCPUA::WRITE_DISCARD);
+		memcpy(matData, m_Matrices, sizeof(Matrices));
+		m_MatrixBuffer->Unmap();
 	}
 }

@@ -7,58 +7,14 @@
 #include "Texture.h"
 #include "Camera.h"
 
-#include "cl/Maths/maths.h"
-#include "cl/Maths2/Rectangle.h"
-
 namespace cl {
 
 	struct API Vertex
 	{
-		vec3 position;
+		vec4 position;
 		vec2 uv;
 		u32 tid;
 		u32 color;
-	};
-
-	class API Renderable2D : public Renderable
-	{
-	public:
-		Rectangle bounds;
-		u32 color;
-		Texture* texture;
-		vec2 uvs[4];
-	public:
-		Renderable2D(const Rectangle& rectangle, u32 color = 0xffffffff)
-			: bounds(rectangle), color(color), texture(NULLPTR)
-		{
-			ResetUVs();
-		}
-
-		Renderable2D(const vec2& position, const vec2& size, u32 color = 0xffffffff)
-			: bounds(position, size), color(color), texture(NULLPTR)
-		{
-			ResetUVs();
-		}
-
-		Renderable2D(const Rectangle& rectangle, Texture* texture, u32 color = 0xffffffff)
-			: bounds(rectangle), texture(texture), color(color)
-		{
-			ResetUVs();
-		}
-
-		Renderable2D(const vec2& position, const vec2& size, Texture* texture, u32 color = 0xffffffff)
-			: bounds(position, size), texture(texture), color(color)
-		{
-			ResetUVs();
-		}
-
-		void ResetUVs()
-		{
-			uvs[0] = vec2(0.0f, 0.0f);
-			uvs[1] = vec2(1.0f, 0.0f);
-			uvs[2] = vec2(0.0f, 1.0f);
-			uvs[3] = vec2(1.0f, 1.0f);
-		}
 	};
 
 	struct API Renderer2DSettings
@@ -68,16 +24,29 @@ namespace cl {
 		u32 BufferSize;
 		u32 MaxIndices;
 	};
+
+	struct Matrices
+	{
+		mat4 View;
+		mat4 Projection;
+	};
+
+	class Renderable2D;
 	
 	class API Renderer2D : public Renderer
 	{
 	private:
+		std::vector<mat4> m_TransformationStack;
+		const mat4* m_TransformationBack;
+
 		Context* m_Context;
 		Shader* m_Shader;
 
 		Vertex* m_Map;
 		Buffer* m_VertexBuffer, *m_IndexBuffer, *m_MatrixBuffer;
 		u32 m_Indices;
+
+		Matrices* m_Matrices;
 
 		Camera* m_Camera;
 
@@ -94,10 +63,15 @@ namespace cl {
 
 		void SetCamera(Camera* camera);
 
+		void PushMatrix(const mat4& matrix, bool override = false);
+		void PopMatrix();
+
 		void Begin(void) override;
-		void Submit(Renderable* renderable) override;
+		void Submit(Renderable2D* renderable);
 		void End(void) override;
 		void Present(void) override;
+
+		void UpdateMatrixBuffer();
 
 		inline void SetSettings(Renderer2DSettings settings) { m_Settings = std::move(settings); }
 	};

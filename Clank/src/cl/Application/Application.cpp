@@ -7,6 +7,8 @@
 
 #include <Windowsx.h>
 
+#include <FreeImage.h>
+
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
 namespace cl {
@@ -182,6 +184,8 @@ namespace cl {
 		}
 
 		Context::Instance().Create(m_hWnd, m_AppSettings);
+
+		FreeImage_Initialise();
 	}
 
 	void Application::ShowWindow(void)

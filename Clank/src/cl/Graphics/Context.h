@@ -28,6 +28,7 @@ namespace cl {
 		ID3D11RenderTargetView* m_RenderTargetView;
 		
 		ID3D11Texture2D* m_DepthStencilBuffer;
+		ID3D11BlendState* m_BlendState;
 		ID3D11DepthStencilState* m_DepthStencilState;
 		ID3D11DepthStencilView* m_DepthStencilView;
 		ID3D11RasterizerState* m_RasterState;

@@ -3,6 +3,11 @@
 
 namespace cl {
 
+	Rectangle::Rectangle()
+		: x(0), y(0), width(0), height(0)
+	{
+	}
+
 	Rectangle::Rectangle(const vec2& position, const vec2& size)
 		: position(position), size(size)
 	{

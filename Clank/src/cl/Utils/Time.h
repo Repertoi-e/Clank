@@ -73,7 +73,7 @@ namespace cl {
 			m_LastTime = currentTime;
 		}
 
-		Time Elapsed(void)
+		const Time Elapsed(void) const
 		{
 			Time time;
 			time.Cycles = 1;

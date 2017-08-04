@@ -423,7 +423,7 @@ namespace cl {
 	template<class T>
 	inline bool tvec4<T>::operator!=(const tvec4<T>& other) const
 	{
-		return !(*this == other)
+		return !(*this == other);
 	}
 
 	template<class T>
@@ -495,7 +495,7 @@ namespace cl {
 	template<class T>
 	inline bool tvec4<T>::operator>=(const tvec4<T>& other) const
 	{
-		return !(this* <= other);
+		return !(*this <= other);
 	}
 
 	template <class T>

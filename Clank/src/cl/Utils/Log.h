@@ -2,6 +2,7 @@
 
 #include "cl/stdafx.h"
 
+#define LOG_LEVEL_NOLOG -1
 #define LOG_LEVEL_FATAL  0
 #define LOG_LEVEL_ERROR	 1
 #define LOG_LEVEL_WARN	 2
@@ -25,6 +26,13 @@ namespace cl {
 	static const wchar* to_string<wchar>(const wchar& t)
 	{
 		return &t;
+	}
+
+	template <>
+	static const wchar* to_string<char>(const char& t)
+	{
+		mbstowcs(to_wchar_buffer, &t, 2);
+		return to_wchar_buffer;
 	}
 
 	template <>
@@ -280,11 +288,12 @@ namespace cl {
 	}
 }
 
-//@Incomplete: These macros call the print_sequence procedure. What if you
-// want the normal print procedure?
-
 #ifndef LOG_LEVEL
-#define LOG_LEVEL LOG_LEVEL_INFO
+	#ifdef _DEBUG
+		#define LOG_LEVEL LOG_LEVEL_INFO
+	#else
+		#define LOG_LEVEL LOG_LEVEL_NOLOG
+	#endif
 #endif
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO

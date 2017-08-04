@@ -14,7 +14,7 @@ namespace cl {
 
 	Context::Context(void)
 		: m_SwapChain(NULLPTR), m_Device(NULLPTR), m_DeviceContext(NULLPTR), m_RenderTargetView(NULLPTR), m_Settings(NULLPTR),
-		m_DepthStencilBuffer(NULLPTR), m_DepthStencilState(NULLPTR), m_DepthStencilView(NULLPTR), m_RasterState(NULLPTR) 
+		m_DepthStencilBuffer(NULLPTR), m_DepthStencilState(NULLPTR), m_DepthStencilView(NULLPTR), m_RasterState(NULLPTR)
 	{
 	}
 
@@ -22,7 +22,7 @@ namespace cl {
 	{
 		if (m_SwapChain)
 			m_SwapChain->SetFullscreenState(FALSE, NULL);
-	
+
 		SafeRelease(m_SwapChain);
 		SafeRelease(m_Device);
 		SafeRelease(m_DeviceContext);
@@ -36,7 +36,7 @@ namespace cl {
 	void Context::Create(HWND hWnd, ApplicationSettings& settings)
 	{
 		m_FeatureLevel = D3D_FEATURE_LEVEL_11_0;
-		
+
 		m_Settings = &settings;
 
 		u32 Width = m_Settings->Width;
@@ -53,10 +53,10 @@ namespace cl {
 
 		u32 numModes;
 		HR(adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL));
-		
+
 		DXGI_MODE_DESC* displayModeList = new DXGI_MODE_DESC[numModes];
 		HR(adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList));
-		
+
 		u32 numerator, denominator;
 		for (u32 i = 0; i < numModes; i++)
 		{
@@ -73,7 +73,7 @@ namespace cl {
 		HR(adapter->GetDesc(&adapterDesc));
 
 		LOG_WARN("----------------------------------\n");
-		LOG_WARN(" Direct3D ", D3DFeatureLevelToString(m_FeatureLevel),":\n");
+		LOG_WARN(" Direct3D ", D3DFeatureLevelToString(m_FeatureLevel), ":\n");
 		LOG_WARN("    ", adapterDesc.Description, "\n");
 		LOG_WARN("    ", "VRAM: ", adapterDesc.DedicatedVideoMemory / 1024 / 1024, " MB\n");
 		LOG_WARN("----------------------------------\n\n");
@@ -87,7 +87,7 @@ namespace cl {
 		DXGI_SWAP_CHAIN_DESC swapChainDesc;
 		{
 			ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
-			
+
 			swapChainDesc.BufferCount = 1;
 			swapChainDesc.BufferDesc.Width = Width;
 			swapChainDesc.BufferDesc.Height = Height;
@@ -104,7 +104,7 @@ namespace cl {
 			swapChainDesc.Windowed = !m_Settings->Fullscreen;
 			swapChainDesc.Flags = 0;
 		}
-		
+
 		HR(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &m_FeatureLevel, 1, D3D11_SDK_VERSION, &swapChainDesc,
 			&m_SwapChain, &m_Device, NULL, &m_DeviceContext));
 
@@ -113,7 +113,7 @@ namespace cl {
 		HR(m_Device->CreateRenderTargetView(backBufferPtr, NULL, &m_RenderTargetView));
 
 		SafeRelease(backBufferPtr);
-		
+
 		D3D11_TEXTURE2D_DESC depthBufferDesc;
 		{
 			ZeroMemory(&depthBufferDesc, sizeof(D3D11_TEXTURE2D_DESC));
@@ -135,24 +135,23 @@ namespace cl {
 		D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 		{
 			ZeroMemory(&depthStencilDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-			
+
 			depthStencilDesc.DepthEnable = true;
 			depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-			depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-
+			depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 			depthStencilDesc.StencilEnable = true;
-			depthStencilDesc.StencilReadMask = 0xFF;
-			depthStencilDesc.StencilWriteMask = 0xFF;
+			depthStencilDesc.StencilReadMask = 0xff;
+			depthStencilDesc.StencilWriteMask = 0xff;
 
 			depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-			depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-			depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+			depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+			depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_INCR_SAT;
 			depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 			depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-			depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+			depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 			depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-			depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+			depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_NEVER;
 		}
 		HR(m_Device->CreateDepthStencilState(&depthStencilDesc, &m_DepthStencilState));
 		m_DeviceContext->OMSetDepthStencilState(m_DepthStencilState, 1);
@@ -167,11 +166,11 @@ namespace cl {
 		}
 		HR(m_Device->CreateDepthStencilView(m_DepthStencilBuffer, &depthStencilViewDesc, &m_DepthStencilView));
 		m_DeviceContext->OMSetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
-	
+
 		D3D11_RASTERIZER_DESC rasterDesc;
 		{
 			ZeroMemory(&rasterDesc, sizeof(D3D11_RASTERIZER_DESC));
-			
+
 			rasterDesc.AntialiasedLineEnable = false;
 			rasterDesc.CullMode = D3D11_CULL_BACK;
 			rasterDesc.DepthBias = 0;
@@ -186,6 +185,26 @@ namespace cl {
 		HR(m_Device->CreateRasterizerState(&rasterDesc, &m_RasterState));
 		m_DeviceContext->RSSetState(m_RasterState);
 
+		D3D11_BLEND_DESC bsDesc;
+		{
+			ZeroMemory(&bsDesc, sizeof(D3D11_BLEND_DESC));
+
+			bsDesc.AlphaToCoverageEnable = false;
+			bsDesc.IndependentBlendEnable = false;
+
+			bsDesc.RenderTarget[0].BlendEnable = true;
+
+			bsDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+			bsDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+			bsDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+			bsDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+			bsDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+			bsDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+			bsDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+		}
+		HR(m_Device->CreateBlendState(&bsDesc, &m_BlendState));
+		m_DeviceContext->OMSetBlendState(m_BlendState, 0, 0xffffffff);
+
 		D3D11_VIEWPORT viewport;
 		{
 			ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
@@ -198,8 +217,6 @@ namespace cl {
 			viewport.TopLeftY = 0.0f;
 		}
 		m_DeviceContext->RSSetViewports(1, &viewport);
-
-		float fieldOfView, screenAspect;
 	}
 
 	void Context::Clear(const vec4& color)

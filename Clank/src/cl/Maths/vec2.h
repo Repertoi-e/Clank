@@ -403,7 +403,7 @@ namespace cl {
 	template<class T>
 	inline bool tvec2<T>::operator!=(const tvec2<T>& other) const
 	{
-		return !(*this == other)
+		return !(*this == other);
 	}
 
 	template<class T>
@@ -475,7 +475,7 @@ namespace cl {
 	template<class T>
 	inline bool tvec2<T>::operator>=(const tvec2<T>& other) const
 	{
-		return !(this* <= other);
+		return !(*this <= other);
 	}
 
 	template <class T>
