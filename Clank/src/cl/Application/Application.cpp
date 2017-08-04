@@ -21,41 +21,40 @@ namespace cl {
 	}
 
 	Application::Application(void)
-		: m_bClosed(FALSE)
+		: m_Closed(FALSE)
 	{
 	}
 
 	void Application::DoFPS(void)
 	{
-		FpsSamples[It % MaxSamples] = float32(m_CycleInfo.Frames * m_CycleInfo.m_UpdatesPerSecond);
-		for (s32 i = 0; i < MaxSamples; i++)
-			m_CycleInfo.m_FramesPerSecond += FpsSamples[i];
-		m_CycleInfo.m_FramesPerSecond /= MaxSamples;
-		It = It == MaxSamples + 1 ? 0 : It + 1;
-		m_CycleInfo.Frames = 0;
+		CycleInfo& info = m_AppSettings.CycleInfo;
+		info.FpsSamples[info.It % info.MaxSamples] = float32(info.Frames * info.m_UpdatesPerSecond);
+		for (s32 i = 0; i < info.MaxSamples; i++)
+			info.m_FramesPerSecond += info.FpsSamples[i];
+		info.m_FramesPerSecond /= info.MaxSamples;
+		info.It = info.It == info.MaxSamples + 1 ? 0 : info.It + 1;
+		info.Frames = 0;
 	}
 
 	void Application::DoCycle(void)
 	{
-		m_CycleInfo.Timer = new Timer;
-		m_CycleInfo.UpdateTimer = m_CycleInfo.Timer->Elapsed().Millis();
-		m_CycleInfo.UpdateDeltaTime = new DeltaTime(m_CycleInfo.Timer->Elapsed().Millis());
-		while (!m_bClosed)
+		CycleInfo& info = m_AppSettings.CycleInfo;
+		while (!m_Closed)
 		{
-			float32 now = m_CycleInfo.Timer->Elapsed().Millis();
-			if (now - m_CycleInfo.UpdateTimer > m_CycleInfo.UpdateTick)
+			float32 now = info.Timer->Elapsed().Millis();
+			if (now - info.UpdateTimer > info.UpdateTick)
 			{
-				m_CycleInfo.UpdateDeltaTime->Update(now);
+				info.UpdateDeltaTime->Update(now);
 				DoWindowMessages();
 
-				DoUpdate(*m_CycleInfo.UpdateDeltaTime);
+				DoUpdate(*info.UpdateDeltaTime);
 
-				m_CycleInfo.Updates++;
-				m_CycleInfo.UpdateTimer += m_CycleInfo.UpdateTick;
+				info.Updates++;
+				info.UpdateTimer += info.UpdateTick;
 
 				DoFPS();
 
-				SetWindowTitle(String(m_sName + L" | FPS: " + std::to_wstring(m_CycleInfo.m_FramesPerSecond)).c_str());
+				SetWindowTitle(String(m_Name + L" | FPS: " + std::to_wstring(info.m_FramesPerSecond)).c_str());
 			}
 			{
 				Context::Instance().Clear(vec4(1, 1, 1, 1));
@@ -64,19 +63,19 @@ namespace cl {
 				{
 					DoRender();
 				}
-				m_CycleInfo.m_Frametime = frametimer.Elapsed().Millis();
-				m_CycleInfo.Frames++;
+				info.m_Frametime = frametimer.Elapsed().Millis();
+				info.Frames++;
 
 				Context::Instance().Present();
 			}
-			if (m_CycleInfo.Timer->Elapsed().Seconds() - m_CycleInfo.ElapsedSeconds > 1.f)
+			if (info.Timer->Elapsed().Seconds() - info.ElapsedSeconds > 1.f)
 			{
-				m_CycleInfo.ElapsedSeconds += 1.f;
-				m_CycleInfo.m_UpdatesPerSecond = m_CycleInfo.Updates;
+				info.ElapsedSeconds += 1.f;
+				info.m_UpdatesPerSecond = info.Updates;
 				DoTick();
-				m_CycleInfo.Updates = 0;
+				info.Updates = 0;
 			}
-			if (!m_bWindowFocused)
+			if (!m_WindowFocused)
 				Sleep(5);
 		}
 	}
@@ -88,7 +87,7 @@ namespace cl {
 		{
 			if (WM_QUIT == message.message)
 			{
-				m_bClosed = true;
+				m_Closed = true;
 				return;
 			}
 			TranslateMessage(&message);
@@ -101,7 +100,7 @@ namespace cl {
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<WindowFocusEvent>([&](WindowFocusEvent& e) -> BOOL
 		{
-			m_bWindowFocused = e.Focused();
+			m_WindowFocused = e.Focused();
 			return FALSE;
 		});
 
@@ -169,7 +168,7 @@ namespace cl {
 			return;
 		}
 
-		RECT r = { 0, 0, m_AppSettings.Width, m_AppSettings.Height };
+		RECT r = { 0, 0, cast(LONG) m_AppSettings.Width, cast(LONG) m_AppSettings.Height };
 		AdjustWindowRect(&r, m_AppSettings.WindowStyle, false);
 		s32 width = r.right - r.left;
 		s32 height = r.bottom - r.top;

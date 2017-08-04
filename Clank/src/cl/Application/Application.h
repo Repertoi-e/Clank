@@ -13,13 +13,6 @@ namespace cl {
 
 	class Layer;
 
-    struct API ApplicationSettings
-    {
-        WORD Width, Height;
-        BOOL VSync, Fullscreen;
-        DWORD WindowStyle;
-    };
-
 	struct API CycleInfo
 	{
 		Timer* Timer;
@@ -30,7 +23,20 @@ namespace cl {
 		u32 Frames, Updates;
 		s32 m_UpdatesPerSecond;
 		float32 m_FramesPerSecond, m_Frametime;
+	
+		// FPS Calculation
+		static const s32 MaxSamples = 64;
+		s32 It;
+		float32 FpsSamples[MaxSamples] = { 0.0f };
 	};
+
+    struct API ApplicationSettings
+    {
+        u32 Width, Height;
+        bool VSync, Fullscreen;
+        u32 WindowStyle;
+		CycleInfo CycleInfo;
+    };
 
     class API Application : public Singleton<Application>
 	{
@@ -38,20 +44,14 @@ namespace cl {
         HINSTANCE m_hInstance;
         HWND m_hWnd;
 
-		BOOL m_bWindowFocused;
+		BOOL m_WindowFocused;
 
-        String m_sName;
+        String m_Name;
         ApplicationSettings m_AppSettings;
-		CycleInfo m_CycleInfo;
 
-        BOOL m_bClosed;
+        BOOL m_Closed;
 
 		std::vector<Layer*> m_Layers;
-
-		// FPS Stuff:
-		static const s32 MaxSamples = 64;
-		s32 It;
-		float32 FpsSamples[MaxSamples] = { 0.0f };
     public:
         Application(void);
 
@@ -68,14 +68,11 @@ namespace cl {
 		Layer* PushLayer(Layer* layer);
 		void PopLayer(Layer* layer);
 
-        inline const String& GetName() const { return m_sName; }
-		inline void SetName(const String& name) { m_sName = name; }
+        inline const String& GetName() const { return m_Name; }
+		inline void SetName(const String& name) { m_Name = name; }
 
-		inline ApplicationSettings& GetSettings() { return m_AppSettings; }
-		inline void SetSettings(ApplicationSettings settings) { m_AppSettings = std::move(settings); }
-		
-		inline CycleInfo& GetCycleInfo() { return m_CycleInfo; }
-		inline void SetCycleInfo(CycleInfo info) { m_CycleInfo = std::move(info); }
+		inline const ApplicationSettings& GetSettings() { return m_AppSettings; }
+		inline void SetSettings(const ApplicationSettings& settings) { m_AppSettings = settings; }
 
         void SetWindowTitle(LPCWSTR title);
 

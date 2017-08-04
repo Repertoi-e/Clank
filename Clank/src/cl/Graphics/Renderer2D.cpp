@@ -94,8 +94,6 @@ namespace cl {
 	void Renderer2D::SetCamera(Camera* camera)
 	{
 		m_Camera = camera;
-		m_Matrices->Projection = m_Camera->GetProjectionMatrix();
-		UpdateMatrixBuffer();
 	}
 
 	void Renderer2D::PushMatrix(const mat4& matrix, bool override)
@@ -173,6 +171,10 @@ namespace cl {
 
 	void Renderer2D::Present(void)
 	{
+		m_Matrices->Projection = m_Camera->GetProjectionMatrix();
+		m_Matrices->View = m_Camera->GetViewMatrix();
+		UpdateMatrixBuffer();
+
 		m_MatrixBuffer->VSSet(0);
 
 		for (u32 i = 0; i < m_Textures.size(); i++)

@@ -66,9 +66,11 @@
     <ClCompile Include="src\cl\Application\Events\MouseEvent.cpp" />
     <ClCompile Include="src\cl\Application\Events\WindowEvent.cpp" />
     <ClCompile Include="src\cl\dxerr.cpp" />
+    <ClCompile Include="src\cl\Graphics\Camera.cpp" />
     <ClCompile Include="src\cl\Graphics\Context.cpp" />
     <ClCompile Include="src\cl\Graphics\Folder.cpp" />
     <ClCompile Include="src\cl\Graphics\Layers\Layer2D.cpp" />
+    <ClCompile Include="src\cl\Graphics\OrthographicCamera.cpp" />
     <ClCompile Include="src\cl\Graphics\Renderable2D.cpp" />
     <ClCompile Include="src\cl\Graphics\Renderer2D.cpp" />
     <ClCompile Include="src\cl\Graphics\Shader.cpp" />

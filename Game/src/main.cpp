@@ -5,9 +5,6 @@
 
 #define WIDTH		  800
 #define HEIGHT		  600
-#define FULLSCREEN	  FALSE
-#define VSYNC		  FALSE
-#define WINDOW_STYLE  WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_SIZEBOX | WS_VISIBLE
 
 using namespace cl;
 
@@ -149,16 +146,26 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 	Timer init;
 	{
 		g_Application.SetName(L"Game");
-		g_Application.SetSettings({ WIDTH, HEIGHT, VSYNC, FULLSCREEN, WINDOW_STYLE });
 
+		ApplicationSettings settings;
+		{
+			ZeroMemory(&settings, sizeof(ApplicationSettings));
+
+			settings.Width = WIDTH;
+			settings.Height = HEIGHT;
+			settings.VSync = FALSE;
+			settings.Fullscreen = FALSE;
+			settings.WindowStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_SIZEBOX | WS_VISIBLE;
+		
+			settings.CycleInfo.UpdateTick = 1000.0f / 60.0f;
+			settings.CycleInfo.Timer = new Timer;
+			settings.CycleInfo.UpdateTimer = 0.0f;
+			settings.CycleInfo.UpdateDeltaTime = new DeltaTime(0.0f);
+		}
+		g_Application.SetSettings(settings);
 		g_Application.DoWindow();
 
 		g_Application.PushLayer(new Game);
-
-		CycleInfo info;
-		ZeroMemory(&info, sizeof(CycleInfo));
-		info.UpdateTick = 1000.0f / 60.0f;
-		g_Application.SetCycleInfo(info);
 	}
 	LOG_WARN("Init took ", init.Elapsed().Millis(), " ms\n\n");
 

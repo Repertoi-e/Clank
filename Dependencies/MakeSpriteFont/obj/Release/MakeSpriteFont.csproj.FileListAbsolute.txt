@@ -3,3 +3,8 @@ P:\C++\Clank\Dependencies\MakeSpriteFont\bin\Release\MakeSpriteFont.pdb
 P:\C++\Clank\Dependencies\MakeSpriteFont\obj\Release\MakeSpriteFont.csprojResolveAssemblyReference.cache
 P:\C++\Clank\Dependencies\MakeSpriteFont\obj\Release\MakeSpriteFont.exe
 P:\C++\Clank\Dependencies\MakeSpriteFont\obj\Release\MakeSpriteFont.pdb
+C:\C++\Clank\Dependencies\MakeSpriteFont\bin\Release\MakeSpriteFont.exe
+C:\C++\Clank\Dependencies\MakeSpriteFont\bin\Release\MakeSpriteFont.pdb
+C:\C++\Clank\Dependencies\MakeSpriteFont\obj\Release\MakeSpriteFont.csprojResolveAssemblyReference.cache
+C:\C++\Clank\Dependencies\MakeSpriteFont\obj\Release\MakeSpriteFont.exe
+C:\C++\Clank\Dependencies\MakeSpriteFont\obj\Release\MakeSpriteFont.pdb
