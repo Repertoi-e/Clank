@@ -17,7 +17,7 @@ namespace cl {
 		u32 color;
 	};
 
-	struct API Renderer2DSettings
+	struct API Renderer2DDesc
 	{
 		u32 MaxQuads;
 		u32 MaxVertices;
@@ -52,12 +52,10 @@ namespace cl {
 
 		std::vector<Texture*> m_Textures;
 
-		Renderer2DSettings m_Settings;
+		Renderer2DDesc m_Desc;
 	public:
 		Renderer2D(void);
 		~Renderer2D(void);
-
-		void Create(void);
 
 		u32 HandleTexture(Texture* texture);
 
@@ -72,7 +70,7 @@ namespace cl {
 		void Present(void) override;
 
 		void UpdateMatrixBuffer();
-
-		inline void SetSettings(Renderer2DSettings settings) { m_Settings = std::move(settings); }
+	public:
+		static void Create(Renderer2D* renderer, Renderer2DDesc& rendererDesc);
 	};
 }

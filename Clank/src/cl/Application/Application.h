@@ -49,11 +49,13 @@ namespace cl {
 		BOOL m_WindowFocused;
 		BOOL m_Closed;
 
-        ApplicationDesc m_AppSettings;
+        ApplicationDesc m_Desc;
 
 		std::vector<Layer*> m_Layers;
-    public:
-        Application(void);
+	public:
+		Application(void);
+	
+		void Create(ApplicationDesc& appDesc);
 
 		void DoWindow(void);
 		void ShowWindow(void);
@@ -68,8 +70,8 @@ namespace cl {
 		Layer* PushLayer(Layer* layer);
 		void PopLayer(Layer* layer);
 
-		inline const ApplicationDesc& GetSettings() { return m_AppSettings; }
-		inline void SetSettings(const ApplicationDesc& settings) { m_AppSettings = settings; }
+		inline const ApplicationDesc& GetDescription() { return m_Desc; }
+		inline void SetDescription(const ApplicationDesc& settings) { m_Desc = settings; }
 
         void SetWindowTitle(LPCWSTR title);
 

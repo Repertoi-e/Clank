@@ -25,9 +25,15 @@ namespace cl {
 	{
 	}
 
+	void Application::Create(ApplicationDesc& appDesc)
+	{
+		SetDescription(appDesc);
+		DoWindow();
+	}
+
 	void Application::DoFPS(void)
 	{
-		CycleDesc& info = m_AppSettings.Cycle;
+		CycleDesc& info = m_Desc.Cycle;
 		info.FpsSamples[info.It % info.MaxSamples] = float32(info.Frames * info.m_UpdatesPerSecond);
 		for (s32 i = 0; i < info.MaxSamples; i++)
 			info.m_FramesPerSecond += info.FpsSamples[i];
@@ -38,7 +44,7 @@ namespace cl {
 
 	void Application::Start(void)
 	{
-		CycleDesc& info = m_AppSettings.Cycle;
+		CycleDesc& info = m_Desc.Cycle;
 		while (!m_Closed)
 		{
 			float32 now = info.Timer->Elapsed().Millis();
@@ -53,8 +59,6 @@ namespace cl {
 				info.UpdateTimer += info.UpdateTick;
 
 				DoFPS();
-
-				SetWindowTitle(String(m_AppSettings.Name + L" | FPS: " + std::to_wstring(info.m_FramesPerSecond)).c_str());
 			}
 			{
 				Context::Instance().Clear(vec4(1, 1, 1, 1));
@@ -140,7 +144,7 @@ namespace cl {
 			if (m_Layers[i] == layer)
 			{
 				m_Layers.erase(m_Layers.begin() + i);
-				delete layer;
+				cl_delete layer;
 			}
 	}
 
@@ -158,7 +162,7 @@ namespace cl {
 		wcex.lpfnWndProc = WndProcBind;
 		wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 		wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wcex.lpszClassName = m_AppSettings.ClassName.c_str();
+		wcex.lpszClassName = m_Desc.ClassName.c_str();
 		wcex.lpszMenuName = NULL;
 		wcex.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
@@ -168,12 +172,12 @@ namespace cl {
 			return;
 		}
 
-		RECT r = { 0, 0, cast(LONG) m_AppSettings.Width, cast(LONG) m_AppSettings.Height };
-		AdjustWindowRect(&r, m_AppSettings.WindowStyle, false);
+		RECT r = { 0, 0, cast(LONG) m_Desc.Width, cast(LONG) m_Desc.Height };
+		AdjustWindowRect(&r, m_Desc.WindowStyle, false);
 		s32 width = r.right - r.left;
 		s32 height = r.bottom - r.top;
 
-		m_hWnd = CreateWindow(m_AppSettings.ClassName.c_str(), L"Clank Window", m_AppSettings.WindowStyle,
+		m_hWnd = CreateWindow(m_Desc.ClassName.c_str(), L"Clank Window", m_Desc.WindowStyle,
 			GetSystemMetrics(SM_CXSCREEN) / 2 - width / 2,
 			GetSystemMetrics(SM_CYSCREEN) / 2 - height / 2, width, height, NULL, NULL, m_hInstance, NULL);
 		if (!m_hWnd)
@@ -182,7 +186,7 @@ namespace cl {
 			return;
 		}
 
-		Context::Instance().Create(m_hWnd, m_AppSettings);
+		Context::Instance().Create(m_hWnd, m_Desc);
 
 		FreeImage_Initialise();
 	}
@@ -211,8 +215,8 @@ namespace cl {
 			WORD width = LOWORD(lParam);
 			WORD height = HIWORD(lParam);
 
-			m_AppSettings.Width = width;
-			m_AppSettings.Height = height;
+			m_Desc.Width = width;
+			m_Desc.Height = height;
 
 			DoEvent(WindowResizeEvent(width, height));
 		}

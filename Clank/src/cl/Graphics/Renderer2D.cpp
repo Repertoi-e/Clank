@@ -6,31 +6,50 @@
 namespace cl {
 
 	Renderer2D::Renderer2D(void)
-		: m_Context(&Context::Instance()), m_Shader(new Shader), m_VertexBuffer(new Buffer), m_Indices(0), 
-		m_MatrixBuffer(new Buffer), m_IndexBuffer(new Buffer), m_Matrices(new Matrices)
+		: m_Context(&Context::Instance()), m_Shader(cl_new Shader), m_VertexBuffer(cl_new Buffer), m_Indices(0),
+		m_MatrixBuffer(cl_new Buffer), m_IndexBuffer(cl_new Buffer), m_Matrices(cl_new Matrices)
 	{
 	}
 
 	Renderer2D::~Renderer2D(void)
 	{
-		delete m_Shader;
-		delete m_VertexBuffer;
-		delete m_IndexBuffer;
-		delete m_MatrixBuffer;
-		delete m_Matrices;
+		cl_delete m_Shader;
+		cl_delete m_VertexBuffer;
+		cl_delete m_IndexBuffer;
+		cl_delete m_MatrixBuffer;
+		cl_delete m_Matrices;
 	}
 
-	void Renderer2D::Create(void)
+	void Renderer2D::Create(Renderer2D* renderer, Renderer2DDesc& rendererDesc)
 	{
-		PushMatrix(mat4::Identity(), true);
+		renderer->m_Desc = rendererDesc;
+		
+		renderer->PushMatrix(mat4::Identity(), true);
 
-		m_Shader->Create(L"VS_R2D.cso", L"PS_R2D.cso");
-		m_Shader->Bind();
+		ShaderDesc shaderDesc;
+		{
+			ZeroMemory(&shaderDesc, sizeof(ShaderDesc));
 
-		m_VertexBuffer->Create(BufferUsage::DYNAMIC, BufferBindFlag::VERTEX_BUFFER, m_Settings.BufferSize, BufferCPUA::WRITE);
+			shaderDesc.VertexFile = L"VS_R2D.cso";
+			shaderDesc.PixelFile = L"PS_R2D.cso";
+		}
+		Shader::Create(renderer->m_Shader, shaderDesc);
+		
+		renderer->m_Shader->Bind();
 
-		m_Matrices->View = mat4::Identity();
-		m_Matrices->Projection = mat4::Identity();
+		BufferDesc vertDesc;
+		{
+			ZeroMemory(&vertDesc, sizeof(BufferDesc));
+
+			vertDesc.Usage = BufferUsage::DYNAMIC;
+			vertDesc.BindFlag = BufferBindFlag::VERTEX_BUFFER;
+			vertDesc.Size = rendererDesc.BufferSize;
+			vertDesc.Access = BufferAccess::WRITE;
+		}
+		Buffer::Create(renderer->m_VertexBuffer, vertDesc);
+
+		renderer->m_Matrices->View = mat4::Identity();
+		renderer->m_Matrices->Projection = mat4::Identity();
 
 		InputLayout layout;
 		layout.Push<vec4>("POSITION");
@@ -38,13 +57,13 @@ namespace cl {
 		layout.Push<u32>("ID");
 		layout.Push<byte>("COLOR", 4);
 
-		ID3D10Blob* vsData = m_Shader->GetData().vs;
-		m_VertexBuffer->SetInputLayout(layout, vsData->GetBufferPointer(), vsData->GetBufferSize());
+		ID3D10Blob* vsData = renderer->m_Shader->GetData().vs;
+		renderer->m_VertexBuffer->SetInputLayout(layout, vsData->GetBufferPointer(), vsData->GetBufferSize());
 
-		u32* indices = new u32[m_Settings.MaxIndices];
+		u32* indices = cl_new u32[rendererDesc.MaxIndices];
 
 		u32 offset = 0;
-		for (u32 i = 0; i < m_Settings.MaxIndices; i += 6)
+		for (u32 i = 0; i < rendererDesc.MaxIndices; i += 6)
 		{
 			indices[i] = offset + 0;
 			indices[i + 1] = offset + 1;
@@ -57,38 +76,46 @@ namespace cl {
 			offset += 4;
 		}
 
-		m_IndexBuffer->Create(BufferUsage::DEFAULT, BufferBindFlag::INDEX_BUFFER, sizeof(u32) * m_Settings.MaxIndices, BufferCPUA::ZERO, indices);
+		BufferDesc indexDesc;
+		{
+			ZeroMemory(&indexDesc, sizeof(BufferDesc));
+
+			indexDesc.Usage = BufferUsage::DEFAULT;
+			indexDesc.BindFlag = BufferBindFlag::INDEX_BUFFER;
+			indexDesc.Size = sizeof(u32) * rendererDesc.MaxIndices;
+			indexDesc.Access = BufferAccess::ZERO;
+			indexDesc.InitialData = indices;
+		}
+		Buffer::Create(renderer->m_IndexBuffer, indexDesc);
+
+		BufferDesc matrixDesc;
+		{
+			ZeroMemory(&matrixDesc, sizeof(BufferDesc));
+
+			matrixDesc.Usage = BufferUsage::DYNAMIC;
+			matrixDesc.BindFlag = BufferBindFlag::CONSTANT_BUFFER;
+			matrixDesc.Size = sizeof(Matrices);
+			matrixDesc.Access = BufferAccess::WRITE;
+		}
+		Buffer::Create(renderer->m_MatrixBuffer, matrixDesc);
 		
-		m_MatrixBuffer->Create(BufferUsage::DYNAMIC, BufferBindFlag::CONSTANT_BUFFER, sizeof(Matrices), BufferCPUA::WRITE);
-		UpdateMatrixBuffer();
+		renderer->UpdateMatrixBuffer();
 	}
 
 	u32 Renderer2D::HandleTexture(Texture* texture)
 	{
-		u32 result = 0;
-		bool found = false;
 		for (u32 i = 0; i < m_Textures.size(); i++)
-		{
 			if (m_Textures[i] == texture)
-			{
-				result = i + 1;
-				found = true;
-				break;
-			}
-		}
+				return i + 1;
 
-		if (!found)
+		if (m_Textures.size() >= 16)
 		{
-			if (m_Textures.size() >= 16)
-			{
-				End();
-				Present();
-				Begin();
-			}
-			m_Textures.push_back(texture);
-			result = m_Textures.size();
+			End();
+			Present();
+			Begin();
 		}
-		return result;
+		m_Textures.push_back(texture);
+		return m_Textures.size();
 	}
 
 	void Renderer2D::SetCamera(Camera* camera)
@@ -115,7 +142,7 @@ namespace cl {
 
 	void Renderer2D::Begin(void)
 	{
-		m_Map = cast(Vertex*) m_VertexBuffer->Map(BufferMapCPUA::WRITE_DISCARD);
+		m_Map = cast(Vertex*) m_VertexBuffer->Map(BufferMapAccess::WRITE_DISCARD);
 	}
 
 	void Renderer2D::Submit(Renderable2D* renderable)
@@ -192,8 +219,7 @@ namespace cl {
 
 	void Renderer2D::UpdateMatrixBuffer()
 	{
-		void* matData = m_MatrixBuffer->Map(BufferMapCPUA::WRITE_DISCARD);
-		memcpy(matData, m_Matrices, sizeof(Matrices));
+		memcpy(m_MatrixBuffer->Map(BufferMapAccess::WRITE_DISCARD), m_Matrices, sizeof(Matrices));
 		m_MatrixBuffer->Unmap();
 	}
 }

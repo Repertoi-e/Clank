@@ -30,6 +30,8 @@
     <ClInclude Include="src\cl\Application\Events\MouseEvent.h" />
     <ClInclude Include="src\cl\Application\Events\WindowEvent.h" />
     <ClInclude Include="src\cl\dxerr.h" />
+    <ClInclude Include="src\cl\Entity\Component.h" />
+    <ClInclude Include="src\cl\Entity\Entity.h" />
     <ClInclude Include="src\cl\Graphics\Camera.h" />
     <ClInclude Include="src\cl\Graphics\Context.h" />
     <ClInclude Include="src\cl\Graphics\Folder.h" />
@@ -39,6 +41,7 @@
     <ClInclude Include="src\cl\Graphics\Renderable2D.h" />
     <ClInclude Include="src\cl\Graphics\Renderer.h" />
     <ClInclude Include="src\cl\Graphics\Renderer2D.h" />
+    <ClInclude Include="src\cl\Graphics\Scene2D.h" />
     <ClInclude Include="src\cl\Graphics\Shader.h" />
     <ClInclude Include="src\cl\Graphics\Buffer.h" />
     <ClInclude Include="src\cl\Graphics\Texture.h" />
@@ -49,6 +52,8 @@
     <ClInclude Include="src\cl\Maths\vec2.h" />
     <ClInclude Include="src\cl\Maths\vec3.h" />
     <ClInclude Include="src\cl\Maths\vec4.h" />
+    <ClInclude Include="src\cl\Memory\Allocator.h" />
+    <ClInclude Include="src\cl\Memory\Memory.h" />
     <ClInclude Include="src\cl\stdafx.h" />
     <ClInclude Include="src\cl\targetver.h" />
     <ClInclude Include="src\cl\types.h" />
@@ -66,6 +71,8 @@
     <ClCompile Include="src\cl\Application\Events\MouseEvent.cpp" />
     <ClCompile Include="src\cl\Application\Events\WindowEvent.cpp" />
     <ClCompile Include="src\cl\dxerr.cpp" />
+    <ClCompile Include="src\cl\Entity\Component.cpp" />
+    <ClCompile Include="src\cl\Entity\Entity.cpp" />
     <ClCompile Include="src\cl\Graphics\Camera.cpp" />
     <ClCompile Include="src\cl\Graphics\Context.cpp" />
     <ClCompile Include="src\cl\Graphics\Folder.cpp" />
@@ -73,6 +80,7 @@
     <ClCompile Include="src\cl\Graphics\OrthographicCamera.cpp" />
     <ClCompile Include="src\cl\Graphics\Renderable2D.cpp" />
     <ClCompile Include="src\cl\Graphics\Renderer2D.cpp" />
+    <ClCompile Include="src\cl\Graphics\Scene2D.cpp" />
     <ClCompile Include="src\cl\Graphics\Shader.cpp" />
     <ClCompile Include="src\cl\Graphics\Buffer.cpp" />
     <ClCompile Include="src\cl\Graphics\Texture.cpp" />
@@ -81,6 +89,7 @@
     <ClCompile Include="src\cl\Maths\vec2.cpp" />
     <ClCompile Include="src\cl\Maths\vec3.cpp" />
     <ClCompile Include="src\cl\Maths\vec4.cpp" />
+    <ClCompile Include="src\cl\Memory\Allocator.cpp" />
     <ClCompile Include="src\cl\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

@@ -22,16 +22,16 @@ namespace cl {
 		m_PS->Release();
 	}
 
-	void Shader::Create(LPCWSTR vertSrc, LPCWSTR pixelSrc)
+	void Shader::Create(Shader* shader, ShaderDesc& shaderDesc)
 	{
-		D3DReadFileToBlob(vertSrc, &m_Data.vs);
-		D3DReadFileToBlob(pixelSrc, &m_Data.ps);
+		D3DReadFileToBlob(shaderDesc.VertexFile.c_str(), &shader->m_Data.vs);
+		D3DReadFileToBlob(shaderDesc.PixelFile.c_str(), &shader->m_Data.ps);
 
-		ASSERT(m_Data.vs, "Couldn't read vertex shader file: \"", vertSrc,"\"");
-		ASSERT(m_Data.ps, "Couldn't read pixel shader file: \"", pixelSrc, "\"");
+		ASSERT(shader->m_Data.vs, "Couldn't read vertex shader file: \"", shaderDesc.VertexFile, "\"");
+		ASSERT(shader->m_Data.ps, "Couldn't read pixel shader file: \"", shaderDesc.PixelFile, "\"");
 
-		HR(Context::Instance().GetDevice()->CreateVertexShader(m_Data.vs->GetBufferPointer(), m_Data.vs->GetBufferSize(), NULL, &m_VS));
-		HR(Context::Instance().GetDevice()->CreatePixelShader(m_Data.ps->GetBufferPointer(), m_Data.ps->GetBufferSize(), NULL, &m_PS));
+		HR(Context::Instance().GetDevice()->CreateVertexShader(shader->m_Data.vs->GetBufferPointer(), shader->m_Data.vs->GetBufferSize(), NULL, &shader->m_VS));
+		HR(Context::Instance().GetDevice()->CreatePixelShader(shader->m_Data.ps->GetBufferPointer(), shader->m_Data.ps->GetBufferSize(), NULL, &shader->m_PS));
 	}
 
 	void Shader::Bind(void)

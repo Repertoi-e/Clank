@@ -21,17 +21,23 @@ public:
 	bool pressedW = false , pressedA = false, pressedS = false, pressedD = false;
 
 	Player()
-		: Renderable2D({ 40, 30 }, {20, 32}, NULLPTR, 0xffffffff)
+		: Renderable2D({ 40, 30 }, {20, 32}, NULLPTR, 0xffffffff), tex(cl_new Texture)
 	{
-		TextureSettings textureSettings;
-		textureSettings.Filter = TextureFilter::NEAREST;
+		TextureDesc textureDesc;
+		{
+			ZeroMemory(&textureDesc, sizeof(TextureDesc));
 
-		TextureLoadSettings textureLoadSettings;
-		textureLoadSettings.FlipHorizontal = false;
-		textureLoadSettings.FlipVertical = false;
+			textureDesc.Filter = TextureFilter::NEAREST;
+		}
 
-		tex = new Texture(textureSettings, textureLoadSettings);
-		tex->CreateFromFile(L"data/textures/player.dds");
+		TextureLoadProperties textureLoadProperties;
+		{
+			ZeroMemory(&textureLoadProperties, sizeof(TextureLoadProperties));
+
+			textureLoadProperties.FlipHorizontal = false;
+			textureLoadProperties.FlipVertical = false; 
+		}
+		Texture::CreateFromFile(tex, L"data/textures/player.dds", textureDesc, textureLoadProperties);
 
 		texture = tex;
 	}

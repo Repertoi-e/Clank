@@ -50,7 +50,7 @@ namespace cl {
 			*bits = b;
 
 		const u32 size = w * h * (b / 8);
-		byte* result = new byte[size];
+		byte* result = cl_new byte[size];
 		memcpy(result, pixels, size);
 		FreeImage_Unload(bitmap);
 		return result;

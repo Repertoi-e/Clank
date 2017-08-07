@@ -36,7 +36,7 @@ namespace cl {
 		Context(void);
 		~Context(void);
 
-		void Create(HWND hWnd, ApplicationDesc& settings);
+		void Create(HWND hWnd, ApplicationDesc& appDesc);
 
 		void Clear(const vec4& color);
 		void Present(void);

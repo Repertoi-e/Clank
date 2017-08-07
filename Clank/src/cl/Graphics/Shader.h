@@ -6,7 +6,13 @@
 
 namespace cl {
 
-	class Shader
+	struct API ShaderDesc
+	{
+		String VertexFile;
+		String PixelFile;
+	};
+
+	class API Shader
 	{
 	public:
 		struct Data
@@ -22,13 +28,13 @@ namespace cl {
 		Shader(void);
 		~Shader(void);
 
-		void Create(LPCWSTR vertSrc, LPCWSTR pixelSrc);
-
 		inline Data& GetData(void) { return m_Data; }
 
 		inline ID3D11VertexShader* GetVS(void) { return m_VS; }
 		inline ID3D11PixelShader* GetPS(void) { return m_PS; }
 
 		void Bind();
+	public:
+		static void Create(Shader* shader, ShaderDesc& shaderDesc);
 	};
 }

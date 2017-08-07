@@ -16,14 +16,14 @@ namespace cl {
 		STAGING		//  Read / Write   Read / Write
 	};
 
-	enum class BufferCPUA
+	enum class BufferAccess
 	{
 		ZERO,
 		READ,
 		WRITE
 	};
 
-	enum class BufferMapCPUA
+	enum class BufferMapAccess
 	{
 		READ,				// Buffer can only be read by the CPU.
 		WRITE,				// Buffer can only be written to by the CPU.
@@ -113,6 +113,15 @@ namespace cl {
 		}
 	};
 
+	struct API BufferDesc
+	{
+		BufferUsage Usage;
+		BufferBindFlag BindFlag;
+		u32 Size;
+		BufferAccess Access;
+		void* InitialData = NULLPTR;
+	};
+
 	class API Buffer
 	{
 	private:
@@ -126,12 +135,11 @@ namespace cl {
 		Buffer();
 		~Buffer();
 
-		void Create(BufferUsage usage, BufferBindFlag bindflag, u32 size, BufferCPUA access, void* initialData = NULLPTR);
 		void Destroy();
 
 		void SetInputLayout(InputLayout layout, void* vsbuffer, u32 vsbufferSize);
 
-		void* Map(BufferMapCPUA access);
+		void* Map(BufferMapAccess access);
 		void Unmap();
 
 		// Bind the buffer as a vertex buffer
@@ -142,10 +150,12 @@ namespace cl {
 
 		// Bind the buffer as an index buffer
 		void BindIB(u32 offset = 0, DXGI_FORMAT format = DXGI_FORMAT_R32_UINT);
-
+	public:
 		static D3D11_USAGE BufferUsageToD3D(BufferUsage usage);
-		static u32 BufferCPUAToD3D(BufferCPUA access);
-		static D3D11_MAP BufferMapCPUAToD3D(BufferMapCPUA access);
+		static u32 BufferAccessToD3D(BufferAccess access);
+		static D3D11_MAP BufferMapAccessToD3D(BufferMapAccess access);
 		static D3D11_BIND_FLAG BufferBindFlagToD3D(BufferBindFlag bindflag);
+	public:
+		static void Create(Buffer* buffer, BufferDesc& desc);
 	};
 }

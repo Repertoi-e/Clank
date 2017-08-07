@@ -33,11 +33,11 @@ namespace cl {
 		SafeRelease(m_RasterState);
 	}
 
-	void Context::Create(HWND hWnd, ApplicationDesc& settings)
+	void Context::Create(HWND hWnd, ApplicationDesc& appDesc)
 	{
 		m_FeatureLevel = D3D_FEATURE_LEVEL_11_0;
 
-		m_Settings = &settings;
+		m_Settings = &appDesc;
 
 		u32 Width = m_Settings->Width;
 		u32 Height = m_Settings->Height;
@@ -54,7 +54,7 @@ namespace cl {
 		u32 numModes;
 		HR(adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL));
 
-		DXGI_MODE_DESC* displayModeList = new DXGI_MODE_DESC[numModes];
+		DXGI_MODE_DESC* displayModeList = cl_new DXGI_MODE_DESC[numModes];
 		HR(adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList));
 
 		u32 numerator, denominator;
@@ -82,7 +82,7 @@ namespace cl {
 		SafeRelease(adapter);
 		SafeRelease(factory);
 
-		delete[] displayModeList;
+		cl_delete[] displayModeList;
 
 		DXGI_SWAP_CHAIN_DESC swapChainDesc;
 		{

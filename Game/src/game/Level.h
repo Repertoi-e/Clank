@@ -73,10 +73,9 @@ class TextureAtlas : public cl::Texture
 public:
 	s32 tilesize;
 
-	TextureAtlas(String file, cl::TextureSettings& textureSettings, cl::TextureLoadSettings& textureLoadSettings)
-		: cl::Texture(textureSettings, textureLoadSettings)
+	TextureAtlas(String file, cl::TextureDesc& textureDesc, cl::TextureLoadProperties& textureLoadProperties)
 	{
-		CreateFromFile(file);
+		Texture::CreateFromFile(this, file, textureDesc, textureLoadProperties);
 	}
 
 	std::vector<cl::vec2> GetUVs(s32 x, s32 y)
@@ -109,19 +108,19 @@ public:
 	TileDatabase()
 		: tiles(Tiles::END)
 	{
-		cl::TextureSettings textureSettings;
+		cl::TextureDesc textureSettings;
 		textureSettings.Filter = cl::TextureFilter::NEAREST;
 
-		cl::TextureLoadSettings textureLoadSettings;
+		cl::TextureLoadProperties textureLoadSettings;
 		textureLoadSettings.FlipHorizontal = false;
 		textureLoadSettings.FlipVertical = false;
 
-		tatlas = new TextureAtlas(L"data/textures/atlas.dds", textureSettings, textureLoadSettings);
+		tatlas = cl_new TextureAtlas(L"data/textures/atlas.dds", textureSettings, textureLoadSettings);
 		tatlas->tilesize = 32;
 
-		tiles[AIR] = new AirTile();
-		tiles[DIRT] = new ClassicTile(DIRT);
-		tiles[GRASS] = new ClassicTile(GRASS);
+		tiles[AIR] = cl_new AirTile();
+		tiles[DIRT] = cl_new ClassicTile(DIRT);
+		tiles[GRASS] = cl_new ClassicTile(GRASS);
 	}
 
 	void InitTiles()
@@ -155,7 +154,7 @@ public:
 		} }
 
 		if (!high)
-			high = new cl::Renderable2D({ 0, 0 }, {16, 16}, 0xff00ffff);
+			high = cl_new cl::Renderable2D({ 0, 0 }, {16, 16}, 0xff00ffff);
 		
 		for (auto a : highlight)
 		{

@@ -6,7 +6,7 @@
 namespace cl {
 
 	Buffer::Buffer(void)
-		: m_Buffer(NULLPTR), m_MappedSubresource(new D3D11_MAPPED_SUBRESOURCE), m_Desc(new D3D11_BUFFER_DESC), m_InputLayout(NULLPTR)
+		: m_Buffer(NULLPTR), m_MappedSubresource(cl_new D3D11_MAPPED_SUBRESOURCE), m_Desc(cl_new D3D11_BUFFER_DESC), m_InputLayout(NULLPTR)
 	{
 	}
 
@@ -15,26 +15,26 @@ namespace cl {
 		m_Buffer->Release();
 	}
 
-	void Buffer::Create(BufferUsage usage, BufferBindFlag bindflag, u32 size, BufferCPUA access, void* initialData)
+	void Buffer::Create(Buffer* buffer, BufferDesc& desc)
 	{
-		ZeroMemory(m_Desc, sizeof(D3D11_BUFFER_DESC));
+		ZeroMemory(buffer->m_Desc, sizeof(D3D11_BUFFER_DESC));
 
-		m_Desc->Usage = BufferUsageToD3D(usage);
-		m_Desc->ByteWidth = size;
-		m_Desc->BindFlags = BufferBindFlagToD3D(bindflag);
-		m_Desc->CPUAccessFlags = BufferCPUAToD3D(access);
+		buffer->m_Desc->Usage = BufferUsageToD3D(desc.Usage);
+		buffer->m_Desc->ByteWidth = desc.Size;
+		buffer->m_Desc->BindFlags = BufferBindFlagToD3D(desc.BindFlag);
+		buffer->m_Desc->CPUAccessFlags = BufferAccessToD3D(desc.Access);
 
 		D3D11_SUBRESOURCE_DATA* indataptr = NULLPTR;
-		if (initialData)
+		if (desc.InitialData)
 		{
 			D3D11_SUBRESOURCE_DATA initData;
-			initData.pSysMem = initialData;
+			initData.pSysMem = desc.InitialData;
 			initData.SysMemPitch = 0;
 			initData.SysMemSlicePitch = 0;
 			indataptr = &initData;
 		}
 
-		HR(Context::Instance().GetDevice()->CreateBuffer(m_Desc, indataptr, &m_Buffer));
+		HR(Context::Instance().GetDevice()->CreateBuffer(buffer->m_Desc, indataptr, &buffer->m_Buffer));
 	}
 
 	void Buffer::Destroy(void)
@@ -51,7 +51,7 @@ namespace cl {
 
 		const std::vector<InputElement>& elements = m_Layout.GetElements();
 
-		D3D11_INPUT_ELEMENT_DESC* ied = new D3D11_INPUT_ELEMENT_DESC[elements.size()];
+		D3D11_INPUT_ELEMENT_DESC* ied = cl_new D3D11_INPUT_ELEMENT_DESC[elements.size()];
 		for (u32 i = 0; i < elements.size(); i++)
 		{
 			const InputElement& element = elements[i];
@@ -60,9 +60,9 @@ namespace cl {
 		HR(Context::Instance().GetDevice()->CreateInputLayout(ied, elements.size(), vsbuffer, vsbufferSize, &m_InputLayout));
 	}
 
-	void* Buffer::Map(BufferMapCPUA access)
+	void* Buffer::Map(BufferMapAccess access)
 	{
-		HR(Context::Instance().GetDeviceContext()->Map(m_Buffer, NULL, BufferMapCPUAToD3D(access), NULL, m_MappedSubresource));
+		HR(Context::Instance().GetDeviceContext()->Map(m_Buffer, NULL, BufferMapAccessToD3D(access), NULL, m_MappedSubresource));
 		
 		return m_MappedSubresource->pData;
 	}
@@ -106,33 +106,33 @@ namespace cl {
 		return D3D11_USAGE_DEFAULT;
 	}
 
-	u32 Buffer::BufferCPUAToD3D(BufferCPUA access)
+	u32 Buffer::BufferAccessToD3D(BufferAccess access)
 	{
 		switch (access)
 		{
-		case BufferCPUA::ZERO:
+		case BufferAccess::ZERO:
 			return 0;
-		case BufferCPUA::READ:
+		case BufferAccess::READ:
 			return D3D11_CPU_ACCESS_READ;
-		case BufferCPUA::WRITE:
+		case BufferAccess::WRITE:
 			return D3D11_CPU_ACCESS_WRITE;
 		}
 		return 0;
 	}
 
-	D3D11_MAP Buffer::BufferMapCPUAToD3D(BufferMapCPUA access)
+	D3D11_MAP Buffer::BufferMapAccessToD3D(BufferMapAccess access)
 	{
 		switch (access)
 		{
-		case BufferMapCPUA::READ:
+		case BufferMapAccess::READ:
 			return D3D11_MAP_READ;
-		case BufferMapCPUA::WRITE:
+		case BufferMapAccess::WRITE:
 			return D3D11_MAP_WRITE;
-		case BufferMapCPUA::READ_WRITE:
+		case BufferMapAccess::READ_WRITE:
 			return D3D11_MAP_READ_WRITE;
-		case BufferMapCPUA::WRITE_DISCARD:
+		case BufferMapAccess::WRITE_DISCARD:
 			return D3D11_MAP_WRITE_DISCARD;
-		case BufferMapCPUA::WRITE_NO_OVERWRITE:
+		case BufferMapAccess::WRITE_NO_OVERWRITE:
 			return D3D11_MAP_WRITE_NO_OVERWRITE;
 		}
 		return D3D11_MAP_READ;
