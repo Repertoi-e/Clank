@@ -177,7 +177,7 @@ namespace cl {
 		s32 width = r.right - r.left;
 		s32 height = r.bottom - r.top;
 
-		m_hWnd = CreateWindow(m_Desc.ClassName.c_str(), L"Clank Window", m_Desc.WindowStyle,
+		m_hWnd = CreateWindow(m_Desc.ClassName.c_str(), m_Desc.Name.c_str(), m_Desc.WindowStyle,
 			GetSystemMetrics(SM_CXSCREEN) / 2 - width / 2,
 			GetSystemMetrics(SM_CYSCREEN) / 2 - height / 2, width, height, NULL, NULL, m_hInstance, NULL);
 		if (!m_hWnd)
@@ -263,6 +263,14 @@ namespace cl {
 			ClientToScreen(m_hWnd, &pt);
 
 			DoEvent(MouseClickedEvent(pt.x, pt.y, MOUSE_RIGHT, GET_MODS));
+		}
+		break;
+		case WM_MOUSEWHEEL:
+		{
+			POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+			ClientToScreen(m_hWnd, &pt);
+
+			DoEvent(MouseScrollEvent(pt.x, pt.y, GET_WHEEL_DELTA_WPARAM(wParam)));
 		}
 		break;
 		case WM_RBUTTONUP:

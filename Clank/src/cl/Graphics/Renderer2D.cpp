@@ -30,8 +30,8 @@ namespace cl {
 		{
 			ZeroMemory(&shaderDesc, sizeof(ShaderDesc));
 
-			shaderDesc.VertexFile = L"VS_R2D.cso";
-			shaderDesc.PixelFile = L"PS_R2D.cso";
+			shaderDesc.VertexFile = rendererDesc.VertexShaderFile;
+			shaderDesc.PixelFile = rendererDesc.PixelShaderFile;
 		}
 		Shader::Create(renderer->m_Shader, shaderDesc);
 		
@@ -131,11 +131,8 @@ namespace cl {
 
 	void Renderer2D::PopMatrix()
 	{
-		if (m_TransformationStack.size() <= 1)
-		{	
-			LOG_WARN("Trying to pop matrix but size of stack is <= 1!");
-			return;
-		}
+		ASSERT(m_TransformationStack.size() > 1, "No matrices to pop!");
+		
 		m_TransformationStack.pop_back();
 		m_TransformationBack = &m_TransformationStack.back();
 	}

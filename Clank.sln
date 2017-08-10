@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xwbtool_Desktop_2017", "Dep
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FreeImage", "Dependencies\FreeImage\FreeImage.vcxproj", "{6F2FF135-E343-4138-A6FB-2D1F2540A3F8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Conway's Game of Life", "Conway's Game of Life\Conway's Game of Life.vcxproj", "{2C591DE8-8902-4FB3-9667-3EF34FD41563}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,18 @@ Global
 		{6F2FF135-E343-4138-A6FB-2D1F2540A3F8}.Release|x64.Build.0 = Release|x64
 		{6F2FF135-E343-4138-A6FB-2D1F2540A3F8}.Release|x86.ActiveCfg = Release|Win32
 		{6F2FF135-E343-4138-A6FB-2D1F2540A3F8}.Release|x86.Build.0 = Release|Win32
+		{2C591DE8-8902-4FB3-9667-3EF34FD41563}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{2C591DE8-8902-4FB3-9667-3EF34FD41563}.Debug|ARM.ActiveCfg = Debug|Win32
+		{2C591DE8-8902-4FB3-9667-3EF34FD41563}.Debug|x64.ActiveCfg = Debug|x64
+		{2C591DE8-8902-4FB3-9667-3EF34FD41563}.Debug|x64.Build.0 = Debug|x64
+		{2C591DE8-8902-4FB3-9667-3EF34FD41563}.Debug|x86.ActiveCfg = Debug|Win32
+		{2C591DE8-8902-4FB3-9667-3EF34FD41563}.Debug|x86.Build.0 = Debug|Win32
+		{2C591DE8-8902-4FB3-9667-3EF34FD41563}.Release|Any CPU.ActiveCfg = Release|Win32
+		{2C591DE8-8902-4FB3-9667-3EF34FD41563}.Release|ARM.ActiveCfg = Release|Win32
+		{2C591DE8-8902-4FB3-9667-3EF34FD41563}.Release|x64.ActiveCfg = Release|x64
+		{2C591DE8-8902-4FB3-9667-3EF34FD41563}.Release|x64.Build.0 = Release|x64
+		{2C591DE8-8902-4FB3-9667-3EF34FD41563}.Release|x86.ActiveCfg = Release|Win32
+		{2C591DE8-8902-4FB3-9667-3EF34FD41563}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

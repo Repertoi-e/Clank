@@ -2,6 +2,9 @@
 
 #include "cl/stdafx.h"
 
+#include <codecvt>
+#include <string>
+
 #define LOG_LEVEL_NOLOG -1
 #define LOG_LEVEL_FATAL  0
 #define LOG_LEVEL_ERROR	 1
@@ -21,11 +24,18 @@ namespace cl {
 		mbstowcs(to_wchar_buffer, c, strlen(c) + 1);
 		return to_wchar_buffer;
 	}
-
+	
 	template <>
 	static const wchar* to_string<wchar>(const wchar& t)
 	{
 		return &t;
+	}
+
+	template <>
+	static const wchar* to_string<char*>(char* const& t)
+	{
+		mbstowcs(to_wchar_buffer, t, 2);
+		return to_wchar_buffer;
 	}
 
 	template <>

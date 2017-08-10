@@ -14,6 +14,9 @@ namespace cl {
 	public:
 		Camera(const mat4& projectionMatrix, const mat4& viewMatrix);
 
+		inline void SetProjectionMatrix(const mat4& projectionMatrix) { m_ProjectionMatrix = projectionMatrix; }
+		inline void SetViewMatrix(const mat4& viewMatrix) { m_ViewMatrix = viewMatrix; }
+
 		inline const mat4& GetProjectionMatrix() { return m_ProjectionMatrix; }
 		inline const mat4& GetViewMatrix() { return m_ViewMatrix; }
 	};

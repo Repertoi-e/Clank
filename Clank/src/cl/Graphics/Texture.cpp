@@ -45,7 +45,7 @@ namespace cl {
 		return DXGI_FORMAT_UNKNOWN;
 	}
 
-	void Texture::CreateFromFile(Texture* texture, const String& file, TextureDesc& textureDesc, TextureLoadProperties& loadProperties)
+	void Texture::CreateFromFile(Texture* texture, const String& file, TextureDesc& textureDesc, TextureLoadProperties loadProperties)
 	{
 		byte* data = nullptr;
 		data = LoadImage(file, &texture->m_Width, &texture->m_Height, &texture->m_BPP, loadProperties.FlipHorizontal, !loadProperties.FlipVertical);

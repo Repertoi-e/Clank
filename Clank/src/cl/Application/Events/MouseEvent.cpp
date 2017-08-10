@@ -22,4 +22,9 @@ namespace cl {
 		: MouseButtonEvent(cast(EventType) GetStaticType(), x, y), m_Button(button), m_Mods(mods)
 	{
 	}
+
+	MouseScrollEvent::MouseScrollEvent(s32 x, s32 y, short distance)
+		: Event(cast(EventType) GetStaticType()), m_Distance(distance), m_x(x), m_y(y)
+	{
+	}
 }

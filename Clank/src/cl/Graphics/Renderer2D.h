@@ -23,6 +23,7 @@ namespace cl {
 		u32 MaxVertices;
 		u32 BufferSize;
 		u32 MaxIndices;
+		String VertexShaderFile, PixelShaderFile;
 	};
 
 	struct Matrices

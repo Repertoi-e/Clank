@@ -22,6 +22,23 @@ namespace cl {
 		static s32 GetStaticType() { return EventType::MOUSE_MOVED; }
 	};
 
+	class API MouseScrollEvent : public Event
+	{
+	private:
+		s32 m_x;
+		s32 m_y;
+		short m_Distance;
+	public:
+		MouseScrollEvent(s32 x, s32 y, short distance);
+
+		const s32 GetX() const { return m_x; }
+		const s32 GetY() const { return m_y; }
+
+		const short GetDistance() const { return m_Distance; }
+
+		static s32 GetStaticType() { return EventType::MOUSE_SCROLLED; }
+	};
+
 	class API MouseButtonEvent : public Event
 	{
 	private:

@@ -73,9 +73,9 @@ class TextureAtlas : public cl::Texture
 public:
 	s32 tilesize;
 
-	TextureAtlas(String file, cl::TextureDesc& textureDesc, cl::TextureLoadProperties& textureLoadProperties)
+	TextureAtlas(String file, cl::TextureDesc& textureDesc, cl::TextureLoadProperties textureLoadProperties = { 0, 0 })
 	{
-		Texture::CreateFromFile(this, file, textureDesc, textureLoadProperties);
+		Texture::CreateFromFile(this, file, textureDesc, std::move(textureLoadProperties));
 	}
 
 	std::vector<cl::vec2> GetUVs(s32 x, s32 y)
@@ -109,13 +109,13 @@ public:
 		: tiles(Tiles::END)
 	{
 		cl::TextureDesc textureSettings;
-		textureSettings.Filter = cl::TextureFilter::NEAREST;
+		{
+			ZeroMemory(&textureSettings, sizeof(cl::TextureDesc));
 
-		cl::TextureLoadProperties textureLoadSettings;
-		textureLoadSettings.FlipHorizontal = false;
-		textureLoadSettings.FlipVertical = false;
+			textureSettings.Filter = cl::TextureFilter::NEAREST;
+		}
+		tatlas = cl_new TextureAtlas(L"data/textures/atlas.dds", textureSettings);
 
-		tatlas = cl_new TextureAtlas(L"data/textures/atlas.dds", textureSettings, textureLoadSettings);
 		tatlas->tilesize = 32;
 
 		tiles[AIR] = cl_new AirTile();

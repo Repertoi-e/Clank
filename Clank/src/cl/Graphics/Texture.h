@@ -20,7 +20,6 @@ namespace cl {
 		LUMINANCE_ALPHA
 	};
 
-
 	struct API TextureDesc
 	{
 		PixelFormat Format;
@@ -65,6 +64,6 @@ namespace cl {
 	public:
 		static DXGI_FORMAT PixelFormatToD3D(PixelFormat format);
 	public:
-		static void CreateFromFile(Texture* texture, const String& file, TextureDesc& textureDesc, TextureLoadProperties& loadProperties);
+		static void CreateFromFile(Texture* texture, const String& file, TextureDesc& textureDesc, TextureLoadProperties loadProperties = { 0, 0 });
 	};
 }
