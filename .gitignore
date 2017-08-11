@@ -34,7 +34,6 @@
 # VS
 .vs/
 Dependencies/
-bin/
 *.sln
 *.vcxproj
 *.vcxproj.filters

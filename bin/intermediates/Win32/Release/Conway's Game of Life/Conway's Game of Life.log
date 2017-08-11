@@ -1,0 +1,19 @@
+﻿  Universe.cpp
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\include\vcruntime_new.h(38): warning C4595: 'operator new': non-member operator new or delete functions may not be declared inline
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\include\vcruntime_new.h(49): warning C4595: 'operator new[]': non-member operator new or delete functions may not be declared inline
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\include\vcruntime_new.h(59): warning C4595: 'operator delete': non-member operator new or delete functions may not be declared inline
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\include\vcruntime_new.h(68): warning C4595: 'operator delete[]': non-member operator new or delete functions may not be declared inline
+..\Conway's Game of Life\src\Universe.cpp(39): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+..\Conway's Game of Life\src\Universe.cpp(101): warning C4244: 'argument': conversion from 'u32' to 'float32', possible loss of data
+..\Conway's Game of Life\src\Universe.cpp(101): warning C4244: 'argument': conversion from 'const u32' to 'float32', possible loss of data
+     Creating library C:\C++\Clank\bin\Win32\Release\Conway's Game of Life.lib and object C:\C++\Clank\bin\Win32\Release\Conway's Game of Life.exp
+  Generating code
+  3 of 6652 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    2 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  Conway's Game of Life.vcxproj -> C:\C++\Clank\bin\Win32\Release\Conway's Game of Life.exe
+  Microsoft (R) Direct3D Shader Compiler 10.1
+  Copyright (C) 2013 Microsoft. All rights reserved.
+  
+  compilation object save succeeded; see C:\C++\Clank\bin\Win32\Release\PS_R2D.cso

@@ -1,0 +1,13 @@
+﻿  Hotloader.cpp
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\vcruntime_new.h(38): warning C4595: 'operator new': non-member operator new or delete functions may not be declared inline
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\vcruntime_new.h(49): warning C4595: 'operator new[]': non-member operator new or delete functions may not be declared inline
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\vcruntime_new.h(59): warning C4595: 'operator delete': non-member operator new or delete functions may not be declared inline
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.10.25017\include\vcruntime_new.h(68): warning C4595: 'operator delete[]': non-member operator new or delete functions may not be declared inline
+c:\c++\clank\conway's game of life\src\hotloader.cpp(65): warning C4715: 'ThreadProc': not all control paths return a value
+     Creating library C:\C++\Clank\bin\Win32\Debug\Conway's Game of Life.lib and object C:\C++\Clank\bin\Win32\Debug\Conway's Game of Life.exp
+  Conway's Game of Life.vcxproj -> C:\C++\Clank\bin\Win32\Debug\Conway's Game of Life.exe
+  Conway's Game of Life.vcxproj -> C:\C++\Clank\bin\Win32\Debug\Conway's Game of Life.pdb (Partial PDB)
+  Microsoft (R) Direct3D Shader Compiler 10.1
+  Copyright (C) 2013 Microsoft. All rights reserved.
+  
+  compilation object save succeeded; see C:\C++\Clank\bin\Win32\Debug\PS_R2D.cso

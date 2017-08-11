@@ -1,12 +1,11 @@
 #include <Clank.h>
 
 #include "Universe.h"
+#include "Hotloader.h"
 
-#include <thread>
-#include <fstream>
-
-constexpr u32 WIDTH = 800u;
-constexpr u32 HEIGHT = 600u;
+constexpr u32	  WIDTH		   = 800u;
+constexpr u32	  HEIGHT	   = 600u;
+constexpr float32 ASPECT_RATIO = WIDTH / HEIGHT;
 
 using namespace cl;
 
@@ -14,59 +13,37 @@ class Game : public Layer2D
 {
 private:
 	Universe* m_Universe;
-	
+	Hotloader* m_Hotloader;
+
 	Renderable2D* m_Background;
 	Renderer2D* m_BackgroundRenderer;
 
 	OrthographicCamera* m_Camera;
 	OrthographicCamera* m_BackgroundCamera;
-	
+
 	vec2 m_MouseDelta;
 	vec2 m_CameraOffset;
+	
+	vec2 m_TargetCameraOffset;
 
 	float32 m_CameraZoom = 0.0f;
-
+	float32 m_TargetCameraZoom;
+	
 	u32 m_Speed;
-
-	String m_HotloaderPath;
-	std::thread m_HotloaderThread;
-	bool m_HotloaderShouldClose;
 public:
 	Game(const String& path)
-		: Layer2D(mat4::Orthographic(0.0f, cast(float32) WIDTH, 0.0f, cast(float32) HEIGHT, -1.0f, 1.0f)), m_Universe(new Universe), 
-		m_HotloaderPath(path), m_Camera(cl_new OrthographicCamera(m_ProjectionMatrix)), m_BackgroundCamera(cl_new OrthographicCamera(m_ProjectionMatrix)),
-		m_BackgroundRenderer(cl_new Renderer2D)
+		: Layer2D(mat4::Orthographic(0.0f, cast(float32) WIDTH, 0.0f, cast(float32) HEIGHT, -1.0f, 1.0f)), m_Universe(cl_new Universe),
+		m_Camera(cl_new OrthographicCamera(m_ProjectionMatrix)), m_BackgroundCamera(cl_new OrthographicCamera(m_ProjectionMatrix)),
+		m_BackgroundRenderer(cl_new Renderer2D), m_Hotloader(cl_new Hotloader)
 	{
-		m_HotloaderShouldClose = false;
+		UpdateConfigFile(path + L"config.txt");
 
-		UpdateConfigFile(m_HotloaderPath + L"config.txt");
-
-		m_HotloaderThread = std::thread([&]() 
-		{
-			HANDLE hDir = CreateFileW(m_HotloaderPath.c_str(), FILE_LIST_DIRECTORY, FILE_SHARE_WRITE | FILE_SHARE_READ | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
-
-			FILE_NOTIFY_INFORMATION strFileNotifyInfo[1024];
-			DWORD dwBytesReturned = 0;
-			BOOL hack = FALSE;
-			while(!m_HotloaderShouldClose)
-			{
-				if (ReadDirectoryChangesW(hDir, (LPVOID)&strFileNotifyInfo, sizeof(strFileNotifyInfo), FALSE, FILE_NOTIFY_CHANGE_LAST_WRITE, &dwBytesReturned, NULL, NULL) != 0)
-				{
-					hack = !hack;
-					if (!hack)
-					{
-						if (String(strFileNotifyInfo[0].FileName) == L"config.txt")
-							UpdateConfigFile(m_HotloaderPath + L"config.txt");
-					}
-				}
-			}
-		});
+		Hotloader::Create(m_Hotloader, path, std::bind(&Game::UpdateConfigFile, this, std::placeholders::_1));
 	}
 
 	~Game()
 	{
-		m_HotloaderShouldClose = true;
-		m_HotloaderThread.join();
+		m_Hotloader->Join();
 	}
 
 	void Init(Context* context, Renderer2D* renderer) override
@@ -97,13 +74,13 @@ public:
 			ZeroMemory(&textureLoadProperties, sizeof(TextureLoadProperties));
 
 			textureDesc.Filter = TextureFilter::NEAREST;
-			
+
 			textureLoadProperties.FlipHorizontal = false;
 			textureLoadProperties.FlipVertical = false;
 		}
 		Texture::CreateFromFile(background, L"cgl_data/bg.jpg", textureDesc, textureLoadProperties);
-		
-		m_Background = cl_new Renderable2D({ WIDTH / 2.0f, HEIGHT / 2.0f }, { 1920 / 3.6f, 1080 / 3.6f }, background, 0xffffffff);
+
+		m_Background = cl_new Renderable2D({ WIDTH / 2.0f, HEIGHT / 2.0f }, { 1920 / 3.6f + 100, 1080 / 3.6f + 100 }, background, 0xffffffff);
 	}
 
 	void OnEvent(Event& event) override
@@ -113,10 +90,10 @@ public:
 		{
 			if (e.IsDragged())
 			{
-				vec2 amount = m_MouseDelta - vec2(e.GetX(), e.GetY());
-				amount *= 0.2f;
+				vec2 amount = m_MouseDelta - vec2(cast(float32) e.GetX(), cast(float32) e.GetY());
+				amount *= 0.4f;
 
-				m_CameraOffset += vec2(amount.x, -amount.y);
+				m_TargetCameraOffset += vec2(amount.x, -amount.y);
 			}
 
 			m_MouseDelta = vec2(e.GetX(), e.GetY());
@@ -126,91 +103,39 @@ public:
 
 		dispatcher.Dispatch<MouseScrollEvent>([&](MouseScrollEvent& e) -> bool
 		{
-			m_CameraZoom += e.GetDistance() * -1;
+			m_TargetCameraZoom += e.GetDistance() * -1;
 
-			if (m_CameraZoom < 20)
-				m_CameraZoom = 20;
-			if (m_CameraZoom > 840)
-				m_CameraZoom = 840;
+			if (m_TargetCameraZoom < 20)
+				m_TargetCameraZoom = 20;
+			if (m_TargetCameraZoom > 840)
+				m_TargetCameraZoom = 840;
 
 			return false;
 		});
 	}
 
-	bool ChangePreset(String preset)
-	{
-		std::transform(preset.begin(), preset.end(), preset.begin(), towlower);
-		
-		static String lastPreset = L"";
-		if (lastPreset == preset)
-			return false;
-
-		if (preset == L"-clear")
-			m_Universe->Clear();
-		if (preset == L"-random")
-			m_Universe->Randomize();
-
-		m_Universe->SetPreset(preset);
-
-		lastPreset = preset;
-		return true;
-	}
-
-	void UpdateConfigFile(String path)
-	{
-		std::wifstream wif(path);
-		wif.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar>));
-		
-		String wline;
-		while (std::getline(wif, wline))
-		{
-			wchar first = wline[0];
-			if (first == L'#')
-				continue;
-
-			u32 speed = wline.find(L"speed:");
-			if (speed < 20000000u)
-			{
-				wline.erase(0, 6);
-				wline.erase(std::remove_if(wline.begin(), wline.end(), std::bind(std::isspace<wchar>, std::placeholders::_1, std::locale::classic())), wline.end());
-
-				s32 newspeed = std::stoi(wline);
-				if (m_Speed != newspeed)
-				{
-					m_Speed = newspeed;
-					
-					print("[Hotloader] Setting speed to /%\n", m_Speed);
-				}
-			}
-
-			u32 preset = wline.find(L"preset:");
-			if (preset < 20000000u)
-			{
-				wline.erase(0, 7);
-				wline.erase(std::remove_if(wline.begin(), wline.end(), std::bind(std::isspace<wchar>, std::placeholders::_1, std::locale::classic())), wline.end());
-
-				if (ChangePreset(wline))
-					print("[Hotloader] Setting preset to /%\n", wline);
-			}
-		}
-	}
-
-	s32 g_t;
+	s32 t = 0;
+	
 	void OnUpdate(const DeltaTime& dt)
 	{
-		g_t++;
+		t++;
+		
 		if (m_Speed != 0)
 		{
-			if (g_t % m_Speed == 0)
+			if (t % m_Speed == 0)
 				m_Universe->DoGeneration();
 		}
-	
-		float32 aspect = WIDTH / HEIGHT;
-		m_Camera->SetProjectionMatrix(mat4::Orthographic(-m_CameraZoom, cast(float32) WIDTH + m_CameraZoom, -m_CameraZoom * aspect, cast(float32) HEIGHT + m_CameraZoom * aspect, -1.0f, 1.0f));
+
+		m_CameraOffset.Lerp(m_TargetCameraOffset, 0.8f);
+		m_CameraZoom += (m_TargetCameraZoom - m_CameraZoom) * 0.3f;
+
+		m_Background->bounds.position = vec2(WIDTH / 2.0f, HEIGHT / 2.0f) + m_CameraOffset * 0.01f;
+
+		m_Camera->SetProjectionMatrix(mat4::Orthographic(-m_CameraZoom, cast(float32) WIDTH + m_CameraZoom, -m_CameraZoom * ASPECT_RATIO, cast(float32) HEIGHT + m_CameraZoom * ASPECT_RATIO, -1.0f, 1.0f));
 	}
 
 	void OnTick() override
-	{		
+	{
 	}
 
 	void PreRender(Context* context, Renderer2D* renderer) override
@@ -224,6 +149,71 @@ public:
 	void OnRender(Context* context, Renderer2D* renderer) override
 	{
 		m_Universe->Draw(renderer, m_CameraOffset);
+	}
+
+	bool ChangePreset(String preset)
+	{
+		std::transform(preset.begin(), preset.end(), preset.begin(), towlower);
+
+		static String lastPreset = L"";
+		if (lastPreset == preset)
+			return false;
+
+		if (preset == L"-clear")
+			m_Universe->Clear();
+		if (preset == L"-random")
+		{
+			m_Universe->Randomize();
+			return true;
+		}
+
+		m_Universe->SetPreset(preset);
+
+		lastPreset = preset;
+		return true;
+	}
+
+	void UpdateConfigFile(String path)
+	{
+		String file = path;
+		file = file.substr(file.find_last_of(L'\\') + 1, file.length());
+		if (file != L"config.txt")
+			return;
+
+		std::wifstream wif(path);
+		wif.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar>));
+
+		String wline;
+		while (std::getline(wif, wline))
+		{
+			if (wline[0] == L'#')
+				continue;
+
+			u32 speed = wline.find(L"speed:");
+			if (speed < 20000000u)
+			{
+				wline.erase(0, 6);
+				wline.erase(std::remove_if(wline.begin(), wline.end(), std::bind(std::isspace<wchar>, std::placeholders::_1, std::locale::classic())), wline.end());
+
+				s32 newspeed = std::stoi(wline);
+				if (m_Speed != newspeed)
+				{
+					m_Speed = newspeed;
+
+					print("[Config] Setting speed to /%\n", m_Speed);
+				}
+			}
+
+			u32 preset = wline.find(L"preset:");
+			if (preset < 20000000u)
+			{
+				wline.erase(0, 7);
+				wline.erase(std::remove_if(wline.begin(), wline.end(), std::bind(std::isspace<wchar>, std::placeholders::_1, std::locale::classic())), wline.end());
+
+				if (ChangePreset(wline))
+					print("[Config] Setting preset to /%\n", wline);
+			}
+		}
 	}
 };
 
@@ -250,7 +240,7 @@ int main(int argc, char* args[])
 		desc.Cycle.UpdateTick = 1000.0f / 60.0f;
 		desc.Cycle.Timer = cl_new Timer;
 		desc.Cycle.UpdateTimer = 0.0f;
-		desc.Cycle.UpdateDeltaTime = cl_new DeltaTime(0.0f); 
+		desc.Cycle.UpdateDeltaTime = cl_new DeltaTime(0.0f);
 	}
 
 	Game* game = cl_new Game(path);

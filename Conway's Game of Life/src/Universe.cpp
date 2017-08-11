@@ -17,8 +17,8 @@ void Universe::SetPreset(const String& preset)
 {
 	Clear();
 	
-	if(preset==L"-glider"){SetAlive(250,250);SetAlive(251,251);SetAlive(251,252);SetAlive(250,252);SetAlive(249,252);}if(preset==L"-spaceshi\
-	p"){SetAlive(250,250);SetAlive(250,252);SetAlive(251,253);SetAlive(252,253);SetAlive(253,253);SetAlive(254,253);SetAlive(254,252);SetAlive
+	if(preset==L"-glider"){SetAlive(250,250);SetAlive(251,251);SetAlive(251,252);SetAlive(250,252);SetAlive(249,252);}if(preset==L"-spaceship")
+	{SetAlive(250,250);SetAlive(250,252);SetAlive(251,253);SetAlive(252,253);SetAlive(253,253);SetAlive(254,253);SetAlive(254,252);SetAlive
 	(254,251);SetAlive(253,250);}if(preset==L"-exploder"){SetAlive(250,250);SetAlive(250,251);SetAlive(250,252);SetAlive(250,253);SetAlive(250
 	,254);SetAlive(254,250);SetAlive(254,251);SetAlive(254,252);SetAlive(254,253);SetAlive(254,254);SetAlive(252,254);SetAlive(252,250);}if(preset
 	==L"-exploder_small"){SetAlive(250,250);SetAlive(249,251);SetAlive(249,252);SetAlive(250,252);SetAlive(250,253);SetAlive(251,251);SetAlive(251
@@ -38,11 +38,8 @@ void Universe::Randomize()
 {
 	srand(time(NULL));
 	
-	CellState* ptr = &m_RNGArray[0];
 	for (u32 i = 0; i < UNIVERSE_SIZE * UNIVERSE_SIZE; ++i)
-		*ptr++ = rand() % 20 > 10 ? DEAD : ALIVE;
-
-	memcpy(m_Cells, m_RNGArray.data(), UNIVERSE_SIZE * UNIVERSE_SIZE * sizeof(CellState));
+		m_Cells[i] = rand() % 20 > 10 ? DEAD : ALIVE;
 }
 
 void Universe::Clear()

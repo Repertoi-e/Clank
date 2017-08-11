@@ -1,0 +1,34 @@
+#
+# Save the file to apply
+# the changes
+#
+
+#
+# Speed is how many
+# generations are calculated
+# per second.
+#
+# Set speed to 60 to have
+# 1 generation/second. 
+# (Set to 0 to pause)
+#
+
+speed: 1
+
+# Available presets:
+# -clear
+# -glider
+# -spaceship
+# -exploder
+# -exploder_small
+# -tumbler
+# -gosper_glider_gun
+# -ten_cell_row
+# -random
+# -custom
+#
+# If you choose the -custom preset,
+# use mouse click to change cell state
+#
+
+preset: -exploder
