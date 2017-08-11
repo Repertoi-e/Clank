@@ -24,12 +24,5 @@ speed: 1
 # -gosper_glider_gun
 # -ten_cell_row
 # -random
-# -custom
-#
-# If you choose the -custom preset,
-# use mouse click to change cell state
-#
 
-preset: -ten_cell_row
-
-neat :)
+preset: -clear
