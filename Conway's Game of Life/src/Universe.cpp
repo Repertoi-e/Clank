@@ -94,11 +94,8 @@ void Universe::Draw(Renderer2D* renderer, const cl::vec2& offset)
 	{
 		for (u32 y = 0; y < (UNIVERSE_SIZE); y++)
 		{
-			u32 indeX = x % (UNIVERSE_SIZE);
-			u32 indeY = y % (UNIVERSE_SIZE);
-
-			indeX += cast(u32) offset.x % (UNIVERSE_SIZE);
-			indeY += cast(u32) offset.y % (UNIVERSE_SIZE);
+			u32 indeX = (x + cast(u32) offset.x) % (UNIVERSE_SIZE);
+			u32 indeY = (y + cast(u32) offset.y) % (UNIVERSE_SIZE);
 
 			const CellState& state = m_Cells[indeX + indeY * UNIVERSE_SIZE];
 			if (state != ALIVE)
