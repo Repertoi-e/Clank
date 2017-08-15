@@ -6,7 +6,5 @@
     0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Maze Generator.vcxproj -> C:\C++\Clank\bin\Win32\Release\Maze Generator.exe
-  Microsoft (R) Direct3D Shader Compiler 10.1
-  Copyright (C) 2013 Microsoft. All rights reserved.
-  
+  compilation object save succeeded; see C:\C++\Clank\bin\Win32\Release\PS_R2D.cso
   compilation object save succeeded; see C:\C++\Clank\bin\Win32\Release\PS_R2D.cso

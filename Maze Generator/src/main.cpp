@@ -9,19 +9,17 @@ using namespace cl;
 class Game : public Layer2D
 {
 private:
-
-
 	OrthographicCamera* m_Camera;
 public:
 	Game()
 		: Layer2D(mat4::Orthographic(0.0f, cast(float32) WIDTH, 0.0f, cast(float32) HEIGHT, -1.0f, 1.0f)),
 		m_Camera(anew OrthographicCamera(m_ProjectionMatrix))	
 	{
-		print("/%\n", Application::Instance().GetDescription().Path);
 	}
 
 	~Game()
 	{
+		del m_Camera;
 	}
 
 	void Init(Context* context, Renderer2D* renderer) override
@@ -41,7 +39,7 @@ public:
 
 		renderer->SetCamera(m_Camera);
 
-		Texture* background = new Texture;
+		Texture* background = anew Texture;
 
 		TextureDesc textureDesc;
 		TextureLoadProperties textureLoadProperties;

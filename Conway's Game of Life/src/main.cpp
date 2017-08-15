@@ -46,6 +46,13 @@ public:
 	~Game()
 	{
 		m_Hotloader->Join();
+		
+		del m_Universe;
+		del m_Hotloader;
+		del m_Background;
+		del m_BackgroundRenderer;
+		del m_Camera;
+		del m_BackgroundCamera;
 	}
 
 	void Init(Context* context, Renderer2D* renderer) override
