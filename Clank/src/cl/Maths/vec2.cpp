@@ -214,7 +214,13 @@
 #include "cl/stdafx.h"
 #include "vec2.h"
 
-namespace cl { 
+namespace cl {
+	
+	vec2::vec2(void)
+	{
+		this->x = 0;
+		this->y = 0;
+	}
 
 	vec2::vec2(float32 scalar)
 	{

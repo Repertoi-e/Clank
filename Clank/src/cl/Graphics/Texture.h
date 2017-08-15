@@ -30,7 +30,7 @@ namespace cl {
 	{
 		bool FlipHorizontal, FlipVertical;
 
-		TextureLoadProperties()
+		TextureLoadProperties(void)
 			: FlipHorizontal(false), FlipVertical(false)
 		{
 		}
@@ -54,13 +54,13 @@ namespace cl {
 
 		u32 m_Width, m_Height, m_BPP;
 	public:
-		Texture();
-		~Texture();
+		Texture(void);
+		~Texture(void);
 
 		void Bind(u32 slot = 0);
 		void Unbind(u32 slot = 0);
 
-		inline ID3D11ShaderResourceView* GetHandle() { return m_Handle; }
+		inline ID3D11ShaderResourceView* GetHandle(void) { return m_Handle; }
 	public:
 		static DXGI_FORMAT PixelFormatToD3D(PixelFormat format);
 	public:

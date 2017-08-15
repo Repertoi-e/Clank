@@ -18,8 +18,6 @@ class Universe
 private:
 	CellState* m_Cells;
 	CellState* m_PrevCells;
-
-	std::array<CellState, UNIVERSE_SIZE * UNIVERSE_SIZE> m_RNGArray;
 public:
 	Universe();
 

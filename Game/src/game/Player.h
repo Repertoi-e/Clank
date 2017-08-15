@@ -21,7 +21,7 @@ public:
 	bool pressedW = false , pressedA = false, pressedS = false, pressedD = false;
 
 	Player()
-		: Renderable2D({ 40, 30 }, {20, 32}, NULLPTR, 0xffffffff), tex(cl_new Texture)
+		: Renderable2D({ 40, 30 }, {20, 32}, NULLPTR, 0xffffffff), tex(anew Texture)
 	{
 		TextureDesc textureDesc;
 		{

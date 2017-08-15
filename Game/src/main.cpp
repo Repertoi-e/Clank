@@ -35,11 +35,11 @@ public:
 		}
 		Renderer2D::Create(renderer, desc);
 		
-		OrthographicCamera* camera = cl_new OrthographicCamera(m_ProjectionMatrix);
+		OrthographicCamera* camera = anew OrthographicCamera(m_ProjectionMatrix);
 		renderer->SetCamera(camera);
 
-		player = cast(Player*) Add(cl_new Player);
-		level = cl_new Level(player);
+		player = cast(Player*) Add(anew Player);
+		level = anew Level(player);
 	}
 
 	void OnUpdate(const DeltaTime& dt) override
@@ -86,13 +86,13 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 		desc.WindowStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_SIZEBOX;
 		
 		desc.Cycle.UpdateTick = 1000.0f / 60.0f;
-		desc.Cycle.Timer = cl_new Timer;
+		desc.Cycle.Timer = anew Timer;
 		desc.Cycle.UpdateTimer = 0.0f;
-		desc.Cycle.UpdateDeltaTime = cl_new DeltaTime(0.0f);
+		desc.Cycle.UpdateDeltaTime = anew DeltaTime(0.0f);
 	}
 	g_Application.Create(desc);
 	
-	g_Application.PushLayer(cl_new Game);
+	g_Application.PushLayer(anew Game);
 	{
 		float32 time = init.Elapsed().Seconds();
 		print("\nInit took /% seconds\n\n", time);

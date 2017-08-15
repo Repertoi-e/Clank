@@ -36,7 +36,7 @@ ClassicTile::ClassicTile(TileID id)
 	: Tile(id)
 {
 	collidable = true;
-	r = cl_new cl::Renderable2D({ 16, 16 }, { 16, 16 }, NULLPTR, 0xffffffff);
+	r = anew cl::Renderable2D({ 16, 16 }, { 16, 16 }, NULLPTR, 0xffffffff);
 }
 
 void ClassicTile::Render(cl::Renderer2D* renderer, cl::vec2 position)

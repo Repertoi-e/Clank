@@ -57,6 +57,7 @@
 #define NULLPTR 0
 #define cast(x) (x)  
 
+#pragma warning(disable: 4595)
 #pragma warning(disable: 4251)
 
 #pragma comment(lib, "dxgi.lib")

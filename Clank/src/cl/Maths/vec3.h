@@ -225,7 +225,7 @@ namespace cl {
 	{
 		float32 x, y, z;
 
-		vec3();
+		vec3(void);
 		vec3(float32 scalar);
 		vec3(float32 x, float32 y, float32 z);
 		vec3(const vec2& other);
@@ -300,8 +300,9 @@ namespace cl {
 	{
 		T x, y, z;
 
+		tvec3<T>(void);
 		tvec3<T>(T scalar);
-		tvec3<T>(T x = NULL, T y = NULL, T z = NULL);
+		tvec3<T>(T x, T y, T z);
 
 		tvec3<T>& Add(const tvec3<T>& other);
 		tvec3<T>& Subtract(const tvec3<T>& other);
@@ -332,6 +333,13 @@ namespace cl {
 		bool operator>=(const tvec3<T>& other) const;
 	};
 
+	template<class T>
+	inline tvec3<T>::tvec3(void)
+	{
+		this->x = 0;
+		this->y = 0;
+		this->z = 0;
+	}
 
 	template<class T>
 	inline tvec3<T>::tvec3(T scalar)

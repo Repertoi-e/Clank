@@ -1,8 +1,4 @@
 ﻿  stdafx.cpp
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\include\vcruntime_new.h(38): warning C4595: 'operator new': non-member operator new or delete functions may not be declared inline
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\include\vcruntime_new.h(49): warning C4595: 'operator new[]': non-member operator new or delete functions may not be declared inline
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\include\vcruntime_new.h(59): warning C4595: 'operator delete': non-member operator new or delete functions may not be declared inline
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\include\vcruntime_new.h(68): warning C4595: 'operator delete[]': non-member operator new or delete functions may not be declared inline
   Application.cpp
   KeyEvent.cpp
   MouseEvent.cpp
@@ -23,11 +19,9 @@ C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.1
   Rectangle.cpp
   mat4.cpp
   vec2.cpp
-  Compiling...
   vec3.cpp
   vec4.cpp
   Allocator.cpp
-src\cl\Memory\Allocator.cpp(15): warning C4390: ';': empty controlled statement found; is this the intent?
   String.cpp
   dxerr.cpp
   Clank.vcxproj -> C:\C++\Clank\bin\Win32\Release\Clank.lib

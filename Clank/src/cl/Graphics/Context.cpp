@@ -54,7 +54,7 @@ namespace cl {
 		u32 numModes;
 		HR(adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL));
 
-		DXGI_MODE_DESC* displayModeList = cl_new DXGI_MODE_DESC[numModes];
+		DXGI_MODE_DESC* displayModeList = anew DXGI_MODE_DESC[numModes];
 		HR(adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList));
 
 		u32 numerator, denominator;
@@ -82,7 +82,7 @@ namespace cl {
 		SafeRelease(adapter);
 		SafeRelease(factory);
 
-		cl_delete[] displayModeList;
+		del[] displayModeList;
 
 		DXGI_SWAP_CHAIN_DESC swapChainDesc;
 		{

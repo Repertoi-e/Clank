@@ -3,7 +3,7 @@
 
 namespace cl {
 
-	Entity::Entity()
+	Entity::Entity(void)
 	{
 	}
 

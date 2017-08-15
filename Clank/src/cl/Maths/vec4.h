@@ -275,8 +275,9 @@ namespace cl {
 	{
 		T x, y, z, w;
 
+		tvec4<T>(void); 
 		tvec4<T>(T scalar);
-		tvec4<T>(T x = NULL, T y = NULL, T z = NULL, T w = NULL);
+		tvec4<T>(T x, T y, T z, T w);
 
 		tvec4<T>& Add(const tvec4<T>& other);
 		tvec4<T>& Subtract(const tvec4<T>& other);
@@ -307,6 +308,14 @@ namespace cl {
 		bool operator>=(const tvec4<T>& other) const;
 	};
 
+	template<class T>
+	inline tvec4<T>::tvec4(void)
+	{
+		this->x = 0;
+		this->y = 0;
+		this->z = 0;
+		this->w = 0;
+	}
 
 	template<class T>
 	inline tvec4<T>::tvec4(T scalar)

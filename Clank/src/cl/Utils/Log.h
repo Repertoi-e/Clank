@@ -222,7 +222,7 @@ namespace cl {
 	void print_internal(std::vector<const wchar*>& argsv, T&& t)
 	{
 		const wchar* ptr = to_string<T>(t);
-		wchar* result = cl_new wchar[wcslen(ptr) + 1];
+		wchar* result = anew wchar[wcslen(ptr) + 1];
 		wcscpy(result, ptr);
 		argsv.push_back(result);
 	}
@@ -231,7 +231,7 @@ namespace cl {
 	void print_internal(std::vector<const wchar*>& argsv, T&& first, Rest&&... rest)
 	{
 		const wchar* ptr = to_string<T>(first);
-		wchar* result = cl_new wchar[wcslen(ptr) + 1];
+		wchar* result = anew wchar[wcslen(ptr) + 1];
 		wcscpy(result, ptr);
 		argsv.push_back(result);
 		if (sizeof...(Rest))
@@ -288,7 +288,7 @@ namespace cl {
 		buffer[index] = '\0';
 
 		for (s32 i = 0; i < args_count; i++)
-			cl_delete[] argsv[i];
+			del[] argsv[i];
 	}
 
 	static void SetLocale(s32 locale)

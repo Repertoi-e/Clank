@@ -6,18 +6,18 @@
 namespace cl {
 
 	Renderer2D::Renderer2D(void)
-		: m_Context(&Context::Instance()), m_Shader(cl_new Shader), m_VertexBuffer(cl_new Buffer), m_Indices(0),
-		m_MatrixBuffer(cl_new Buffer), m_IndexBuffer(cl_new Buffer), m_Matrices(cl_new Matrices)
+		: m_Context(&Context::Instance()), m_Shader(anew Shader), m_VertexBuffer(anew Buffer), m_Indices(0),
+		m_MatrixBuffer(anew Buffer), m_IndexBuffer(anew Buffer), m_Matrices(anew Matrices)
 	{
 	}
 
 	Renderer2D::~Renderer2D(void)
 	{
-		cl_delete m_Shader;
-		cl_delete m_VertexBuffer;
-		cl_delete m_IndexBuffer;
-		cl_delete m_MatrixBuffer;
-		cl_delete m_Matrices;
+		del m_Shader;
+		del m_VertexBuffer;
+		del m_IndexBuffer;
+		del m_MatrixBuffer;
+		del m_Matrices;
 	}
 
 	void Renderer2D::Create(Renderer2D* renderer, Renderer2DDesc& rendererDesc)
@@ -60,7 +60,7 @@ namespace cl {
 		ID3D10Blob* vsData = renderer->m_Shader->GetData().vs;
 		renderer->m_VertexBuffer->SetInputLayout(layout, vsData->GetBufferPointer(), vsData->GetBufferSize());
 
-		u32* indices = cl_new u32[rendererDesc.MaxIndices];
+		u32* indices = anew u32[rendererDesc.MaxIndices];
 
 		u32 offset = 0;
 		for (u32 i = 0; i < rendererDesc.MaxIndices; i += 6)

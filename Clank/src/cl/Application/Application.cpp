@@ -29,6 +29,17 @@ namespace cl {
 	{
 		SetDescription(appDesc);
 		DoWindow();
+		
+		Context::Instance().Create(m_hWnd, m_Desc);
+
+		FreeImage_Initialise();
+
+		wchar file[1024 * 10] = { 0 };
+		GetModuleFileNameW(NULL, file, 1024);
+
+		String& path = m_Desc.Path;
+		path = String(file);
+		path = path.substr(0, path.find_last_of(L'\\') + 1);
 	}
 
 	void Application::DoFPS(void)
@@ -144,7 +155,7 @@ namespace cl {
 			if (m_Layers[i] == layer)
 			{
 				m_Layers.erase(m_Layers.begin() + i);
-				cl_delete layer;
+				del layer;
 			}
 	}
 
@@ -185,10 +196,6 @@ namespace cl {
 			MessageBox(NULL, L"Failed to create window", NULL, NULL);
 			return;
 		}
-
-		Context::Instance().Create(m_hWnd, m_Desc);
-
-		FreeImage_Initialise();
 	}
 
 	void Application::ShowWindow(void)

@@ -12,7 +12,10 @@ namespace cl {
 		ASSERT(size < 1024 * 1024 * 1024, "Allocation > 1gb");
 
 		if (size > 1024 * 1024)
+		{
+			// !!
 			LOG_WARN("Allocation larger than 1 MB at ", file, " [", line, "]\n");
+		}
 
 		u32 actualSize = size + sizeof(u32);
 		byte* result = cast(byte*) _aligned_malloc(actualSize, 16);

@@ -12,10 +12,10 @@ namespace cl {
 	public:
 		WindowResizeEvent(u32 width, u32 height);        
 
-		const u32 GetWidth() const { return m_Width; }
-		const u32 GetHeight() const { return m_Height; }
+		const u32 GetWidth(void) const { return m_Width; }
+		const u32 GetHeight(void) const { return m_Height; }
 
-		static s32 GetStaticType() { return EventType::WINDOW_RESIZE; }
+		static s32 GetStaticType(void) { return EventType::WINDOW_RESIZE; }
 	};
 
 	class API WindowFocusEvent : public Event
@@ -25,8 +25,8 @@ namespace cl {
 	public:
 		WindowFocusEvent(bool focused);
 
-		const s32 Focused() const { return m_Focused; }
+		const s32 Focused(void) const { return m_Focused; }
 
-		static s32 GetStaticType() { return EventType::WINDOW_FOCUS; }
+		static s32 GetStaticType(void) { return EventType::WINDOW_FOCUS; }
 	};
 }

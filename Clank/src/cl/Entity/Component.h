@@ -12,10 +12,10 @@ namespace cl {
 	class Component
 	{
 	public:
-		Component() 
+		Component(void)
 		{
 		}
 
-		virtual ComponentType GetType() = 0;
+		virtual ComponentType GetType(void) = 0;
 	};
 }

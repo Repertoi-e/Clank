@@ -15,40 +15,40 @@ namespace cl {
 	public:
 		MouseMovedEvent(s32 x, s32 y, bool dragged);         
 
-		const bool IsDragged() const { return m_Dragged; }
-		const s32 GetX() const { return m_x; }
-		const s32 GetY() const { return m_y; }
+		const bool IsDragged(void) const { return m_Dragged; }
+		const s32 GetX(void) const { return m_x; }
+		const s32 GetY(void) const { return m_y; }
 
-		static s32 GetStaticType() { return EventType::MOUSE_MOVED; }
+		static s32 GetStaticType(void) { return EventType::MOUSE_MOVED; }
 	};
 
 	class API MouseScrollEvent : public Event
 	{
 	private:
-		s32 m_x;
-		s32 m_y;
+		s32 m_X;
+		s32 m_Y;
 		short m_Distance;
 	public:
 		MouseScrollEvent(s32 x, s32 y, short distance);
 
-		const s32 GetX() const { return m_x; }
-		const s32 GetY() const { return m_y; }
+		const s32 GetX(void) const { return m_X; }
+		const s32 GetY(void) const { return m_Y; }
 
-		const short GetDistance() const { return m_Distance; }
+		const short GetDistance(void) const { return m_Distance; }
 
-		static s32 GetStaticType() { return EventType::MOUSE_SCROLLED; }
+		static s32 GetStaticType(void) { return EventType::MOUSE_SCROLLED; }
 	};
 
 	class API MouseButtonEvent : public Event
 	{
 	private:
-		s32 m_x;          
-		s32 m_y;          
+		s32 m_X;          
+		s32 m_Y;          
 	public:
 		MouseButtonEvent(EventType type, s32 x, s32 y);           
 
-		const s32 GetX() const { return m_x; }
-		const s32 GetY() const { return m_y; }
+		const s32 GetX(void) const { return m_X; }
+		const s32 GetY(void) const { return m_Y; }
 	};
 
 	class API MouseClickedEvent : public MouseButtonEvent
@@ -59,10 +59,10 @@ namespace cl {
 	public:
 		MouseClickedEvent(s32 x, s32 y, s32 button, s32 mods);           
 
-		const s32 GetButton() const { return m_Button; }
+		const s32 GetButton(void) const { return m_Button; }
 		const bool IsModifier(s32 mod) const { return (m_Mods & mod); };
 
-		static s32 GetStaticType() { return EventType::MOUSE_CLICKED; }
+		static s32 GetStaticType(void) { return EventType::MOUSE_CLICKED; }
 	};
 
 	class API MouseReleasedEvent : public MouseButtonEvent
@@ -73,9 +73,9 @@ namespace cl {
 	public:
 		MouseReleasedEvent(s32 x, s32 y, s32 button, s32 mods);           
 
-		const s32 GetButton() const { return m_Button; }
+		const s32 GetButton(void) const { return m_Button; }
 		const bool IsModifier(s32 mod) const { return (m_Mods & mod); };
 
-		static s32 GetStaticType() { return EventType::MOUSE_RELEASED; }
+		static s32 GetStaticType(void) { return EventType::MOUSE_RELEASED; }
 	};
 }

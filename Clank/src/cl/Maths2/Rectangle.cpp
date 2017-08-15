@@ -3,7 +3,7 @@
 
 namespace cl {
 
-	Rectangle::Rectangle()
+	Rectangle::Rectangle(void)
 		: x(0), y(0), width(0), height(0)
 	{
 	}

@@ -38,6 +38,7 @@ namespace cl {
         bool VSync, Fullscreen;
         u32 WindowStyle;
 		CycleDesc Cycle;
+		String Path;
     };
 
     class API Application : public Singleton<Application>
@@ -70,14 +71,14 @@ namespace cl {
 		Layer* PushLayer(Layer* layer);
 		void PopLayer(Layer* layer);
 
-		inline const ApplicationDesc& GetDescription() { return m_Desc; }
+		inline const ApplicationDesc& GetDescription(void) { return m_Desc; }
 		inline void SetDescription(const ApplicationDesc& settings) { m_Desc = settings; }
 
         void SetWindowTitle(LPCWSTR title);
 
         LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	private:
-		void DoFPS();
+		void DoFPS(void);
     };
 
     extern API Application& g_Application;

@@ -7,12 +7,12 @@
 
 namespace cl {
 	
-	Texture::Texture()
+	Texture::Texture(void)
 		: m_Handle(NULLPTR)
 	{
 	}
 	
-	Texture::~Texture()
+	Texture::~Texture(void)
 	{
 		if (m_Handle)
 		{
@@ -136,6 +136,6 @@ namespace cl {
 		HR(Context::Instance().GetDevice()->CreateSamplerState(&texture->m_SamplerDesc, &texture->m_SamplerState));
 
 		if (data != nullptr)
-			cl_delete[] data;
+			del[] data;
 	}
 }

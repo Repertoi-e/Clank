@@ -132,15 +132,15 @@ namespace cl {
 
 		InputLayout m_Layout;
 	public:
-		Buffer();
-		~Buffer();
+		Buffer(void);
+		~Buffer(void);
 
-		void Destroy();
+		void Destroy(void);
 
 		void SetInputLayout(InputLayout layout, void* vsbuffer, u32 vsbufferSize);
 
 		void* Map(BufferMapAccess access);
-		void Unmap();
+		void Unmap(void);
 
 		// Bind the buffer as a vertex buffer
 		void BindVB(u32 stride, u32 offset, D3D_PRIMITIVE_TOPOLOGY topology);

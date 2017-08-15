@@ -114,13 +114,13 @@ public:
 
 			textureSettings.Filter = cl::TextureFilter::NEAREST;
 		}
-		tatlas = cl_new TextureAtlas(L"data/textures/atlas.dds", textureSettings);
+		tatlas = anew TextureAtlas(L"data/textures/atlas.dds", textureSettings);
 
 		tatlas->tilesize = 32;
 
-		tiles[AIR] = cl_new AirTile();
-		tiles[DIRT] = cl_new ClassicTile(DIRT);
-		tiles[GRASS] = cl_new ClassicTile(GRASS);
+		tiles[AIR] = anew AirTile();
+		tiles[DIRT] = anew ClassicTile(DIRT);
+		tiles[GRASS] = anew ClassicTile(GRASS);
 	}
 
 	void InitTiles()
@@ -154,7 +154,7 @@ public:
 		} }
 
 		if (!high)
-			high = cl_new cl::Renderable2D({ 0, 0 }, {16, 16}, 0xff00ffff);
+			high = anew cl::Renderable2D({ 0, 0 }, {16, 16}, 0xff00ffff);
 		
 		for (auto a : highlight)
 		{

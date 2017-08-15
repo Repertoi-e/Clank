@@ -6,7 +6,6 @@ P:\C++\Clank\Dependencies\MakeSpriteFont\obj\Debug\MakeSpriteFont.pdb
 C:\C++\Clank\Dependencies\MakeSpriteFont\bin\Debug\MakeSpriteFont.exe
 C:\C++\Clank\Dependencies\MakeSpriteFont\bin\Debug\MakeSpriteFont.pdb
 C:\C++\Clank\Dependencies\MakeSpriteFont\obj\Debug\MakeSpriteFont.csprojResolveAssemblyReference.cache
-C:\C++\Clank\Dependencies\MakeSpriteFont\obj\Debug\MakeSpriteFont.csproj.CoreCompileInputs.cache
 C:\C++\Clank\Dependencies\MakeSpriteFont\obj\Debug\MakeSpriteFont.exe
 C:\C++\Clank\Dependencies\MakeSpriteFont\obj\Debug\MakeSpriteFont.pdb
 C:\Users\Repertoire\Documents\Visual Studio 2017\Projects\Clank\Dependencies\MakeSpriteFont\bin\Debug\MakeSpriteFont.exe

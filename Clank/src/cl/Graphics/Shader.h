@@ -33,7 +33,7 @@ namespace cl {
 		inline ID3D11VertexShader* GetVS(void) { return m_VS; }
 		inline ID3D11PixelShader* GetPS(void) { return m_PS; }
 
-		void Bind();
+		void Bind(void);
 	public:
 		static void Create(Shader* shader, ShaderDesc& shaderDesc);
 	};

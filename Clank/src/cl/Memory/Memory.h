@@ -3,11 +3,11 @@
 #include "Allocator.h"
 
 #ifdef _DEBUG
-	#define cl_new		new(__FILE__, __LINE__)
+	#define anew		new(__FILE__, __LINE__)
 #else
-	#define cl_new		new
+	#define anew		new
 #endif
-#define cl_delete		delete
+#define del		delete
 
 #pragma warning(disable : 4595)
 
@@ -50,5 +50,3 @@ inline void operator delete[](void* block, const char* file, u32 line)
 {
 	cl::Allocator::Free(block);
 }
-
-#pragma warning(default : 4595)

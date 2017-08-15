@@ -19,7 +19,7 @@ namespace cl {
 
 		void Submit(Renderer2D* renderer) override;
 
-		inline const mat4& GetTransformationMatrix() { return m_TransformationMatrix; }
+		inline const mat4& GetTransformationMatrix(void) { return m_TransformationMatrix; }
 		inline void SetTransformationMatrix(const mat4& transformationMatrix) { m_TransformationMatrix = transformationMatrix; }
 	};
 }

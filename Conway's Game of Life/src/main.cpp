@@ -31,11 +31,13 @@ private:
 	
 	u32 m_Speed;
 public:
-	Game(const String& path)
-		: Layer2D(mat4::Orthographic(0.0f, cast(float32) WIDTH, 0.0f, cast(float32) HEIGHT, -1.0f, 1.0f)), m_Universe(cl_new Universe),
-		m_Camera(cl_new OrthographicCamera(m_ProjectionMatrix)), m_BackgroundCamera(cl_new OrthographicCamera(m_ProjectionMatrix)),
-		m_BackgroundRenderer(cl_new Renderer2D), m_Hotloader(cl_new Hotloader)
+	Game()
+		: Layer2D(mat4::Orthographic(0.0f, cast(float32) WIDTH, 0.0f, cast(float32) HEIGHT, -1.0f, 1.0f)), m_Universe(anew Universe),
+		m_Camera(anew OrthographicCamera(m_ProjectionMatrix)), m_BackgroundCamera(anew OrthographicCamera(m_ProjectionMatrix)),
+		m_BackgroundRenderer(anew Renderer2D), m_Hotloader(anew Hotloader)
 	{
+		const String& path = Application::Instance().GetDescription().Path;
+
 		UpdateConfigFile(path + L"config.txt");
 
 		Hotloader::Create(m_Hotloader, path, std::bind(&Game::UpdateConfigFile, this, std::placeholders::_1));
@@ -80,7 +82,7 @@ public:
 		}
 		Texture::CreateFromFile(background, L"cgl_data/bg.jpg", textureDesc, textureLoadProperties);
 
-		m_Background = cl_new Renderable2D({ WIDTH / 2.0f, HEIGHT / 2.0f }, { 1920 / 3.6f + 100, 1080 / 3.6f + 100 }, background, 0xffffffff);
+		m_Background = anew Renderable2D({ WIDTH / 2.0f, HEIGHT / 2.0f }, { 1920 / 3.6f + 100, 1080 / 3.6f + 100 }, background, 0xffffffff);
 	}
 
 	void OnEvent(Event& event) override
@@ -181,7 +183,7 @@ public:
 			return;
 
 		std::wifstream wif(path);
-		wif.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar>));
+		wif.imbue(std::locale(std::locale::empty(), anew std::codecvt_utf8<wchar>));
 
 		String wline;
 		while (std::getline(wif, wline))
@@ -217,14 +219,8 @@ public:
 	}
 };
 
-int main(int argc, char* args[])
+int main()
 {
-	wbyte file[1024] = {};
-	GetModuleFileNameW(NULL, file, 1024);
-
-	String path = String(file);
-	path = path.substr(0, path.find_last_of(L'\\') + 1);
-
 	SetLocale(LC_ALL);
 
 	ApplicationDesc desc;
@@ -238,20 +234,18 @@ int main(int argc, char* args[])
 		desc.WindowStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_SIZEBOX;
 
 		desc.Cycle.UpdateTick = 1000.0f / 60.0f;
-		desc.Cycle.Timer = cl_new Timer;
+		desc.Cycle.Timer = anew Timer;
 		desc.Cycle.UpdateTimer = 0.0f;
-		desc.Cycle.UpdateDeltaTime = cl_new DeltaTime(0.0f);
+		desc.Cycle.UpdateDeltaTime = anew DeltaTime(0.0f);
 	}
 
-	Game* game = cl_new Game(path);
-
 	g_Application.Create(desc);
-	g_Application.PushLayer(game);
+	
+	Game* game = cast(Game*)
+	g_Application.PushLayer(anew Game());
 	g_Application.ShowWindow();
-
 	g_Application.Start();
-
-	cl_delete game;
+	g_Application.PopLayer(game);
 
 	return EXIT_SUCCESS;
 }

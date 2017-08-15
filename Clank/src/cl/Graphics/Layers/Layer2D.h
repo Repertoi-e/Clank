@@ -15,7 +15,7 @@ namespace cl {
 		std::vector<Renderable2D*> m_Renderables;
 	public:
 		Layer2D(mat4 projectionMatrix)
-			: m_ProjectionMatrix(projectionMatrix), m_Renderer(cl_new Renderer2D)
+			: m_ProjectionMatrix(projectionMatrix), m_Renderer(anew Renderer2D)
 		{
 		}
 

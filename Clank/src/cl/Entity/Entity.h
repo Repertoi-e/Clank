@@ -11,12 +11,12 @@ namespace cl {
 	private:
 		std::unordered_map<ComponentType, Component*> m_Components;
 	public:
-		Entity();
+		Entity(void);
 
 		void Add(Component* component);
 		
 		template<typename T>
-		Component* Get()
+		Component* Get(void)
 		{
 			ComponentType type = T::GetType();
 			auto result = m_Components.find(type);

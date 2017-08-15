@@ -6,7 +6,7 @@
 namespace cl {
 
 	Buffer::Buffer(void)
-		: m_Buffer(NULLPTR), m_MappedSubresource(cl_new D3D11_MAPPED_SUBRESOURCE), m_Desc(cl_new D3D11_BUFFER_DESC), m_InputLayout(NULLPTR)
+		: m_Buffer(NULLPTR), m_MappedSubresource(anew D3D11_MAPPED_SUBRESOURCE), m_Desc(anew D3D11_BUFFER_DESC), m_InputLayout(NULLPTR)
 	{
 	}
 
@@ -51,7 +51,7 @@ namespace cl {
 
 		const std::vector<InputElement>& elements = m_Layout.GetElements();
 
-		D3D11_INPUT_ELEMENT_DESC* ied = cl_new D3D11_INPUT_ELEMENT_DESC[elements.size()];
+		D3D11_INPUT_ELEMENT_DESC* ied = anew D3D11_INPUT_ELEMENT_DESC[elements.size()];
 		for (u32 i = 0; i < elements.size(); i++)
 		{
 			const InputElement& element = elements[i];

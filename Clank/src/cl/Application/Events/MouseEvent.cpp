@@ -9,7 +9,7 @@ namespace cl {
 	}
 
 	MouseButtonEvent::MouseButtonEvent(EventType type, s32 x, s32 y)
-		: Event(type), m_x(x), m_y(y)
+		: Event(type), m_X(x), m_Y(y)
 	{
 	}
 
@@ -24,7 +24,7 @@ namespace cl {
 	}
 
 	MouseScrollEvent::MouseScrollEvent(s32 x, s32 y, short distance)
-		: Event(cast(EventType) GetStaticType()), m_Distance(distance), m_x(x), m_y(y)
+		: Event(cast(EventType) GetStaticType()), m_Distance(distance), m_X(x), m_Y(y)
 	{
 	}
 }

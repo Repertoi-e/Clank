@@ -221,8 +221,9 @@ namespace cl {
 	{
 		float32 x, y;
 
+		vec2(void);
 		vec2(float32 scalar);
-		vec2(float32 x = .0f, float32 y = .0f);
+		vec2(float32 x, float32 y);
 
 		vec2& Add(const vec2& other);
 		vec2& Subtract(const vec2& other);
@@ -276,8 +277,9 @@ namespace cl {
 	{
 		T x, y;
 
+		tvec2<T>(void);
 		tvec2<T>(T scalar);
-		tvec2<T>(T x = NULL, T y = NULL);
+		tvec2<T>(T x, T y);
 
 		tvec2<T>& Add(const tvec2<T>& other);
 		tvec2<T>& Subtract(const tvec2<T>& other);
@@ -307,6 +309,13 @@ namespace cl {
 		bool operator>(const tvec2<T>& other) const;
 		bool operator>=(const tvec2<T>& other) const;
 	};
+
+	template<class T>
+	inline tvec2<T>::tvec2(void)
+	{
+		this->x = 0;
+		this->y = 0;
+	}
 
 	template<class T>
 	inline tvec2<T>::tvec2(T scalar)
