@@ -181,6 +181,7 @@ namespace cl {
 			rasterDesc.MultisampleEnable = false;
 			rasterDesc.ScissorEnable = false;
 			rasterDesc.SlopeScaledDepthBias = 0.0f;
+			rasterDesc.FrontCounterClockwise = true;
 		}
 		HR(m_Device->CreateRasterizerState(&rasterDesc, &m_RasterState));
 		m_DeviceContext->RSSetState(m_RasterState);

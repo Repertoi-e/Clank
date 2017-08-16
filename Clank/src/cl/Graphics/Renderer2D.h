@@ -66,7 +66,10 @@ namespace cl {
 		void PopMatrix();
 
 		void Begin(void) override;
+
 		void Submit(Renderable2D* renderable);
+		void DrawLine(const vec2& p1, const vec2& p2, u32 color, float32 thickness);
+
 		void End(void) override;
 		void Present(void) override;
 

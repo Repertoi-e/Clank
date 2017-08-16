@@ -1,27 +1,6 @@
-﻿  stdafx.cpp
-  Application.cpp
-  KeyEvent.cpp
-  MouseEvent.cpp
-  WindowEvent.cpp
-  Component.cpp
-  Entity.cpp
-  Buffer.cpp
-  Camera.cpp
-  Context.cpp
-  Folder.cpp
+﻿  Folder.cpp
   Layer2D.cpp
-  OrthographicCamera.cpp
   Renderable2D.cpp
   Renderer2D.cpp
-  Scene2D.cpp
-  Shader.cpp
-  Texture.cpp
   Rectangle.cpp
-  mat4.cpp
-  vec2.cpp
-  vec3.cpp
-  vec4.cpp
-  Allocator.cpp
-  String.cpp
-  dxerr.cpp
   Clank.vcxproj -> C:\C++\Clank\bin\Win32\Release\Clank.lib

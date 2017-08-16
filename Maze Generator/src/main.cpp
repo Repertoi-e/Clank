@@ -9,10 +9,11 @@ using namespace cl;
 class Game : public Layer2D
 {
 private:
+	Texture* m_Background; 
 	OrthographicCamera* m_Camera;
 public:
 	Game()
-		: Layer2D(mat4::Orthographic(0.0f, cast(float32) WIDTH, 0.0f, cast(float32) HEIGHT, -1.0f, 1.0f)),
+		: Layer2D(mat4::Orthographic(0.0f, cast(float32) WIDTH, 0.0f, cast(float32) HEIGHT, -1.0f, 1.0f)), m_Background(anew Texture),
 		m_Camera(anew OrthographicCamera(m_ProjectionMatrix))	
 	{
 	}
@@ -28,7 +29,7 @@ public:
 		{
 			ZeroMemory(&desc, sizeof(Renderer2DDesc));
 
-			desc.MaxQuads = 250200u;
+			desc.MaxQuads = 50000u;
 			desc.MaxVertices = desc.MaxQuads * 4;
 			desc.BufferSize = desc.MaxVertices * sizeof(Vertex);
 			desc.MaxIndices = desc.MaxQuads * 6;
@@ -38,8 +39,6 @@ public:
 		Renderer2D::Create(renderer, desc);
 
 		renderer->SetCamera(m_Camera);
-
-		Texture* background = anew Texture;
 
 		TextureDesc textureDesc;
 		TextureLoadProperties textureLoadProperties;
@@ -70,6 +69,7 @@ public:
 
 	void OnRender(Context* context, Renderer2D* renderer) override
 	{
+		renderer->DrawLine(vec2(20, 20), vec2(500, 500), 0xffff00ff, 10.0f);
 	}
 };
 

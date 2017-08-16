@@ -1,8 +1,9 @@
-﻿  Player.cpp
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\include\vcruntime_new.h(38): warning C4595: 'operator new': non-member operator new or delete functions may not be declared inline
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\include\vcruntime_new.h(49): warning C4595: 'operator new[]': non-member operator new or delete functions may not be declared inline
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\include\vcruntime_new.h(59): warning C4595: 'operator delete': non-member operator new or delete functions may not be declared inline
-C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\include\vcruntime_new.h(68): warning C4595: 'operator delete[]': non-member operator new or delete functions may not be declared inline
+﻿  Level.cpp
+c:\c++\clank\game\src\game\ReadBMP.h(18): warning C4244: 'argument': conversion from 'std::streamoff' to 'const unsigned int', possible loss of data
+c:\c++\clank\game\src\game\ReadBMP.h(24): warning C4018: '<': signed/unsigned mismatch
+c:\c++\clank\game\src\game\Level.h(83): warning C4244: 'initializing': conversion from 's32' to 'float32', possible loss of data
+c:\c++\clank\game\src\game\Level.h(84): warning C4244: 'initializing': conversion from 's32' to 'float32', possible loss of data
+  Player.cpp
 c:\c++\clank\game\src\game\ReadBMP.h(18): warning C4244: 'argument': conversion from 'std::streamoff' to 'const unsigned int', possible loss of data
 c:\c++\clank\game\src\game\ReadBMP.h(24): warning C4018: '<': signed/unsigned mismatch
 c:\c++\clank\game\src\game\Level.h(83): warning C4244: 'initializing': conversion from 's32' to 'float32', possible loss of data
@@ -17,3 +18,8 @@ src\game\Player.cpp(22): warning C4244: '=': conversion from 's32' to 'float32',
 src\game\Player.cpp(38): warning C4244: 'initializing': conversion from 'float32' to 'u32', possible loss of data
 src\game\Player.cpp(39): warning C4244: 'initializing': conversion from 'float32' to 'u32', possible loss of data
 src\game\Player.cpp(47): warning C4244: 'argument': conversion from 'u32' to 'float32', possible loss of data
+  main.cpp
+c:\c++\clank\game\src\game\ReadBMP.h(18): warning C4244: 'argument': conversion from 'std::streamoff' to 'const unsigned int', possible loss of data
+c:\c++\clank\game\src\game\ReadBMP.h(24): warning C4018: '<': signed/unsigned mismatch
+c:\c++\clank\game\src\game/Level.h(83): warning C4244: 'initializing': conversion from 's32' to 'float32', possible loss of data
+c:\c++\clank\game\src\game/Level.h(84): warning C4244: 'initializing': conversion from 's32' to 'float32', possible loss of data

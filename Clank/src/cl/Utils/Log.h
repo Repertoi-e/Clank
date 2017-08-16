@@ -2,6 +2,8 @@
 
 #include "cl/stdafx.h"
 
+#include "cl/Maths/maths.h"
+
 #include <codecvt>
 #include <string>
 
@@ -157,6 +159,27 @@ namespace cl {
 	static const wchar* to_string<float64>(const float64& t)
 	{
 		swprintf(sprintf_buffer, 1024 * 10, L"%f", t);
+		return sprintf_buffer;
+	}
+
+	template <>
+	static const wchar* to_string<vec2>(const vec2& t)
+	{
+		swprintf(sprintf_buffer, 1024 * 10, L"vec2 { %f, %f }", t.x, t.y);
+		return sprintf_buffer;
+	}
+
+	template <>
+	static const wchar* to_string<vec3>(const vec3& t)
+	{
+		swprintf(sprintf_buffer, 1024 * 10, L"vec3 { %f, %f, %f }", t.x, t.y, t.z);
+		return sprintf_buffer;
+	}
+
+	template <>
+	static const wchar* to_string<vec4>(const vec4& t)
+	{
+		swprintf(sprintf_buffer, 1024 * 10, L"vec4 { %f, %f, %f, %f }", t.x, t.y, t.z, t.w);
 		return sprintf_buffer;
 	}
 

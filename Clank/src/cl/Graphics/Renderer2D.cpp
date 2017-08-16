@@ -69,9 +69,9 @@ namespace cl {
 			indices[i + 1] = offset + 1;
 			indices[i + 2] = offset + 2;
 
-			indices[i + 3] = offset + 1;
+			indices[i + 3] = offset + 2;
 			indices[i + 4] = offset + 3;
-			indices[i + 5] = offset + 2;
+			indices[i + 5] = offset + 0;
 
 			offset += 4;
 		}
@@ -171,6 +171,13 @@ namespace cl {
 		m_Map->color = color;
 		m_Map++;
 
+		vertex = vec4(max.x, max.y, 0.0f, 1.0f);
+		m_Map->position = *m_TransformationBack * vertex;
+		m_Map->uv = *uvs++;
+		m_Map->tid = tid;
+		m_Map->color = color;
+		m_Map++;
+
 		vertex = vec4(min.x, max.y, 0.0f, 1.0f);
 		m_Map->position = *m_TransformationBack * vertex;
 		m_Map->uv = *uvs++;
@@ -178,10 +185,57 @@ namespace cl {
 		m_Map->color = color;
 		m_Map++;
 
-		vertex = vec4(max.x, max.y, 0.0f, 1.0f);
+		m_Indices += 6;
+	}
+
+	void Renderer2D::DrawLine(const vec2& p1, const vec2& p2, u32 color, float32 thickness)
+	{
+		vec2 normal = vec2(p2.y - p1.y, -(p2.x - p1.x)).Normalise() * thickness;
+	
+		// p1 = vec2(20, 20);
+		// p2 = vec2(500, 500);
+		//
+		// normal ~= vec2(7, -7)
+		//
+
+		// 27, 27
+		// 507, 507
+		// 493, 493
+		// 507, 507
+		// 13, 13
+		// 493, 493
+
+
+
+		// 27, 27
+		vec4 vertex = vec4(p1.x + normal.x, p1.y + normal.y, 0.0f, 1.0f);
 		m_Map->position = *m_TransformationBack * vertex;
-		m_Map->uv = *uvs++;
-		m_Map->tid = tid;
+		m_Map->uv = vec2();
+		m_Map->tid = 0u;
+		m_Map->color = color;
+		m_Map++;
+
+		// 507, 507
+		vertex = vec4(p2.x + normal.x, p2.y + normal.y, 0.0f, 1.0f);
+		m_Map->position = *m_TransformationBack * vertex;
+		m_Map->uv = vec2();
+		m_Map->tid = 0u;
+		m_Map->color = color;
+		m_Map++;
+
+		// 493, 493
+		vertex = vec4(p2.x - normal.x, p2.y - normal.y, 0.0f, 1.0f);
+		m_Map->position = *m_TransformationBack * vertex;
+		m_Map->uv = vec2();
+		m_Map->tid = 0u;
+		m_Map->color = color;
+		m_Map++;
+
+		// 13, 13
+		vertex = vec4(p1.x - normal.x, p1.y - normal.y, 0.0f, 1.0f);
+		m_Map->position = *m_TransformationBack * vertex;
+		m_Map->uv = vec2();
+		m_Map->tid = 0u;
 		m_Map->color = color;
 		m_Map++;
 

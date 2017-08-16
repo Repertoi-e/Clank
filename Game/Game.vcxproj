@@ -157,7 +157,7 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>fxc.exe /T ps_4_0 /E"PSMain" /Fo "$(TargetDir)PS_R2D.cso" "src/shaders/Renderer2D.hlsl"</Command>
+      <Command>fxc.exe /T ps_4_0 /E"PSMain" /Fo "$(TargetDir)PS_R2D.cso" "src/shaders/Renderer2D.hlsl" /nologo </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -187,7 +187,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="src\shaders\Renderer2D.hlsl">
+    <None Include="src\shaders\Renderer2D.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VSMain</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)VS_R2D.cso</ObjectFileOutput>
@@ -196,7 +196,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)VS_R2D.cso</ObjectFileOutput>
-    </FxCompile>
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\game\Level.h" />

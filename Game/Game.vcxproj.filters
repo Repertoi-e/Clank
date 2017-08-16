@@ -26,9 +26,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="src\shaders\Renderer2D.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="src\game\Village.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -41,5 +38,8 @@
     <ClInclude Include="src\game\ReadBMP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shaders\Renderer2D.hlsl" />
   </ItemGroup>
 </Project>
