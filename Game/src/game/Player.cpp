@@ -2,11 +2,11 @@
 
 #include "Level.h"
 
-u32 time;
+u32 timea;
 
 void Player::Update(const DeltaTime& dt, Level* level)
 {
-	time++;
+	timea++;
 
 	s32 xa = 0, ya = 0;
 	if (pressedW)

@@ -273,7 +273,7 @@ namespace cl {
 	};
 
 	template <class T>
-	struct API tvec2
+	struct tvec2
 	{
 		T x, y;
 

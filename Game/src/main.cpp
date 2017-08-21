@@ -32,6 +32,9 @@ public:
 			desc.MaxVertices = desc.MaxQuads * 4;
 			desc.BufferSize = desc.MaxVertices * sizeof(Vertex);
 			desc.MaxIndices = desc.MaxQuads * 6;
+			
+			desc.VertexShaderFile = L"VS_R2D.cso";
+			desc.PixelShaderFile = L"PS_R2D.cso";
 		}
 		Renderer2D::Create(renderer, desc);
 		

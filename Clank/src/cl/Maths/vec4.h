@@ -271,7 +271,7 @@ namespace cl {
 	};
 
 	template <class T>
-	struct API tvec4
+	struct tvec4
 	{
 		T x, y, z, w;
 

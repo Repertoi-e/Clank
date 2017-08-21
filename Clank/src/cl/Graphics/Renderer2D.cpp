@@ -30,8 +30,9 @@ namespace cl {
 		{
 			ZeroMemory(&shaderDesc, sizeof(ShaderDesc));
 
-			shaderDesc.VertexFile = rendererDesc.VertexShaderFile;
-			shaderDesc.PixelFile = rendererDesc.PixelShaderFile;
+			String exePath = Application::Instance().GetDescription().Path;
+			shaderDesc.VertexFile = exePath + rendererDesc.VertexShaderFile;
+			shaderDesc.PixelFile = exePath + rendererDesc.PixelShaderFile;
 		}
 		Shader::Create(renderer->m_Shader, shaderDesc);
 		
@@ -192,22 +193,6 @@ namespace cl {
 	{
 		vec2 normal = vec2(p2.y - p1.y, -(p2.x - p1.x)).Normalise() * thickness;
 	
-		// p1 = vec2(20, 20);
-		// p2 = vec2(500, 500);
-		//
-		// normal ~= vec2(7, -7)
-		//
-
-		// 27, 27
-		// 507, 507
-		// 493, 493
-		// 507, 507
-		// 13, 13
-		// 493, 493
-
-
-
-		// 27, 27
 		vec4 vertex = vec4(p1.x + normal.x, p1.y + normal.y, 0.0f, 1.0f);
 		m_Map->position = *m_TransformationBack * vertex;
 		m_Map->uv = vec2();
@@ -215,7 +200,6 @@ namespace cl {
 		m_Map->color = color;
 		m_Map++;
 
-		// 507, 507
 		vertex = vec4(p2.x + normal.x, p2.y + normal.y, 0.0f, 1.0f);
 		m_Map->position = *m_TransformationBack * vertex;
 		m_Map->uv = vec2();
@@ -223,7 +207,6 @@ namespace cl {
 		m_Map->color = color;
 		m_Map++;
 
-		// 493, 493
 		vertex = vec4(p2.x - normal.x, p2.y - normal.y, 0.0f, 1.0f);
 		m_Map->position = *m_TransformationBack * vertex;
 		m_Map->uv = vec2();
@@ -231,7 +214,6 @@ namespace cl {
 		m_Map->color = color;
 		m_Map++;
 
-		// 13, 13
 		vertex = vec4(p1.x - normal.x, p1.y - normal.y, 0.0f, 1.0f);
 		m_Map->position = *m_TransformationBack * vertex;
 		m_Map->uv = vec2();

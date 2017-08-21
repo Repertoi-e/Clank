@@ -231,4 +231,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\cl\BuiltIn\Shaders\Renderer2D.hlsl" />
+  </ItemGroup>
 </Project>

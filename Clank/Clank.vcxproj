@@ -110,6 +110,11 @@
       <Project>{c7ab4186-54b2-4244-a533-77494763ea1d}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\cl\BuiltIn\Shaders\Renderer2D.hlsl">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{E9633A00-447D-491F-97F0-B07DEBC1A41E}</ProjectGuid>
@@ -187,6 +192,10 @@
     <Link>
       <SubSystem>Windows</SubSystem>
     </Link>
+    <PostBuildEvent>
+      <Command>fxc.exe /Zi /Od /T ps_4_0 /E"PSMain" /Fo "$(TargetDir)PS_R2D.cso" "src/cl/BuiltIn/Shaders/Renderer2D.hlsl" /nologo
+fxc.exe /Zi /Od /T vs_4_0 /E"VSMain" /Fo "$(TargetDir)VS_R2D.cso" "src/cl/BuiltIn/Shaders/Renderer2D.hlsl" /nologo</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -222,6 +231,10 @@
     <Lib>
       <Verbose>false</Verbose>
     </Lib>
+    <PostBuildEvent>
+      <Command>fxc.exe /T ps_4_0 /E"PSMain" /Fo "$(TargetDir)PS_R2D.cso" "src/cl/BuiltIn/Shaders/Renderer2D.hlsl" /nologo
+fxc.exe /T vs_4_0 /E"VSMain" /Fo "$(TargetDir)VS_R2D.cso" "src/cl/BuiltIn/Shaders/Renderer2D.hlsl" /nologo</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
