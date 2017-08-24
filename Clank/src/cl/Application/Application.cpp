@@ -45,10 +45,10 @@ namespace cl {
 	void Application::DoFPS(void)
 	{
 		CycleDesc& info = m_Desc.Cycle;
-		info.FpsSamples[info.It % info.MaxSamples] = float32(info.Frames * info.m_UpdatesPerSecond);
+		info.FpsSamples[info.It % info.MaxSamples] = float32(info.Frames * info.UPS);
 		for (s32 i = 0; i < info.MaxSamples; i++)
-			info.m_FramesPerSecond += info.FpsSamples[i];
-		info.m_FramesPerSecond /= info.MaxSamples;
+			info.FPS += info.FpsSamples[i];
+		info.FPS /= info.MaxSamples;
 		info.It = info.It == info.MaxSamples + 1 ? 0 : info.It + 1;
 		info.Frames = 0;
 	}
@@ -78,7 +78,7 @@ namespace cl {
 				{
 					DoRender();
 				}
-				info.m_Frametime = frametimer.Elapsed().Millis();
+				info.FrameTime = frametimer.Elapsed().Millis();
 				info.Frames++;
 
 				Context::Instance().Present();
@@ -86,7 +86,7 @@ namespace cl {
 			if (info.Timer->Elapsed().Seconds() - info.ElapsedSeconds > 1.f)
 			{
 				info.ElapsedSeconds += 1.f;
-				info.m_UpdatesPerSecond = info.Updates;
+				info.UPS = info.Updates;
 				DoTick();
 				info.Updates = 0;
 			}
@@ -203,9 +203,9 @@ namespace cl {
 		::ShowWindow(m_hWnd, SW_SHOW);
 	}
 
-	void Application::SetWindowTitle(LPCWSTR title)
+	void Application::SetWindowTitle(const String& title)
 	{
-		SetWindowText(m_hWnd, title);
+		SetWindowText(m_hWnd, title.c_str());
 	}
 
 	LRESULT CALLBACK Application::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

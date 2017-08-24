@@ -62,6 +62,8 @@ DWORD WINAPI ThreadProc(void* arg)
 	} while (error == WAIT_TIMEOUT);
 
 	CloseHandle(o.hEvent);
+
+	return 0;
 }
 
 void Hotloader::Create(Hotloader* hotloader, const String& pathToMonitor, std::function<void(String)> method)
@@ -77,5 +79,5 @@ void Hotloader::Create(Hotloader* hotloader, const String& pathToMonitor, std::f
 
 void Hotloader::Join()
 {
-	WaitForSingleObject(m_Thread, INFINITE);
+	WaitForSingleObject(m_Thread, 1);
 }

@@ -30,17 +30,25 @@ private:
 	float32 m_TargetCameraZoom;
 	
 	u32 m_Speed;
+	UniversePreset m_Preset;
+
+	std::unordered_map<String, UniversePreset> m_Presets;
 public:
 	Game()
-		: Layer2D(mat4::Orthographic(0.0f, cast(float32) WIDTH, 0.0f, cast(float32) HEIGHT, -1.0f, 1.0f)), m_Universe(anew Universe),
-		m_Camera(anew OrthographicCamera(m_ProjectionMatrix)), m_BackgroundCamera(anew OrthographicCamera(m_ProjectionMatrix)),
-		m_BackgroundRenderer(anew Renderer2D), m_Hotloader(anew Hotloader)
+		: Layer2D(mat4::Orthographic(0.0f, cast(float32) WIDTH, 0.0f, cast(float32) HEIGHT, -1.0f, 1.0f)), 
+		m_Universe(anew Universe), m_Hotloader(anew Hotloader), m_BackgroundRenderer(anew Renderer2D), 
+		m_Camera(anew OrthographicCamera(m_ProjectionMatrix)), m_BackgroundCamera(anew OrthographicCamera(m_ProjectionMatrix)), 
+		m_CameraOffset(10000.0f), m_TargetCameraOffset(10000.0f), m_Preset(DEFAULT)
 	{
-		const String& path = Application::Instance().GetDescription().Path;
-
-		UpdateConfigFile(path + L"config.txt");
-
-		Hotloader::Create(m_Hotloader, path, std::bind(&Game::UpdateConfigFile, this, std::placeholders::_1));
+		m_Presets[L"-clear"] = CLEAR;
+		m_Presets[L"-glider"] = GLIDER;
+		m_Presets[L"-spaceship"] = SPACESHIP;
+		m_Presets[L"-exploder"] = EXPLODER;
+		m_Presets[L"-exploder_small"] = EXPLODER_SMALL;
+		m_Presets[L"-tumbler"] = TUMBLER;
+		m_Presets[L"-gosper_glider_gun"] = GOSPER_GLIDER_GUN;
+		m_Presets[L"-ten_cell_row"] = TEN_CELL_ROW;
+		m_Presets[L"-random"] = RANDOM;
 	}
 
 	~Game()
@@ -90,6 +98,11 @@ public:
 		Texture::CreateFromFile(background, L"cgl_data/bg.jpg", textureDesc, textureLoadProperties);
 
 		m_Background = anew Renderable2D({ WIDTH / 2.0f, HEIGHT / 2.0f }, { 1920 / 3.6f + 100, 1080 / 3.6f + 100 }, background, 0xffffffff);
+
+		const String& path = Application::Instance().GetDescription().Path;
+
+		UpdateConfigFile(path + L"config.txt");
+		Hotloader::Create(m_Hotloader, path, std::bind(&Game::UpdateConfigFile, this, std::placeholders::_1));
 	}
 
 	void OnEvent(Event& event) override
@@ -100,12 +113,11 @@ public:
 			if (e.IsDragged())
 			{
 				vec2 amount = m_MouseDelta - vec2(cast(float32) e.GetX(), cast(float32) e.GetY());
-				amount *= 0.4f;
-
-				m_TargetCameraOffset += vec2(amount.x, -amount.y);
+			
+				m_TargetCameraOffset += vec2(amount.x * 0.4f, -amount.y * 0.4f);
 			}
 
-			m_MouseDelta = vec2(e.GetX(), e.GetY());
+			m_MouseDelta = vec2(cast(float32) e.GetX(), cast(float32) e.GetY());
 
 			return false;
 		});
@@ -113,38 +125,25 @@ public:
 		dispatcher.Dispatch<MouseScrollEvent>([&](MouseScrollEvent& e) -> bool
 		{
 			m_TargetCameraZoom += e.GetDistance() * -1;
-
-			if (m_TargetCameraZoom < 20)
-				m_TargetCameraZoom = 20;
-			if (m_TargetCameraZoom > 840)
-				m_TargetCameraZoom = 840;
+			m_TargetCameraZoom = clamp(m_TargetCameraZoom, 200, 840);
 
 			return false;
 		});
 	}
 
-	s32 t = 0;
-	
 	void OnUpdate(const DeltaTime& dt)
 	{
-		t++;
-		
-		if (m_Speed != 0)
-		{
-			if (t % m_Speed == 0)
-				m_Universe->DoGeneration();
-		}
+		m_Universe->Update();
 
-		m_CameraOffset.Lerp(m_TargetCameraOffset, 0.8f);
+		m_CameraOffset.Lerp(m_TargetCameraOffset, 0.4f);
 		m_CameraZoom += (m_TargetCameraZoom - m_CameraZoom) * 0.3f;
 
-		m_Background->bounds.position = vec2(WIDTH / 2.0f, HEIGHT / 2.0f) + m_CameraOffset * 0.01f;
+		m_Camera->SetProjectionMatrix(mat4::Orthographic(-m_CameraZoom, cast(float32) WIDTH + m_CameraZoom, -m_CameraZoom, cast(float32) HEIGHT + m_CameraZoom, -1.0f, 1.0f));
+	
+		wchar buffer[1024];
+		sprint(buffer, NULL, "/% | FPS: /%", g_Application.GetDescription().Name, g_Application.GetDescription().Cycle.FPS);
 
-		m_Camera->SetProjectionMatrix(mat4::Orthographic(-m_CameraZoom, cast(float32) WIDTH + m_CameraZoom, -m_CameraZoom * ASPECT_RATIO, cast(float32) HEIGHT + m_CameraZoom * ASPECT_RATIO, -1.0f, 1.0f));
-	}
-
-	void OnTick() override
-	{
+		g_Application.SetWindowTitle(String(buffer));
 	}
 
 	void PreRender(Context* context, Renderer2D* renderer) override
@@ -160,25 +159,25 @@ public:
 		m_Universe->Draw(renderer, m_CameraOffset);
 	}
 
-	bool ChangePreset(String preset)
+	bool ChangeSpeed(u32 speed)
 	{
-		std::transform(preset.begin(), preset.end(), preset.begin(), towlower);
-
-		static String lastPreset = L"";
-		if (lastPreset == preset)
+		if (m_Speed == speed)
 			return false;
 
-		if (preset == L"-clear")
-			m_Universe->Clear();
-		if (preset == L"-random")
-		{
-			m_Universe->Randomize();
-			return true;
-		}
+		m_Speed = speed;
+		m_Universe->SetSpeed(m_Speed);
 
-		m_Universe->SetPreset(preset);
+		return true;
+	}
 
-		lastPreset = preset;
+	bool ChangePreset(UniversePreset preset)
+	{
+		if (m_Preset == preset)
+			return false;
+
+		m_Preset = preset;
+		m_Universe->ApplyPreset(m_Preset);
+
 		return true;
 	}
 
@@ -190,37 +189,34 @@ public:
 			return;
 
 		std::wifstream wif(path);
-		wif.imbue(std::locale(std::locale::empty(), anew std::codecvt_utf8<wchar>));
 
-		String wline;
-		while (std::getline(wif, wline))
+		String line;
+		while (std::getline(wif, line))
 		{
-			if (wline[0] == L'#')
+			if (line[0] == L'#')
 				continue;
 
-			u32 speed = wline.find(L"speed:");
-			if (speed < 20000000u)
+			line.erase(std::remove(line.begin(), line.end(), L' '), line.end());
+
+			static constexpr wchar speedField[] = L"speed:";
+			static constexpr wchar presetField[] = L"preset:";
+			
+			if (line.find(speedField) != String::npos)
 			{
-				wline.erase(0, 6);
-				wline.erase(std::remove_if(wline.begin(), wline.end(), std::bind(std::isspace<wchar>, std::placeholders::_1, std::locale::classic())), wline.end());
+				line.erase(0, wcslen(speedField));
 
-				s32 newspeed = std::stoi(wline);
-				if (m_Speed != newspeed)
-				{
-					m_Speed = newspeed;
-
+				if (ChangeSpeed(std::stoi(line)))
 					print("[Config] Setting speed to /%\n", m_Speed);
-				}
 			}
 
-			u32 preset = wline.find(L"preset:");
-			if (preset < 20000000u)
+			if (line.find(presetField) != String::npos)
 			{
-				wline.erase(0, 7);
-				wline.erase(std::remove_if(wline.begin(), wline.end(), std::bind(std::isspace<wchar>, std::placeholders::_1, std::locale::classic())), wline.end());
+				line.erase(0, wcslen(presetField));
 
-				if (ChangePreset(wline))
-					print("[Config] Setting preset to /%\n", wline);
+				std::transform(line.begin(), line.end(), line.begin(), towlower);
+
+				if (ChangePreset(m_Presets[line]))
+					print("[Config] Setting preset to /%\n", line);
 			}
 		}
 	}
@@ -247,7 +243,9 @@ int main()
 	}
 
 	g_Application.Create(desc);
-	
+
+	print("/%\n", g_Application.GetDescription().Path);
+
 	Game* game = cast(Game*)
 	g_Application.PushLayer(anew Game());
 	g_Application.ShowWindow();

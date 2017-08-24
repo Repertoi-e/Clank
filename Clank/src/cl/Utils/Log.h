@@ -184,7 +184,7 @@ namespace cl {
 	}
 
 	template <typename T>
-	void print_sequence_internal(wbyte* buffer, s32& index, T&& t)
+	void print_sequence_internal(wchar* buffer, s32& index, T&& t)
 	{
 		const wchar* string = to_string<T>(t);
 		s32 len = wcslen(string);
@@ -193,7 +193,7 @@ namespace cl {
 	}
 
 	template <typename T, typename... Rest>
-	void print_sequence_internal(wbyte* buffer, s32& index, T&& first, Rest&&... rest)
+	void print_sequence_internal(wchar* buffer, s32& index, T&& first, Rest&&... rest)
 	{
 		const wchar* string = to_string<T>(first);
 		s32 len = wcslen(string);
@@ -206,13 +206,13 @@ namespace cl {
 	template <typename... Args>
 	const wchar* sprint_sequence(Args... args)
 	{
-		wbyte buffer[1024 * 10];
+		wchar buffer[1024 * 10];
 		s32 index = 0;
 		print_sequence_internal(buffer, index, std::forward<Args>(args)...);
 
 		buffer[index] = '\0';
 
-		return cast(const wchar*) buffer;
+		return buffer;
 	}
 
 	template <typename... Args>
@@ -242,7 +242,7 @@ namespace cl {
 	}
 
 	template <typename T>
-	void print_internal(std::vector<const wchar*>& argsv, T&& t)
+	void sprint_internal(std::vector<const wchar*>& argsv, T&& t)
 	{
 		const wchar* ptr = to_string<T>(t);
 		wchar* result = anew wchar[wcslen(ptr) + 1];
@@ -251,14 +251,14 @@ namespace cl {
 	}
 
 	template <typename T, typename... Rest>
-	void print_internal(std::vector<const wchar*>& argsv, T&& first, Rest&&... rest)
+	void sprint_internal(std::vector<const wchar*>& argsv, T&& first, Rest&&... rest)
 	{
 		const wchar* ptr = to_string<T>(first);
 		wchar* result = anew wchar[wcslen(ptr) + 1];
 		wcscpy(result, ptr);
 		argsv.push_back(result);
 		if (sizeof...(Rest))
-			print_internal(argsv, std::forward<Rest>(rest)...);
+			sprint_internal(argsv, std::forward<Rest>(rest)...);
 	}
 
 	template <typename... Args>
@@ -266,18 +266,20 @@ namespace cl {
 	{
 		wchar buffer[1024 * 10];
 		s32 index = 0;
-		sprint(cast(wbyte*) buffer, index, std::forward<Args>(args)...);
+		sprint(buffer, &index, std::forward<Args>(args)...);
 		wprintf(L"%ls", buffer);
 	}
 
-	//@Cleanup: Having to pass a reference to a s32 int for buffer indexing is
-	// annoying and rarely used but it is there for completeness. Make it not
-	// obligatory.
 	template <typename... Args>
-	void sprint(wbyte* buffer, s32& index, Args... args)
+	void sprint(wchar* buffer, s32* indexPtr, Args... args)
 	{
+		s32* index = indexPtr;
+
+		if (!index)
+			index = anew s32(0);
+
 		std::vector<const wchar*> argsv;
-		print_internal(argsv, std::forward<Args>(args)...);
+		sprint_internal(argsv, std::forward<Args>(args)...);
 
 		s32 args_count = argsv.size();
 
@@ -298,20 +300,23 @@ namespace cl {
 					}();
 
 					s32 size = wcslen(src);
-					wmemcpy(&buffer[index - 1], src, size);
-					index += size - 1;
+					wmemcpy(&buffer[(*index) - 1], src, size);
+					(*index) += size - 1;
 					ch++;
 
 					continue;
 				}
 				ch++;
 			}
-			buffer[index++] = *ch;
+			buffer[(*index)++] = *ch;
 		} 
-		buffer[index] = '\0';
+		buffer[*index] = '\0';
 
 		for (s32 i = 0; i < args_count; i++)
 			del[] argsv[i];
+		
+		if (indexPtr != index)
+			del index;
 	}
 
 	static void SetLocale(s32 locale)

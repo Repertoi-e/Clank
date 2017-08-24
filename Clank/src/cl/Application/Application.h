@@ -21,8 +21,8 @@ namespace cl {
 		float32 UpdateTimer;
 		float32 UpdateTick;
 		u32 Frames, Updates;
-		s32 m_UpdatesPerSecond;
-		float32 m_FramesPerSecond, m_Frametime;
+		s32 UPS;
+		float32 FPS, FrameTime;
 	
 		// FPS Calculation
 		static const s32 MaxSamples = 64;
@@ -74,7 +74,7 @@ namespace cl {
 		inline const ApplicationDesc& GetDescription(void) { return m_Desc; }
 		inline void SetDescription(const ApplicationDesc& settings) { m_Desc = settings; }
 
-        void SetWindowTitle(LPCWSTR title);
+        void SetWindowTitle(const String& title);
 
         LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	private:
