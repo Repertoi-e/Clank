@@ -57,9 +57,9 @@
     <ClInclude Include="src\cl\stdafx.h" />
     <ClInclude Include="src\cl\targetver.h" />
     <ClInclude Include="src\cl\types.h" />
+    <ClInclude Include="src\cl\Utils\FileUtils.h" />
     <ClInclude Include="src\cl\Utils\ISystem.h" />
     <ClInclude Include="src\cl\Utils\INoCopy.h" />
-    <ClInclude Include="src\cl\Utils\LoadImage.h" />
     <ClInclude Include="src\cl\Utils\Log.h" />
     <ClInclude Include="src\cl\Utils\Singleton.h" />
     <ClInclude Include="src\cl\String.h" />
@@ -95,6 +95,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\cl\String.cpp" />
+    <ClCompile Include="src\cl\Utils\FileUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dependencies\DirectXTK\DirectXTK_Desktop_2017_Win10.vcxproj">

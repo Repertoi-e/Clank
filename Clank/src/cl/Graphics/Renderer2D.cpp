@@ -6,8 +6,6 @@
 namespace cl {
 
 	Renderer2D::Renderer2D(void)
-		: m_Context(&Context::Instance()), m_Shader(anew Shader), m_VertexBuffer(anew Buffer), m_Indices(0),
-		m_MatrixBuffer(anew Buffer), m_IndexBuffer(anew Buffer), m_Matrices(anew Matrices)
 	{
 	}
 

@@ -17,21 +17,21 @@ namespace cl {
 		static std::vector<ID3D11BlendState*> s_BlendStates;
 		static std::vector<ID3D11DepthStencilState*> s_DepthStencilStates;
 	private:
-		ApplicationDesc* m_Settings;
+		ApplicationDesc* m_Settings = NULLPTR;
 
 		D3D_FEATURE_LEVEL m_FeatureLevel;
 
-		IDXGISwapChain* m_SwapChain;
-		ID3D11Device* m_Device;
-		ID3D11DeviceContext* m_DeviceContext;
+		IDXGISwapChain* m_SwapChain = NULLPTR;
+		ID3D11Device* m_Device = NULLPTR;
+		ID3D11DeviceContext* m_DeviceContext = NULLPTR;
 
-		ID3D11RenderTargetView* m_RenderTargetView;
+		ID3D11RenderTargetView* m_RenderTargetView = NULLPTR;
 		
-		ID3D11Texture2D* m_DepthStencilBuffer;
-		ID3D11BlendState* m_BlendState;
-		ID3D11DepthStencilState* m_DepthStencilState;
-		ID3D11DepthStencilView* m_DepthStencilView;
-		ID3D11RasterizerState* m_RasterState;
+		ID3D11Texture2D* m_DepthStencilBuffer = NULLPTR;
+		ID3D11BlendState* m_BlendState = NULLPTR;
+		ID3D11DepthStencilState* m_DepthStencilState = NULLPTR;
+		ID3D11DepthStencilView* m_DepthStencilView = NULLPTR;
+		ID3D11RasterizerState* m_RasterState = NULLPTR;
 	public:
 		Context(void);
 		~Context(void);

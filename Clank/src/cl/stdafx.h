@@ -61,3 +61,10 @@
 #pragma warning(disable: 4251)
 
 #pragma comment(lib, "dxgi.lib")
+
+#define SafeRelease(x)	\
+	if (x)				\
+	{					\
+		x->Release();	\
+		x = NULLPTR;	\
+	}

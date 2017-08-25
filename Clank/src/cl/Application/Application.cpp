@@ -21,7 +21,6 @@ namespace cl {
 	}
 
 	Application::Application(void)
-		: m_Closed(FALSE)
 	{
 	}
 

@@ -47,8 +47,8 @@ namespace cl {
         HINSTANCE m_hInstance;
         HWND m_hWnd;
 
-		BOOL m_WindowFocused;
-		BOOL m_Closed;
+		BOOL m_WindowFocused = FALSE;
+		BOOL m_Closed = FALSE;
 
         ApplicationDesc m_Desc;
 

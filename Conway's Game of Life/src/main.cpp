@@ -7,38 +7,37 @@ constexpr u32	  WIDTH		   = 800u;
 constexpr u32	  HEIGHT	   = 600u;
 constexpr float32 ASPECT_RATIO = WIDTH / HEIGHT;
 
+constexpr float32 MOVE_SENSITIVITY = 0.4f;
+
 using namespace cl;
 
 class Game : public Layer2D
 {
 private:
-	Universe* m_Universe;
-	Hotloader* m_Hotloader;
+	Universe* m_Universe = anew Universe;
+	Hotloader* m_Hotloader = anew Hotloader;
 
 	Renderable2D* m_Background;
-	Renderer2D* m_BackgroundRenderer;
+	Renderer2D* m_BackgroundRenderer = anew Renderer2D;
 
 	OrthographicCamera* m_Camera;
 	OrthographicCamera* m_BackgroundCamera;
 
 	vec2 m_MouseDelta;
-	vec2 m_CameraOffset;
-	
-	vec2 m_TargetCameraOffset;
+	vec2 m_CameraOffset = vec2(10000.0f);
+	vec2 m_TargetCameraOffset = vec2(10000.0f);
 
 	float32 m_CameraZoom = 0.0f;
 	float32 m_TargetCameraZoom;
 	
 	u32 m_Speed;
-	UniversePreset m_Preset;
+	UniversePreset m_Preset = DEFAULT;
 
 	std::unordered_map<String, UniversePreset> m_Presets;
 public:
 	Game()
 		: Layer2D(mat4::Orthographic(0.0f, cast(float32) WIDTH, 0.0f, cast(float32) HEIGHT, -1.0f, 1.0f)), 
-		m_Universe(anew Universe), m_Hotloader(anew Hotloader), m_BackgroundRenderer(anew Renderer2D), 
-		m_Camera(anew OrthographicCamera(m_ProjectionMatrix)), m_BackgroundCamera(anew OrthographicCamera(m_ProjectionMatrix)), 
-		m_CameraOffset(10000.0f), m_TargetCameraOffset(10000.0f), m_Preset(DEFAULT)
+		m_Camera(anew OrthographicCamera(m_ProjectionMatrix)), m_BackgroundCamera(anew OrthographicCamera(m_ProjectionMatrix))
 	{
 		m_Presets[L"-clear"] = CLEAR;
 		m_Presets[L"-glider"] = GLIDER;
@@ -82,22 +81,13 @@ public:
 		renderer->SetCamera(m_Camera);
 		m_BackgroundRenderer->SetCamera(m_BackgroundCamera);
 
-		Texture* background = new Texture;
-
 		TextureDesc textureDesc;
-		TextureLoadProperties textureLoadProperties;
-		{
-			ZeroMemory(&textureDesc, sizeof(TextureDesc));
-			ZeroMemory(&textureLoadProperties, sizeof(TextureLoadProperties));
+		textureDesc.Filter = TextureFilter::NEAREST;
 
-			textureDesc.Filter = TextureFilter::NEAREST;
+		Texture* background = anew Texture;
+		Texture::CreateFromFile(background, FileLoadProperties(L"cgl_data/bg.jpg"), textureDesc);
 
-			textureLoadProperties.FlipHorizontal = false;
-			textureLoadProperties.FlipVertical = false;
-		}
-		Texture::CreateFromFile(background, L"cgl_data/bg.jpg", textureDesc, textureLoadProperties);
-
-		m_Background = anew Renderable2D({ WIDTH / 2.0f, HEIGHT / 2.0f }, { 1920 / 3.6f + 100, 1080 / 3.6f + 100 }, background, 0xffffffff);
+		m_Background = anew Renderable2D({ WIDTH * 0.5f, HEIGHT * 0.5f }, { 633.3f, 400.0f }, background);
 
 		const String& path = Application::Instance().GetDescription().Path;
 
@@ -114,7 +104,7 @@ public:
 			{
 				vec2 amount = m_MouseDelta - vec2(cast(float32) e.GetX(), cast(float32) e.GetY());
 			
-				m_TargetCameraOffset += vec2(amount.x * 0.4f, -amount.y * 0.4f);
+				m_TargetCameraOffset += vec2(amount.x * MOVE_SENSITIVITY, -amount.y * MOVE_SENSITIVITY);
 			}
 
 			m_MouseDelta = vec2(cast(float32) e.GetX(), cast(float32) e.GetY());
@@ -135,7 +125,7 @@ public:
 	{
 		m_Universe->Update();
 
-		m_CameraOffset.Lerp(m_TargetCameraOffset, 0.4f);
+		m_CameraOffset.Lerp(m_TargetCameraOffset, 0.2f);
 		m_CameraZoom += (m_TargetCameraZoom - m_CameraZoom) * 0.3f;
 
 		m_Camera->SetProjectionMatrix(mat4::Orthographic(-m_CameraZoom, cast(float32) WIDTH + m_CameraZoom, -m_CameraZoom, cast(float32) HEIGHT + m_CameraZoom, -1.0f, 1.0f));
@@ -181,11 +171,9 @@ public:
 		return true;
 	}
 
-	void UpdateConfigFile(String path)
+	void UpdateConfigFile(const String& path)
 	{
-		String file = path;
-		file = file.substr(file.find_last_of(L'\\') + 1, file.length());
-		if (file != L"config.txt")
+		if (GetFilenameFromPath(path) != L"config.txt")
 			return;
 
 		std::wifstream wif(path);

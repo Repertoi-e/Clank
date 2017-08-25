@@ -15,8 +15,8 @@
 
 namespace cl {
 
-	static wbyte to_wchar_buffer[1024 * 10];
-	static wbyte sprintf_buffer[1024 * 10];
+	static wchar to_wchar_buffer[1024 * 10];
+	static wchar sprintf_buffer[1024 * 10];
 
 	template <typename T>
 	static const wchar* to_string(const T& t)
@@ -36,6 +36,9 @@ namespace cl {
 	template <>
 	static const wchar* to_string<char*>(char* const& t)
 	{
+		if (!t)
+			return L""; 
+		
 		mbstowcs(to_wchar_buffer, t, 2);
 		return to_wchar_buffer;
 	}
@@ -56,7 +59,9 @@ namespace cl {
 	template <>
 	static const wchar* to_string<const char*>(const char* const& t)
 	{
-		//@Bug: When passing a NULL const char* this fails. 
+		if (!t)
+			return L"";
+
 		mbstowcs(to_wchar_buffer, t, strlen(t) + 1);
 		return to_wchar_buffer;
 	}
@@ -218,7 +223,7 @@ namespace cl {
 	template <typename... Args>
 	void print_sequence(s32 level, Args... args)
 	{
-		wbyte buffer[1024 * 10];
+		wchar buffer[1024 * 10];
 		s32 index = 0;
 		print_sequence_internal(buffer, index, std::forward<Args>(args)...);
 
@@ -281,7 +286,7 @@ namespace cl {
 		std::vector<const wchar*> argsv;
 		sprint_internal(argsv, std::forward<Args>(args)...);
 
-		s32 args_count = argsv.size();
+		const s32 args_count = argsv.size();
 
 		if (args_count <= 0)
 			return;

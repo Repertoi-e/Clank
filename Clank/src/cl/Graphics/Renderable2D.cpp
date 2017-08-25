@@ -6,25 +6,25 @@
 namespace cl {
 	
 	Renderable2D::Renderable2D(const Rectangle& rectangle, u32 color)
-		: bounds(rectangle), color(color), texture(NULLPTR)
+		: bounds(rectangle), color(color)
 	{
 		ResetUVs();
 	}
 	
 	Renderable2D::Renderable2D(const vec2& position, const vec2& size, u32 color)
-		: bounds(position, size), color(color), texture(NULLPTR)
+		: bounds(position, size), color(color)
 	{
 		ResetUVs();
 	}
 	
-	Renderable2D::Renderable2D(const Rectangle& rectangle, Texture* texture, u32 color)
-		: bounds(rectangle), texture(texture), color(color)
+	Renderable2D::Renderable2D(const Rectangle& rectangle, Texture* texture)
+		: bounds(rectangle), texture(texture)
 	{
 		ResetUVs();
 	}
 	
-	Renderable2D::Renderable2D(const vec2& position, const vec2& size, Texture* texture, u32 color)
-		: bounds(position, size), texture(texture), color(color)
+	Renderable2D::Renderable2D(const vec2& position, const vec2& size, Texture* texture)
+		: bounds(position, size), texture(texture)
 	{
 		ResetUVs();
 	}

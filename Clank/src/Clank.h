@@ -13,4 +13,6 @@
 #include "cl/Graphics/OrthographicCamera.h"
 
 #include "cl/Utils/Log.h"
+#include "cl/Utils/FileUtils.h"
+
 #include "cl/Maths/maths.h"

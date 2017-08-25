@@ -3,22 +3,19 @@
 
 #include "Context.h"
 
-#include "cl/Utils/LoadImage.h"
+#include "cl/Utils/FileUtils.h"
 
 namespace cl {
 	
 	Texture::Texture(void)
-		: m_Handle(NULLPTR)
 	{
 	}
 	
 	Texture::~Texture(void)
 	{
-		if (m_Handle)
-		{
-			m_Handle->Release();
-			m_Handle = 0;
-		}
+		SafeRelease(m_Handle);
+		SafeRelease(m_Texture);
+		SafeRelease(m_SamplerState);
 	}
 
 	void Texture::Bind(u32 slot)
@@ -33,36 +30,27 @@ namespace cl {
 		Context::Instance().GetDeviceContext()->PSSetShaderResources(slot, 1, &rv);
 	}
 
-	DXGI_FORMAT Texture::PixelFormatToD3D(PixelFormat format)
+	void Texture::CreateFromFile(Texture* texture, const FileLoadProperties& loadProperties, const TextureDesc& textureDesc)
 	{
-		switch (format)
-		{
-			case PixelFormat::RGB:
-			case PixelFormat::RGBA:
-			case PixelFormat::LUMINANCE_ALPHA:
-				return DXGI_FORMAT_R8G8B8A8_UNORM;
-		}
-		return DXGI_FORMAT_UNKNOWN;
-	}
-
-	void Texture::CreateFromFile(Texture* texture, const String& file, TextureDesc& textureDesc, TextureLoadProperties loadProperties)
-	{
-		byte* data = nullptr;
-		data = LoadImage(file, &texture->m_Width, &texture->m_Height, &texture->m_BPP, loadProperties.FlipHorizontal, !loadProperties.FlipVertical);
-		textureDesc.Format = texture->m_BPP == 24 ? PixelFormat::RGB : PixelFormat::RGBA;
-
-		bool generateMips = data != nullptr;
+		byte* data = NULLPTR;
+		data = LoadImage(loadProperties.File, &texture->m_Width, &texture->m_Height, &texture->m_BPP, loadProperties.FlipHorizontal, !loadProperties.FlipVertical);
+		
+		bool generateMips = data != NULLPTR;
 
 		u32 stride = 4;
 
 		D3D11_SUBRESOURCE_DATA initData;
-		initData.pSysMem = data;
-		initData.SysMemPitch = stride * texture->m_Width;
-		initData.SysMemSlicePitch = texture->m_Width * texture->m_Height * stride;
+		{
+			ZeroMemory(&initData, sizeof(D3D11_SUBRESOURCE_DATA));
 
-		D3D11_SUBRESOURCE_DATA* initDataPtr = nullptr;
-		u32 miplevels = 1;
+			initData.pSysMem = data;
+			initData.SysMemPitch = stride * texture->m_Width;
+			initData.SysMemSlicePitch = texture->m_Width * texture->m_Height * stride;
+		}
+		
+		D3D11_SUBRESOURCE_DATA* initDataPtr = NULLPTR;
 
+		u32 mipLevels = 1;
 		if (generateMips)
 		{
 			u32 width = texture->m_Width;
@@ -72,15 +60,15 @@ namespace cl {
 			{
 				width = std::max(width / 2, 1u);
 				height = std::max(height / 2, 1u);
-				++miplevels;
+				++mipLevels;
 			}
 		}
 		else
 			if (data)
 				initDataPtr = &initData;
 
-		DXGI_FORMAT format = PixelFormatToD3D(textureDesc.Format);
-
+		DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		
 		u32 fmtSupport = 0;
 		Context::Instance().GetDevice()->CheckFormatSupport(format, &fmtSupport);
 		ASSERT(fmtSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN, "");
@@ -90,7 +78,7 @@ namespace cl {
 
 			texture->m_Desc.Width = texture->m_Width;
 			texture->m_Desc.Height = texture->m_Height;
-			texture->m_Desc.MipLevels = miplevels;
+			texture->m_Desc.MipLevels = mipLevels;
 			texture->m_Desc.ArraySize = 1;
 			texture->m_Desc.Format = format;
 			texture->m_Desc.CPUAccessFlags = 0;
@@ -117,7 +105,7 @@ namespace cl {
 
 		if (generateMips)
 		{
-			Context::Instance().GetDeviceContext()->UpdateSubresource(texture->m_Texture, 0, nullptr, initData.pSysMem, initData.SysMemPitch, initData.SysMemSlicePitch);
+			Context::Instance().GetDeviceContext()->UpdateSubresource(texture->m_Texture, 0, NULLPTR, initData.pSysMem, initData.SysMemPitch, initData.SysMemSlicePitch);
 			Context::Instance().GetDeviceContext()->GenerateMips(texture->m_Handle);
 		}
 
@@ -135,7 +123,7 @@ namespace cl {
 		}
 		HR(Context::Instance().GetDevice()->CreateSamplerState(&texture->m_SamplerDesc, &texture->m_SamplerState));
 
-		if (data != nullptr)
+		if (data)
 			del[] data;
 	}
 }

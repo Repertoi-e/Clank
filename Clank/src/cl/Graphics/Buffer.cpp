@@ -6,7 +6,6 @@
 namespace cl {
 
 	Buffer::Buffer(void)
-		: m_Buffer(NULLPTR), m_MappedSubresource(anew D3D11_MAPPED_SUBRESOURCE), m_Desc(anew D3D11_BUFFER_DESC), m_InputLayout(NULLPTR)
 	{
 	}
 

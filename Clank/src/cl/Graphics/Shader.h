@@ -22,8 +22,8 @@ namespace cl {
 		};
 	private:
 		Data m_Data;
-		ID3D11VertexShader* m_VS;
-		ID3D11PixelShader* m_PS;
+		ID3D11VertexShader* m_VS = NULLPTR;
+		ID3D11PixelShader* m_PS = NULLPTR;
 	public:
 		Shader(void);
 		~Shader(void);

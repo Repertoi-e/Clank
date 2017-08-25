@@ -10,12 +10,12 @@ namespace cl {
 	{
 	protected:
 		mat4 m_ProjectionMatrix;
-		Renderer2D* m_Renderer;
+		Renderer2D* m_Renderer = anew Renderer2D;
 
 		std::vector<Renderable2D*> m_Renderables;
 	public:
 		Layer2D(mat4 projectionMatrix)
-			: m_ProjectionMatrix(projectionMatrix), m_Renderer(anew Renderer2D)
+			: m_ProjectionMatrix(projectionMatrix)
 		{
 		}
 

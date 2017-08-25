@@ -5,16 +5,7 @@
 
 namespace cl {
 
-#define SafeRelease(x)	\
-	if (x)				\
-	{					\
-		x->Release();	\
-		x = nullptr;	\
-	}
-
 	Context::Context(void)
-		: m_SwapChain(NULLPTR), m_Device(NULLPTR), m_DeviceContext(NULLPTR), m_RenderTargetView(NULLPTR), m_Settings(NULLPTR),
-		m_DepthStencilBuffer(NULLPTR), m_DepthStencilState(NULLPTR), m_DepthStencilView(NULLPTR), m_RasterState(NULLPTR)
 	{
 	}
 

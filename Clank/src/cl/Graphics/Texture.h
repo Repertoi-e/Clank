@@ -12,31 +12,23 @@ namespace cl {
 		NEAREST
 	};
 
-	enum class API PixelFormat
+	struct TextureDesc
 	{
-		RGB,
-		RGBA,
-		LUMINANCE,
-		LUMINANCE_ALPHA
-	};
-
-	struct API TextureDesc
-	{
-		PixelFormat Format;
 		TextureFilter Filter;
 	};
 
-	struct API TextureLoadProperties
+	struct API FileLoadProperties
 	{
-		bool FlipHorizontal, FlipVertical;
+		String File;
+		bool FlipHorizontal = false, FlipVertical = false;
 
-		TextureLoadProperties(void)
-			: FlipHorizontal(false), FlipVertical(false)
+		FileLoadProperties(String file)
+			: File(file)
 		{
 		}
 
-		TextureLoadProperties(bool flipHorizontal, bool flipVertical)
-			: FlipHorizontal(flipHorizontal), FlipVertical(flipVertical)
+		FileLoadProperties(String file, bool flipHorizontal, bool flipVertical)
+			: File(file), FlipHorizontal(flipHorizontal), FlipVertical(flipVertical)
 		{
 		}
 	};
@@ -44,13 +36,13 @@ namespace cl {
 	class API Texture
 	{
 	protected:
-		ID3D11ShaderResourceView* m_Handle;
+		ID3D11ShaderResourceView* m_Handle = NULLPTR;
 		
 		D3D11_TEXTURE2D_DESC m_Desc;
-		ID3D11Texture2D* m_Texture;
+		ID3D11Texture2D* m_Texture = NULLPTR;
 		
 		D3D11_SAMPLER_DESC m_SamplerDesc;
-		ID3D11SamplerState* m_SamplerState;
+		ID3D11SamplerState* m_SamplerState = NULLPTR;
 
 		u32 m_Width, m_Height, m_BPP;
 	public:
@@ -62,8 +54,7 @@ namespace cl {
 
 		inline ID3D11ShaderResourceView* GetHandle(void) { return m_Handle; }
 	public:
-		static DXGI_FORMAT PixelFormatToD3D(PixelFormat format);
-	public:
-		static void CreateFromFile(Texture* texture, const String& file, TextureDesc& textureDesc, TextureLoadProperties loadProperties = { 0, 0 });
+		static void CreateFromFile(Texture* texture, const FileLoadProperties& loadProperties, const TextureDesc& textureDesc);
+		static void CreateFromMemory();
 	};
 }

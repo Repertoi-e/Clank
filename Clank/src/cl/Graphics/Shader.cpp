@@ -10,7 +10,6 @@
 namespace cl {
 	
 	Shader::Shader(void)
-		: m_VS(NULLPTR), m_PS(NULLPTR)
 	{
 		m_Data.vs = NULLPTR;
 		m_Data.ps = NULLPTR;

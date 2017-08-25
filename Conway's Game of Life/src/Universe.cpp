@@ -120,7 +120,7 @@ void Universe::Update(void)
 
 void Universe::Draw(Renderer2D* renderer, const cl::vec2& offset)
 {
-	static Renderable2D* cell = anew Renderable2D({ 0, 0 }, { CELL_RENDER_SIZE / 2, CELL_RENDER_SIZE / 2 }, 0, 0xaa42f48c);
+	static Renderable2D* cell = anew Renderable2D({ 0, 0 }, { CELL_RENDER_SIZE / 2, CELL_RENDER_SIZE / 2 }, 0xaa42f48c);
 
 	for (u32 x = 0; x < (UNIVERSE_SIZE); x++)
 	{

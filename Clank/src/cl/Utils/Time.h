@@ -59,11 +59,11 @@ namespace cl {
 	class API DeltaTime
 	{
 	private:
-		float32 m_Difference;
+		float32 m_Difference = 0;
 		float32 m_LastTime;
 	public:
 		DeltaTime(float32 start)
-			: m_Difference(0), m_LastTime(start)
+			: m_LastTime(start)
 		{
 		}
 

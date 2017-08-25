@@ -12,7 +12,7 @@ namespace cl {
 	private:
 		OrthographicCamera* m_Camera;
 		
-		Renderer2D* m_Renderer;
+		Renderer2D* m_Renderer = anew Renderer2D;
 		std::vector<Renderable2D*> m_Renderables;
 	public:
 		Scene2D(const mat4 projectionMatrix);

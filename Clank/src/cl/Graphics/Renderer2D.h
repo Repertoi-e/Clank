@@ -40,14 +40,14 @@ namespace cl {
 		std::vector<mat4> m_TransformationStack;
 		const mat4* m_TransformationBack;
 
-		Context* m_Context;
-		Shader* m_Shader;
+		Context* m_Context = &Context::Instance();
+		Shader* m_Shader = anew Shader;
 
 		Vertex* m_Map;
-		Buffer* m_VertexBuffer, *m_IndexBuffer, *m_MatrixBuffer;
-		u32 m_Indices;
+		Buffer* m_VertexBuffer = anew Buffer, *m_IndexBuffer = anew Buffer, *m_MatrixBuffer = anew Buffer;
+		u32 m_Indices = 0u;
 
-		Matrices* m_Matrices;
+		Matrices* m_Matrices = anew Matrices;
 
 		Camera* m_Camera;
 

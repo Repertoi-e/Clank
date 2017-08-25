@@ -54,11 +54,10 @@ namespace cl {
 	class API InputLayout
 	{
 	private:
-		u32 m_Size;
+		u32 m_Size = 0;
 		std::vector<InputElement> m_Layout;
 	public:
 		InputLayout(void)
-			: m_Size(0)
 		{
 		}
 
@@ -125,10 +124,10 @@ namespace cl {
 	class API Buffer
 	{
 	private:
-		ID3D11Buffer* m_Buffer;
-		D3D11_MAPPED_SUBRESOURCE* m_MappedSubresource;
-		D3D11_BUFFER_DESC* m_Desc;
-		ID3D11InputLayout* m_InputLayout;
+		ID3D11Buffer* m_Buffer = NULLPTR;
+		D3D11_MAPPED_SUBRESOURCE* m_MappedSubresource = anew D3D11_MAPPED_SUBRESOURCE;
+		D3D11_BUFFER_DESC* m_Desc = anew D3D11_BUFFER_DESC;
+		ID3D11InputLayout* m_InputLayout = NULLPTR;
 
 		InputLayout m_Layout;
 	public:
