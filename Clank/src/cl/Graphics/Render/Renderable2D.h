@@ -2,7 +2,7 @@
 
 #include "cl/stdafx.h"
 
-#include "Texture.h"
+#include "cl/Graphics/Texture.h"
 
 #include "cl/Maths/maths.h"
 #include "cl/Maths2/Rectangle.h"

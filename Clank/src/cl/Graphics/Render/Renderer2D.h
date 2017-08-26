@@ -1,11 +1,12 @@
 #pragma once
 
 #include "Renderer.h"
-#include "Shader.h"
-#include "Context.h"
-#include "Buffer.h"
-#include "Texture.h"
-#include "Camera.h"
+
+#include "cl/Graphics/Shader.h"
+#include "cl/Graphics/Context.h"
+#include "cl/Graphics/Buffer.h"
+#include "cl/Graphics/Texture.h"
+#include "cl/Graphics/Camera/Camera.h"
 
 namespace cl {
 

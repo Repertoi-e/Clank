@@ -203,14 +203,23 @@ public:
 
 				std::transform(line.begin(), line.end(), line.begin(), towlower);
 
-				if (ChangePreset(m_Presets[line]))
+				auto it = m_Presets.find(line);
+				if (it == m_Presets.end())
+					print("[Config] Invalid preset: /%\n", line);
+				else if (ChangePreset(it->second))
 					print("[Config] Setting preset to /%\n", line);
 			}
 		}
 	}
 };
 
-s32 CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, s32)
+#define CONSOLE
+
+#ifdef CONSOLE
+int main()
+#else
+s32 CALLBACK WinMain(HINSTANCE, HINSTANCE, char*, s32)
+#endif
 {
 	SetLocale(LC_ALL);
 

@@ -2,8 +2,8 @@
 
 #include "cl/stdafx.h"
 
-#include "Renderer2D.h"
-#include "OrthographicCamera.h"
+#include "Render/Renderer2D.h"
+#include "Camera/OrthographicCamera.h"
 
 namespace cl {
 
