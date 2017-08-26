@@ -36,6 +36,9 @@
 
 #include <wchar.h>	// needed for UNICODE functions
 
+#undef FREEIMAGE_LIB
+#undef FREEIMAGE_EXPORTS
+
 #if defined(FREEIMAGE_LIB)
 	#define DLL_API
 	#define DLL_CALLCONV

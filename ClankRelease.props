@@ -23,7 +23,8 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <EntryPointSymbol>main</EntryPointSymbol>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

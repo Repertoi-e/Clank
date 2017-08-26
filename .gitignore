@@ -10,7 +10,6 @@
 *.smod
 
 # VS
-FreeImage.lib
 *.exp 
 *.iobj 
 *.ipdb 

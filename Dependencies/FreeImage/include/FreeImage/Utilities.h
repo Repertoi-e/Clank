@@ -361,7 +361,26 @@ Swap red and blue channels in a 24- or 32-bit dib.
 @return Returns TRUE if successful, returns FALSE otherwise
 @see See definition in Conversion.cpp
 */
-BOOL SwapRedBlue32(FIBITMAP* dib);
+inline BOOL SwapRedBlue32(FIBITMAP* dib)
+{
+	if (FreeImage_GetImageType(dib) != FIT_BITMAP)
+		return FALSE;
+
+	const unsigned bpp = FreeImage_GetBPP(dib) / 8;
+	if (bpp > 4 || bpp < 3)
+		return FALSE;
+
+	const unsigned height = FreeImage_GetHeight(dib);
+	const unsigned pitch = FreeImage_GetPitch(dib);
+	const unsigned lineSize = FreeImage_GetLine(dib);
+
+	BYTE* line = FreeImage_GetBits(dib);
+	for (unsigned y = 0; y < height; ++y, line += pitch)
+		for (BYTE* pixel = line; pixel < line + lineSize; pixel += bpp)
+			INPLACESWAP(pixel[0], pixel[2]);
+
+	return TRUE;
+}
 
 /**
 Inplace convert CMYK to RGBA.(8- and 16-bit). 

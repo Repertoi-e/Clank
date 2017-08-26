@@ -6,27 +6,6 @@
 
 #include "Log.h"
 
-bool SwapRedBlue(FIBITMAP* dib)
-{
-	if (FreeImage_GetImageType(dib) != FIT_BITMAP)
-		return false;
-
-	const u32 bpp = FreeImage_GetBPP(dib) / 8;
-	if (bpp > 4 || bpp < 3)
-		return false;
-
-	const u32 height = FreeImage_GetHeight(dib);
-	const u32 pitch = FreeImage_GetPitch(dib);
-	const u32 lineSize = FreeImage_GetLine(dib);
-
-	byte* line = FreeImage_GetBits(dib);
-	for (u32 y = 0; y < height; ++y, line += pitch)
-		for (byte* pixel = line; pixel < line + lineSize; pixel += bpp)
-			INPLACESWAP(pixel[0], pixel[2]);
-
-	return true;
-}
-
 namespace cl {
 
 	String GetFilenameFromPath(const wchar* path)
@@ -75,7 +54,7 @@ namespace cl {
 			FreeImage_FlipVertical(bitmap);
 
 		if (FreeImage_GetRedMask(bitmap) == 0xff0000)
-			SwapRedBlue(bitmap);
+			SwapRedBlue32(bitmap);
 
 		if (width)
 			*width = w;

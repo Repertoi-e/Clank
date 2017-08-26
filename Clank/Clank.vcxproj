@@ -101,9 +101,6 @@
     <ProjectReference Include="..\Dependencies\DirectXTK\DirectXTK_Desktop_2017_Win10.vcxproj">
       <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Dependencies\FreeImage\FreeImage.vcxproj">
-      <Project>{6f2ff135-e343-4138-a6fb-2d1f2540a3f8}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Dependencies\MakeSpriteFont\MakeSpriteFont.csproj">
       <Project>{7329b02d-c504-482a-a156-181d48ce493c}</Project>
     </ProjectReference>
@@ -185,8 +182,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NON_CONFORMING_SWPRINTFS;WIN32;FREEIMAGE_LIB;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src\;..\Dependencies\DirectXTK\Inc;..\Dependencies\DirectXTK\Audio\;..\Dependencies\FreeImage\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NON_CONFORMING_SWPRINTFS;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src\;..\Dependencies\FreeImage\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>cl/stdafx.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
@@ -216,8 +213,8 @@ fxc.exe /Zi /Od /T vs_4_0 /E"VSMain" /Fo "$(TargetDir)VS_R2D.cso" "src/cl/BuiltI
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NON_CONFORMING_SWPRINTFS;WIN32;FREEIMAGE_LIB;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src\;..\Dependencies\DirectXTK\Inc;..\Dependencies\DirectXTK\Audio;..\Dependencies\FreeImage\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NON_CONFORMING_SWPRINTFS;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src\;..\Dependencies\FreeImage\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>cl/stdafx.h</PrecompiledHeaderFile>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>

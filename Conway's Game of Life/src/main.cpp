@@ -210,7 +210,7 @@ public:
 	}
 };
 
-int main()
+s32 CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, s32)
 {
 	SetLocale(LC_ALL);
 
