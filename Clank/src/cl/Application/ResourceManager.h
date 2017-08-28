@@ -29,11 +29,15 @@ namespace cl {
 
 		void Add(T* t)
 		{
+			ASSERT(t, "Resource is NULLPTR");
+		
 			m_Resources->PushBack(t);
 		}
 
 		void Remove(T* t)
 		{
+			ASSERT(t, "Resource is NULLPTR");
+
 			for (u32 i = 0; i < m_Resources->Size(); i++)
 			{
 				if (m_Resources->Get(i) == t)
@@ -45,10 +49,12 @@ namespace cl {
 		{
 			for (u32 i = 0; i < m_Resources->Size(); i++)
 			{
-				T* resource = m_Resources->Get(i);
+				T* resource = cast(T*) m_Resources->Get(i);
 				if (resource->GetName() == name)
 					return resource;
 			}
+
+			return NULLPTR;
 		}
 	};
 

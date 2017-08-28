@@ -64,6 +64,8 @@ public:
 
 	void Init(Context* context, Renderer2D* renderer) override
 	{
+		const String& path = Application::Instance().GetDescription().Path;
+		
 		Renderer2DDesc desc;
 		{
 			ZeroMemory(&desc, sizeof(Renderer2DDesc));
@@ -109,7 +111,6 @@ public:
 			g_Fonts.Add(Font::CreateFromFile(anew Font, fontDesc));
 		}
 
-		const String& path = Application::Instance().GetDescription().Path;
 
 		UpdateConfigFile(path + L"config.txt");
 		Hotloader::Create(m_Hotloader, path, std::bind(&Game::UpdateConfigFile, this, std::placeholders::_1));
@@ -166,10 +167,10 @@ public:
 
 	void OnRender(Context* context, Renderer2D* renderer) override
 	{
-		m_Universe->Draw(renderer, m_CameraOffset);
+		// m_Universe->Draw(renderer, m_CameraOffset);
 
-		renderer->DrawString(L"I think this is some kind of a text? :^)", vec2(150, 400), *m_Font, 0xffffffff);
-		renderer->DrawString(L"This is a strange font! (Alex Brush)", vec2(150, 300), *m_Font2, 0xff6b20f7);
+		renderer->DrawString(L"I think this is some kind of a text? :^)", vec2(150, 400), *g_Fonts.Get(L"Roboto"), 0xffffffff);
+		renderer->DrawString(L"This is a strange font! (Alex Brush)", vec2(150, 300), *g_Fonts.Get(L"Alex Brush"), 0xff6b20f7);
 	}
 
 	bool ChangeSpeed(u32 speed)

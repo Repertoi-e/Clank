@@ -294,6 +294,9 @@ namespace cl {
 
 	void Renderer2D::Present(void)
 	{
+		Context::Instance().SetBlend(true);
+		Context::Instance().SetDepthTesting(false);
+
 		m_Matrices->Projection = m_Camera->GetProjectionMatrix();
 		m_Matrices->View = m_Camera->GetViewMatrix();
 		UpdateMatrixBuffer();

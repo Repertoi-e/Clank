@@ -21,8 +21,6 @@ namespace cl {
 
 	void Texture::Load(void)
 	{
-		LOG_INFO("Calling Texture::Load\n");
-
 		byte* data = NULLPTR;
 		
 		if (m_LoadProperties.File != L"NULL")

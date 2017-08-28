@@ -162,6 +162,9 @@
     <ClInclude Include="src\cl\Memory\Vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\cl\Application\ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cl\Application\Events\KeyEvent.cpp">
@@ -255,6 +258,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cl\Memory\Vector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cl\Application\ResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

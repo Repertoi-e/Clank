@@ -225,6 +225,8 @@ namespace cl {
 			m_Desc.Height = height;
 
 			DoEvent(WindowResizeEvent(width, height));
+
+			Context::Instance().ChangeSize(m_Desc.Width, m_Desc.Height);
 		}
 		break;
 		case WM_ACTIVATE:

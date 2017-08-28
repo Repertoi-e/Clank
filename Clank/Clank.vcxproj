@@ -29,6 +29,7 @@
     <ClInclude Include="src\cl\Application\Events\Keys.h" />
     <ClInclude Include="src\cl\Application\Events\MouseEvent.h" />
     <ClInclude Include="src\cl\Application\Events\WindowEvent.h" />
+    <ClInclude Include="src\cl\Application\ResourceManager.h" />
     <ClInclude Include="src\cl\dxerr.h" />
     <ClInclude Include="src\cl\Entity\Component.h" />
     <ClInclude Include="src\cl\Entity\Entity.h" />
@@ -74,6 +75,7 @@
     <ClCompile Include="src\cl\Application\Events\KeyEvent.cpp" />
     <ClCompile Include="src\cl\Application\Events\MouseEvent.cpp" />
     <ClCompile Include="src\cl\Application\Events\WindowEvent.cpp" />
+    <ClCompile Include="src\cl\Application\ResourceManager.cpp" />
     <ClCompile Include="src\cl\dxerr.cpp" />
     <ClCompile Include="src\cl\Entity\Component.cpp" />
     <ClCompile Include="src\cl\Entity\Entity.cpp" />
