@@ -3,31 +3,40 @@
 #include "cl/stdafx.h"
 
 #include "cl/Maths/maths.h"
-#include "cl/Utils/Vector.h"
+
+#include "cl/Memory/Vector.h"
 
 namespace cl {
 
-	struct texture_atlas_t
+	class FontTextureAtlas
 	{
-		Vector* nodes;
+	private:
+		friend class Font;
+		friend class FontTexture;
+		
+		Vector* m_Nodes;
 
-		size_t width;
-		size_t height;
-		size_t depth;
-		size_t used;
+		u32 m_Width;
+		u32 m_Height;
+		u32 m_Depth;
+		u32 m_Used = 0;
 
-		unsigned int id;
-		unsigned char * data;
+		byte* m_Data = NULLPTR;
 
-		int dirty;
+		s32 m_Dirty = 0;
+	public:
+		FontTextureAtlas(u32 width, u32 height, u32 depth);
+		~FontTextureAtlas();
+		
+		void Clear(void);
+
+		void SetRegion(u32 x, u32 y, u32 width, u32 height, const byte* data, u32 stride);
+		void SetDirty(s32 value);
+
+		vec4i GetRegion(u32 width, u32 height);
+	private:
+		s32 Fit(u32 index, u32 width, u32 height);
+		
+		void Merge(void);
 	};
-
-	texture_atlas_t * texture_atlas_new(const size_t width, const size_t height, const size_t depth);
-
-	void texture_atlas_delete(texture_atlas_t * self);
-	void texture_atlas_upload(texture_atlas_t * self);
-	void texture_atlas_set_region(texture_atlas_t * self, const size_t x, const size_t y, const size_t width, const size_t height, const unsigned char *data, const size_t stride);
-	void texture_atlas_clear(texture_atlas_t * self);
-
-	vec4i texture_atlas_get_region(texture_atlas_t * self, const size_t width, const size_t height);
 }

@@ -159,7 +159,7 @@
     <ClInclude Include="src\cl\Graphics\Text\FontTextureAtlas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\cl\Utils\Vector.h">
+    <ClInclude Include="src\cl\Memory\Vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -254,7 +254,7 @@
     <ClCompile Include="src\cl\Graphics\Text\FontTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cl\Utils\Vector.cpp">
+    <ClCompile Include="src\cl\Memory\Vector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -20,6 +20,7 @@ namespace cl {
 
 	struct TextureDesc
 	{
+		String Name;
 		TextureFilter Filter;
 		PixelFormat Format;
 		u32 Width;
@@ -54,7 +55,6 @@ namespace cl {
 		TextureDesc m_Desc;
 	public:
 		Texture(void);
-		Texture(const TextureDesc& desc, const byte* data);
 		~Texture(void);
 
 		void Load(void);
@@ -64,9 +64,11 @@ namespace cl {
 
 		void SetData(const byte* data);
 
+		inline const String& GetName() const { return m_Desc.Name; }
+
 		inline ID3D11ShaderResourceView* GetHandle(void) { return m_Handle; }
 	public:
-		static void CreateFromFile(Texture* texture, const FileLoadProperties& loadProperties, const TextureDesc& textureDesc);
-		static void CreateFromMemory(Texture* texture, const TextureDesc& desc, const byte* data);
+		static Texture* CreateFromFile(Texture* texture, const FileLoadProperties& loadProperties, const TextureDesc& textureDesc);
+		static Texture* CreateFromMemory(Texture* texture, const TextureDesc& desc, const byte* data);
 	};
 }

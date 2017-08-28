@@ -29,9 +29,6 @@ private:
 
 	float32 m_CameraZoom = 0.0f;
 	float32 m_TargetCameraZoom;
-
-	Font* m_Font;
-	Font* m_Font2;
 	
 	u32 m_Speed;
 	UniversePreset m_Preset = DEFAULT;
@@ -85,27 +82,31 @@ public:
 		m_BackgroundRenderer->SetCamera(m_BackgroundCamera);
 
 		TextureDesc textureDesc;
+		textureDesc.Name = L"Background Space";
 		textureDesc.Filter = TextureFilter::NEAREST;
 
 		Texture* background = anew Texture;
 		Texture::CreateFromFile(background, FileLoadProperties(L"cgl_data/bg.jpg"), textureDesc);
+		g_Textures.Add(background);
 
-		m_Background = anew Renderable2D({ WIDTH * 0.5f, HEIGHT * 0.5f }, { 633.3f, 400.0f }, background);
+		m_Background = anew Renderable2D({ WIDTH * 0.5f, HEIGHT * 0.5f }, { 633.3f, 400.0f }, g_Textures.Get(L"Background Space"));
 
+		FontDesc fontDesc;
 		{
-			u32 dataSize = 0;
-			byte* font = ReadFile(L"cgl_data/Roboto-Regular.ttf", &dataSize);
-			String name = L"Roboto";
-			m_Font = anew Font(name, font, dataSize, 32);
-			m_Font->SetTexture();
-			m_Font->SetScale(vec2(1.0f, 1.0f));
+			fontDesc.Name = L"Roboto";
+			fontDesc.FileName = L"cgl_data/Roboto-Regular.ttf";
+			fontDesc.Size = 60;
+			fontDesc.Scale = vec2(1.0f, 1.0f);
+
+			g_Fonts.Add(Font::CreateFromFile(anew Font, fontDesc));
 		}
 		{
-			u32 dataSize = 0;
-			byte* font = ReadFile(L"cgl_data/AlexBrush-Regular.ttf", &dataSize);
-			m_Font2 = anew Font(L"Alex Brush", font, dataSize, 50);
-			m_Font2->SetTexture();
-			m_Font2->SetScale(vec2(2.0f, 1.0f));
+			fontDesc.Name = L"Alex Brush";
+			fontDesc.FileName = L"cgl_data/AlexBrush-Regular.ttf";
+			fontDesc.Size = 90;
+			fontDesc.Scale = vec2(1.0f, 1.0f);
+
+			g_Fonts.Add(Font::CreateFromFile(anew Font, fontDesc));
 		}
 
 		const String& path = Application::Instance().GetDescription().Path;
@@ -168,7 +169,7 @@ public:
 		m_Universe->Draw(renderer, m_CameraOffset);
 
 		renderer->DrawString(L"I think this is some kind of a text? :^)", vec2(150, 400), *m_Font, 0xffffffff);
-		renderer->DrawString(L"This is a strange font! (Alex Brush)", vec2(150, 500), *m_Font2, 0xff6b20f7);
+		renderer->DrawString(L"This is a strange font! (Alex Brush)", vec2(150, 300), *m_Font2, 0xff6b20f7);
 	}
 
 	bool ChangeSpeed(u32 speed)
@@ -263,8 +264,6 @@ s32 CALLBACK WinMain(HINSTANCE, HINSTANCE, char*, s32)
 	}
 
 	g_Application.Create(desc);
-
-	print("/%\n", g_Application.GetDescription().Path);
 
 	Game* game = cast(Game*)
 	g_Application.PushLayer(anew Game());

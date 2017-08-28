@@ -67,7 +67,7 @@
     <ClInclude Include="src\cl\Utils\Singleton.h" />
     <ClInclude Include="src\cl\String.h" />
     <ClInclude Include="src\cl\Utils\Time.h" />
-    <ClInclude Include="src\cl\Utils\Vector.h" />
+    <ClInclude Include="src\cl\Memory\Vector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cl\Application\Application.cpp" />
@@ -103,18 +103,9 @@
     </ClCompile>
     <ClCompile Include="src\cl\String.cpp" />
     <ClCompile Include="src\cl\Utils\FileUtils.cpp" />
-    <ClCompile Include="src\cl\Utils\Vector.cpp" />
+    <ClCompile Include="src\cl\Memory\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Dependencies\DirectXTK\DirectXTK_Desktop_2017_Win10.vcxproj">
-      <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Dependencies\MakeSpriteFont\MakeSpriteFont.csproj">
-      <Project>{7329b02d-c504-482a-a156-181d48ce493c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Dependencies\XWBTool\xwbtool_Desktop_2017.vcxproj">
-      <Project>{c7ab4186-54b2-4244-a533-77494763ea1d}</Project>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\cl\BuiltIn\Shaders\Renderer2D.hlsl">

@@ -2,6 +2,7 @@
 
 #include "cl/Application/Application.h"
 #include "cl/Application/Events/Events.h"
+#include "cl/Application/ResourceManager.h"
 
 #include "cl/Graphics/Context.h"
 #include "cl/Graphics/Shader.h"

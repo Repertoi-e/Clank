@@ -35,33 +35,8 @@ const struct {
 #endif
 
 
-#ifdef FT_CONFIG_OPTION_USE_MODULE_ERRORS
-
-#ifndef FT_ERR_BASE
-#define FT_ERR_BASE  FT_Mod_Err_Base
-#endif
-
-#else
-
 #undef FT_ERR_BASE
 #define FT_ERR_BASE  0
-
-#endif /* FT_CONFIG_OPTION_USE_MODULE_ERRORS */
-
-
-#ifndef FT_ERRORDEF
-
-#define FT_ERRORDEF( e, v, s )  e = v,
-#define FT_ERROR_START_LIST     enum {
-#define FT_ERROR_END_LIST       FT_ERR_CAT( FT_ERR_PREFIX, Max ) };
-
-#ifdef __cplusplus
-#define FT_NEED_EXTERN_C
-extern "C" {
-#endif
-
-#endif /* !FT_ERRORDEF */
-
 
 #define FT_ERRORDEF_( e, v, s )                                             \
           FT_ERRORDEF( FT_ERR_CAT( FT_ERR_PREFIX, e ), v + FT_ERR_BASE, s )
@@ -104,13 +79,13 @@ extern "C" {
 
 namespace cl {
 
-	struct kerning_t
+	struct Kerning
 	{
 		wchar charcode;
 		float32 kerning;
 	};
 
-	struct texture_glyph_t
+	struct TextureGlyph
 	{
 		wchar charcode;
 		u32 id = 0u;
@@ -129,59 +104,52 @@ namespace cl {
 		float32 s1 = 0.0f;
 		float32 t1 = 0.0f;
 
-		Vector* kerning;
+		Vector* kerning = anew Vector(sizeof(Kerning));
 
 		s32 outline_type = 0;
 		float32 outline_thickness = 0.0f;
+	public:
+		~TextureGlyph();
+
+		float32 GetKerning(const wchar charcode);
 	};
 
-	struct texture_font_t
+	class FontTexture
 	{
-		Vector* glyphs;
-
-		texture_atlas_t * atlas;
-
-		enum {
-			TEXTURE_FONT_FILE = 0,
-			TEXTURE_FONT_MEMORY,
-		} location;
-
-		union {
-			char *filename;
-
-			struct {
-				const void *base;
-				size_t size;
-			} memory;
+	private:
+		Vector* m_Glyphs = anew Vector(sizeof(TextureGlyph*));
+		FontTextureAtlas* m_Atlas;
+		
+		struct Memory
+		{
+			const void*base;
+			u32 size;
 		};
+		Memory m_Memory;
 
-		int hinting;
-		int outline_type;
-		int filtering;
-		int kerning;
+		s32 m_Hinting = 1, m_OutlineType = 0, m_Filtering = 1, m_Kerning = 1;
 
-		unsigned char lcd_weights[5];
+		byte m_LCDWeights[5];
 
-		float size;
-		float outline_thickness;
-		float height;
-		float linegap;
-		float ascender;
-		float descender;
+		float32 m_Size, m_Height = 0.0f, m_LineGap;
+		float32 m_Ascender = 0.0f, m_Descender = 0.0f;
+		float32 m_OutlineThickness = 0.0f, m_UnderlinePosition = 0.0f, m_UnderlineThickness = 0.0f;
+	public:
+		FontTexture(FontTextureAtlas* atlas, float32 size, const void* memory_base, u32 memory_size);
+		~FontTexture();
 
-		float underline_position;
-		float underline_thickness;
+		u32 LoadGlyphs(const wchar* charcodes);
+
+		TextureGlyph* GetGlyph(wchar charcode);
+	private:
+		s32 Init(void);
+
+		void GenerateKerning(void);
+
+		s32 LoadFace(float32 size, FT_Library* library, FT_Face* face);
+
+		s32 GetFace(FT_Library* library, FT_Face* face);
+		s32 GetFace(float32 size, FT_Library* library, FT_Face* face);
+		s32 GetHiresFace(FT_Library* library, FT_Face* face);
 	};
-
-	texture_font_t * texture_font_new_from_file(texture_atlas_t * atlas, const float pt_size, const char * filename);
-	texture_font_t * texture_font_new_from_memory(texture_atlas_t *atlas, float pt_size, const void *memory_base, size_t memory_size);
-	
-	void texture_font_delete(texture_font_t * self);
-
-	size_t texture_font_load_glyphs(texture_font_t * self, const wchar_t * charcodes);
-	
-	float texture_glyph_get_kerning(const texture_glyph_t * self, const wchar_t charcode);
-
-	texture_glyph_t * texture_font_get_glyph(texture_font_t * self, wchar_t charcode);
-	texture_glyph_t * texture_glyph_new(void);
 }

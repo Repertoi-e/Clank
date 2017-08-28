@@ -228,23 +228,21 @@ namespace cl {
 		ASSERT(texture, "Font texture is NULL!");
 		u32 ts = HandleTexture(texture);
 
-		const vec2& scale = font.GetScale();
+		const vec2& scale = font.GetDesc().Scale;
 
 		float32 x = position.x;
 
-		texture_font_t* ftFont = font.GetFTFont();
+		FontTexture* ftFont = font.GetFTFont();
 
 		for (u32 i = 0; i < text.length(); i++)
 		{
 			wchar c = text[i];
-			// texture_glyph_t* glyph = ftFont->GetGlyph(c);
-			texture_glyph_t* glyph = texture_font_get_glyph(ftFont, c);
+			TextureGlyph* glyph = ftFont->GetGlyph(c);
 			if (glyph)
 			{
 				if (i > 0)
 				{
-					// float32 kerning = glyph->GetKerning(text[i - 1]);
-					float32 kerning = texture_glyph_get_kerning(glyph, text[i - 1]);
+					float32 kerning = glyph->GetKerning(text[i - 1]);
 					x += kerning / scale.x;
 				}
 

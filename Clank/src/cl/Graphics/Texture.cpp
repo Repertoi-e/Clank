@@ -11,14 +11,6 @@ namespace cl {
 		: m_LoadProperties(L"NULL")
 	{
 	}
-
-	Texture::Texture(const TextureDesc& desc, const byte* data)
-		: m_LoadProperties(L"NULL"), m_Desc(desc)
-	{
-		Load();
-
-		SetData(data);
-	}
 	
 	Texture::~Texture(void)
 	{
@@ -157,18 +149,22 @@ namespace cl {
 		Context::Instance().GetDeviceContext()->Unmap(m_Texture, NULLPTR);
 	}
 
-	void Texture::CreateFromFile(Texture* texture, const FileLoadProperties& loadProperties, const TextureDesc& textureDesc)
+	Texture* Texture::CreateFromFile(Texture* texture, const FileLoadProperties& loadProperties, const TextureDesc& textureDesc)
 	{
 		texture->m_LoadProperties = loadProperties;
 		texture->m_Desc = textureDesc;
 		texture->Load();
+
+		return texture;
 	}
 
-	void Texture::CreateFromMemory(Texture* texture, const TextureDesc& desc, const byte* data)
+	Texture* Texture::CreateFromMemory(Texture* texture, const TextureDesc& desc, const byte* data)
 	{
 		texture->m_Desc = desc;
 		texture->Load();
 
 		texture->SetData(data);
+
+		return texture;
 	}
 }
