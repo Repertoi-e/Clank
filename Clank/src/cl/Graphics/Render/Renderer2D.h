@@ -7,6 +7,7 @@
 #include "cl/Graphics/Buffer.h"
 #include "cl/Graphics/Texture.h"
 #include "cl/Graphics/Camera/Camera.h"
+#include "cl/Graphics/Text/Font.h"
 
 namespace cl {
 
@@ -70,6 +71,7 @@ namespace cl {
 
 		void Submit(Renderable2D* renderable);
 		void DrawLine(const vec2& p1, const vec2& p2, u32 color, float32 thickness);
+		void DrawString(const String& text, const vec2& position, const Font& font, u32 color);
 
 		void End(void) override;
 		void Present(void) override;

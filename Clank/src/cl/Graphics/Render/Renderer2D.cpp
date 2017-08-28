@@ -222,6 +222,73 @@ namespace cl {
 		m_Indices += 6;
 	}
 
+	void Renderer2D::DrawString(const String& text, const vec2& position, const Font& font, u32 color)
+	{
+		Texture* texture = font.GetTexture();
+		ASSERT(texture, "Font texture is NULL!");
+		u32 ts = HandleTexture(texture);
+
+		const vec2& scale = font.GetScale();
+
+		float32 x = position.x;
+
+		texture_font_t* ftFont = font.GetFTFont();
+
+		for (u32 i = 0; i < text.length(); i++)
+		{
+			wchar c = text[i];
+			// texture_glyph_t* glyph = ftFont->GetGlyph(c);
+			texture_glyph_t* glyph = texture_font_get_glyph(ftFont, c);
+			if (glyph)
+			{
+				if (i > 0)
+				{
+					// float32 kerning = glyph->GetKerning(text[i - 1]);
+					float32 kerning = texture_glyph_get_kerning(glyph, text[i - 1]);
+					x += kerning / scale.x;
+				}
+
+				float32 x0 = x + glyph->offset_x / scale.x;
+				float32 y0 = position.y + glyph->offset_y / scale.y;
+				float32 x1 = x0 + glyph->width / scale.x;
+				float32 y1 = y0 - glyph->height / scale.y;
+
+				float32 u0 = glyph->s0;
+				float32 v0 = glyph->t0;
+				float32 u1 = glyph->s1;
+				float32 v1 = glyph->t1;
+
+				m_Map->position = *m_TransformationBack * vec4(x0, y0, 0.0f, 1.0f);
+				m_Map->uv = vec2(u0, v0);
+				m_Map->tid = ts;
+				m_Map->color = color;
+				m_Map++;
+				
+				m_Map->position = *m_TransformationBack * vec4(x0, y1, 0.0f, 1.0f);
+				m_Map->uv = vec2(u0, v1);
+				m_Map->tid = ts;
+				m_Map->color = color;
+				m_Map++;
+				
+				m_Map->position = *m_TransformationBack * vec4(x1, y1, 0.0f, 1.0f);
+				m_Map->uv = vec2(u1, v1);
+				m_Map->tid = ts;
+				m_Map->color = color;
+				m_Map++;
+				
+				m_Map->position = *m_TransformationBack * vec4(x1, y0, 0.0f, 1.0f);
+				m_Map->uv = vec2(u1, v0);
+				m_Map->tid = ts;
+				m_Map->color = color;
+				m_Map++;
+
+				m_Indices += 6;
+
+				x += glyph->advance_x / scale.x;
+			}
+		}
+	}
+
 	void Renderer2D::End(void)
 	{
 		m_VertexBuffer->Unmap();

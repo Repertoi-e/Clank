@@ -25,4 +25,4 @@ speed: 1
 # -ten_cell_row
 # -random
 
-preset: -random
+preset: -gosper_glider_gun

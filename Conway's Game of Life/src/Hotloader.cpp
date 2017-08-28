@@ -1,5 +1,5 @@
+#include "stdafx.h"
 #include "Hotloader.h"
-
 
 DWORD WINAPI ThreadProc(void* arg)
 {

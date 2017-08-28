@@ -85,12 +85,18 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>..\Dependencies\FreeType\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link />
     <PostBuildEvent>
       <Command>
       </Command>
     </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>Clank.lib;FreeImage.lib;freetype.lib;d3d11.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(TargetDir);$(SolutionDir)Dependencies/FreeImage/lib;$(SolutionDir)Dependencies/FreeType/lib</AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -106,11 +112,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <SDLCheck>true</SDLCheck>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\Dependencies\FreeType\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <EntryPointSymbol />
+      <AdditionalDependencies>Clank.lib;FreeImage.lib;freetype.lib;d3d11.lib;d3dcompiler.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(TargetDir);$(SolutionDir)Dependencies/FreeImage/lib;$(SolutionDir)Dependencies/FreeType/lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -137,10 +147,15 @@
   <ItemGroup>
     <ClCompile Include="..\Conway%27s Game of Life\src\Hotloader.cpp" />
     <ClCompile Include="..\Conway%27s Game of Life\src\main.cpp" />
+    <ClCompile Include="..\Conway%27s Game of Life\src\stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\Conway%27s Game of Life\src\Universe.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Conway%27s Game of Life\src\Hotloader.h" />
+    <ClInclude Include="..\Conway%27s Game of Life\src\stdafx.h" />
     <ClInclude Include="..\Conway%27s Game of Life\src\Universe.h" />
   </ItemGroup>
   <ItemGroup>

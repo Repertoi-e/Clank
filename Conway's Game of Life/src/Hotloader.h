@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Clank.h>
+#include "stdafx.h"
 
 struct HotloaderThreadArgs
 {

@@ -1,4 +1,4 @@
-#include <Clank.h>
+#include "stdafx.h"
 
 #include "Universe.h"
 #include "Hotloader.h"
@@ -29,6 +29,9 @@ private:
 
 	float32 m_CameraZoom = 0.0f;
 	float32 m_TargetCameraZoom;
+
+	Font* m_Font;
+	Font* m_Font2;
 	
 	u32 m_Speed;
 	UniversePreset m_Preset = DEFAULT;
@@ -89,6 +92,22 @@ public:
 
 		m_Background = anew Renderable2D({ WIDTH * 0.5f, HEIGHT * 0.5f }, { 633.3f, 400.0f }, background);
 
+		{
+			u32 dataSize = 0;
+			byte* font = ReadFile(L"cgl_data/Roboto-Regular.ttf", &dataSize);
+			String name = L"Roboto";
+			m_Font = anew Font(name, font, dataSize, 32);
+			m_Font->SetTexture();
+			m_Font->SetScale(vec2(1.0f, 1.0f));
+		}
+		{
+			u32 dataSize = 0;
+			byte* font = ReadFile(L"cgl_data/AlexBrush-Regular.ttf", &dataSize);
+			m_Font2 = anew Font(L"Alex Brush", font, dataSize, 50);
+			m_Font2->SetTexture();
+			m_Font2->SetScale(vec2(2.0f, 1.0f));
+		}
+
 		const String& path = Application::Instance().GetDescription().Path;
 
 		UpdateConfigFile(path + L"config.txt");
@@ -147,6 +166,9 @@ public:
 	void OnRender(Context* context, Renderer2D* renderer) override
 	{
 		m_Universe->Draw(renderer, m_CameraOffset);
+
+		renderer->DrawString(L"I think this is some kind of a text? :^)", vec2(150, 400), *m_Font, 0xffffffff);
+		renderer->DrawString(L"This is a strange font! (Alex Brush)", vec2(150, 500), *m_Font2, 0xff6b20f7);
 	}
 
 	bool ChangeSpeed(u32 speed)
@@ -213,8 +235,9 @@ public:
 	}
 };
 
-#define CONSOLE
-
+#ifdef _DEBUG
+	#define CONSOLE
+#endif
 #ifdef CONSOLE
 int main()
 #else

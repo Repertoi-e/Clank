@@ -12,9 +12,19 @@ namespace cl {
 		NEAREST
 	};
 
+	enum class PixelFormat
+	{
+		RGB,
+		RGBA
+	};
+
 	struct TextureDesc
 	{
 		TextureFilter Filter;
+		PixelFormat Format;
+		u32 Width;
+		u32 Height;
+		u32 BPP;
 	};
 
 	struct API FileLoadProperties
@@ -36,25 +46,27 @@ namespace cl {
 	class API Texture
 	{
 	protected:
-		ID3D11ShaderResourceView* m_Handle = NULLPTR;
-		
-		D3D11_TEXTURE2D_DESC m_Desc;
+		ID3D11ShaderResourceView* m_Handle = NULLPTR;		
 		ID3D11Texture2D* m_Texture = NULLPTR;
-		
-		D3D11_SAMPLER_DESC m_SamplerDesc;
 		ID3D11SamplerState* m_SamplerState = NULLPTR;
 
-		u32 m_Width, m_Height, m_BPP;
+		FileLoadProperties m_LoadProperties;
+		TextureDesc m_Desc;
 	public:
 		Texture(void);
+		Texture(const TextureDesc& desc, const byte* data);
 		~Texture(void);
+
+		void Load(void);
 
 		void Bind(u32 slot = 0);
 		void Unbind(u32 slot = 0);
 
+		void SetData(const byte* data);
+
 		inline ID3D11ShaderResourceView* GetHandle(void) { return m_Handle; }
 	public:
 		static void CreateFromFile(Texture* texture, const FileLoadProperties& loadProperties, const TextureDesc& textureDesc);
-		static void CreateFromMemory();
+		static void CreateFromMemory(Texture* texture, const TextureDesc& desc, const byte* data);
 	};
 }

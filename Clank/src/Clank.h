@@ -11,6 +11,7 @@
 #include "cl/Graphics/Render/Renderer2D.h"
 #include "cl/Graphics/Folder.h"
 #include "cl/Graphics/Camera/OrthographicCamera.h"
+#include "cl/Graphics/Text/Font.h"
 
 #include "cl/Utils/Log.h"
 #include "cl/Utils/FileUtils.h"

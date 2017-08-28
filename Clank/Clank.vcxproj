@@ -45,6 +45,9 @@
     <ClInclude Include="src\cl\Graphics\Shader.h" />
     <ClInclude Include="src\cl\Graphics\Buffer.h" />
     <ClInclude Include="src\cl\Graphics\Texture.h" />
+    <ClInclude Include="src\cl\Graphics\Text\Font.h" />
+    <ClInclude Include="src\cl\Graphics\Text\FontTextureAtlas.h" />
+    <ClInclude Include="src\cl\Graphics\Text\FontTexture.h" />
     <ClInclude Include="src\cl\Maths2\Rectangle.h" />
     <ClInclude Include="src\cl\Maths\mat4.h" />
     <ClInclude Include="src\cl\Maths\maths.h" />
@@ -64,6 +67,7 @@
     <ClInclude Include="src\cl\Utils\Singleton.h" />
     <ClInclude Include="src\cl\String.h" />
     <ClInclude Include="src\cl\Utils\Time.h" />
+    <ClInclude Include="src\cl\Utils\Vector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cl\Application\Application.cpp" />
@@ -84,6 +88,9 @@
     <ClCompile Include="src\cl\Graphics\Shader.cpp" />
     <ClCompile Include="src\cl\Graphics\Buffer.cpp" />
     <ClCompile Include="src\cl\Graphics\Texture.cpp" />
+    <ClCompile Include="src\cl\Graphics\Text\Font.cpp" />
+    <ClCompile Include="src\cl\Graphics\Text\FontTexture.cpp" />
+    <ClCompile Include="src\cl\Graphics\Text\FontTextureAtlas.cpp" />
     <ClCompile Include="src\cl\Maths2\Rectangle.cpp" />
     <ClCompile Include="src\cl\Maths\mat4.cpp" />
     <ClCompile Include="src\cl\Maths\vec2.cpp" />
@@ -96,6 +103,7 @@
     </ClCompile>
     <ClCompile Include="src\cl\String.cpp" />
     <ClCompile Include="src\cl\Utils\FileUtils.cpp" />
+    <ClCompile Include="src\cl\Utils\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dependencies\DirectXTK\DirectXTK_Desktop_2017_Win10.vcxproj">
@@ -183,7 +191,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NON_CONFORMING_SWPRINTFS;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src\;..\Dependencies\FreeImage\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\;..\Dependencies\FreeImage\include;..\Dependencies\FreeType\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>cl/stdafx.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
@@ -214,7 +222,7 @@ fxc.exe /Zi /Od /T vs_4_0 /E"VSMain" /Fo "$(TargetDir)VS_R2D.cso" "src/cl/BuiltI
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NON_CONFORMING_SWPRINTFS;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src\;..\Dependencies\FreeImage\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src\;..\Dependencies\FreeImage\include;..\Dependencies\FreeType\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>cl/stdafx.h</PrecompiledHeaderFile>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>

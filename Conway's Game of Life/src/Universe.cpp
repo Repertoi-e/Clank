@@ -1,9 +1,7 @@
+#include "stdafx.h"
 #include "Universe.h"
 
-#include <amp.h>
-
 using namespace cl;
-using namespace Concurrency;
 
 Universe::Universe()
 {

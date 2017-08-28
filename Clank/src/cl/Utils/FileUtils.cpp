@@ -26,6 +26,28 @@ namespace cl {
 		return result;
 	}
 
+	byte* ReadFile(const wchar* filename, u32* readBytes)
+	{
+		FILE* file = _wfopen(filename, L"rb");
+
+		fseek(file, 0, SEEK_END);
+		u32 length = ftell(file);
+		fseek(file, 0, SEEK_SET);
+
+		if (readBytes)
+			*readBytes = length;
+		byte* result = anew byte[length];
+		fread(result, 1, length, file);
+		fclose(file);
+
+		return result;
+	}
+
+	byte* ReadFile(const String& filename, u32* readBytes)
+	{
+		return ReadFile(filename.c_str(), readBytes);
+	}
+
 	byte* LoadImage(const wchar* filename, u32* width, u32* height, u32* bits, bool flipX, bool flipY)
 	{
 		FREE_IMAGE_FORMAT format = FreeImage_GetFileTypeU(filename, 0);

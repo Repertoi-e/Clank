@@ -24,12 +24,18 @@
     <ClCompile Include="..\Conway%27s Game of Life\src\Hotloader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Conway%27s Game of Life\src\stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Conway%27s Game of Life\src\Universe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Conway%27s Game of Life\src\Hotloader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Conway%27s Game of Life\src\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
