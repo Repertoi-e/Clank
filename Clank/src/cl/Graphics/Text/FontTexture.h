@@ -13,69 +13,7 @@
 #include <freetype/ftstroke.h>
 #include <freetype/ftlcdfil.h>
 
-#undef __FTERRORS_H__
-#define FT_ERRORDEF( e, v, s )  { e, s },
-#define FT_ERROR_START_LIST     {
-#define FT_ERROR_END_LIST       { 0, 0 } };
-const struct {
-	s32          code;
-	const char*  message;
-} FT_Errors[] =
-#ifndef __FTERRORS_H__
-#define __FTERRORS_H__
-
-
-#include FT_MODULE_ERRORS_H
-
-
-#undef  FT_NEED_EXTERN_C
-
-#ifndef FT_ERR_PREFIX
-#define FT_ERR_PREFIX  FT_Err_
-#endif
-
-
-#undef FT_ERR_BASE
-#define FT_ERR_BASE  0
-
-#define FT_ERRORDEF_( e, v, s )                                             \
-          FT_ERRORDEF( FT_ERR_CAT( FT_ERR_PREFIX, e ), v + FT_ERR_BASE, s )
-
-#define FT_NOERRORDEF_( e, v, s )                             \
-          FT_ERRORDEF( FT_ERR_CAT( FT_ERR_PREFIX, e ), v, s )
-
-
-#ifdef FT_ERROR_START_LIST
-	FT_ERROR_START_LIST
-#endif
-
-
-#include FT_ERROR_DEFINITIONS_H
-
-
-#ifdef FT_ERROR_END_LIST
-		FT_ERROR_END_LIST
-#endif
-
-#ifdef FT_NEED_EXTERN_C
-}
-#endif
-
-#undef FT_ERROR_START_LIST
-#undef FT_ERROR_END_LIST
-
-#undef FT_ERRORDEF
-#undef FT_ERRORDEF_
-#undef FT_NOERRORDEF_
-
-#undef FT_NEED_EXTERN_C
-#undef FT_ERR_BASE
-
-#ifndef FT2_BUILD_LIBRARY
-#undef FT_ERR_PREFIX
-#endif
-
-#endif /* __FTERRORS_H__ */
+#include "FTErrors.h"
 
 namespace cl {
 

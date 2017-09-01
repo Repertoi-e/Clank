@@ -107,8 +107,6 @@ namespace cl {
 
 	void Context::ChangeSize(u32 width, u32 height)
 	{
-		LOG_INFO("Change Size\n");
-
 		SafeRelease(m_RenderTargetView);
 		SafeRelease(m_DepthStencilView);
 		SafeRelease(m_DepthStencilBuffer);

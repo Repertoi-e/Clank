@@ -19,7 +19,8 @@ namespace cl {
 		KEY_RELEASED = BIT(5),
 
 		WINDOW_RESIZE = BIT(6),
-		WINDOW_FOCUS = BIT(7)
+		WINDOW_FOCUS = BIT(7),
+		WINDOW_FILEDROP = BIT(8)
 	};
 
 	class API Event

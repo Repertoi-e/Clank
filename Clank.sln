@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Clank", "Clank\Clank.vcxproj", "{E9633A00-447D-491F-97F0-B07DEBC1A41E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Conway's Game of Life", "Conway's Game of Life\Conway's Game of Life.vcxproj", "{2C591DE8-8902-4FB3-9667-3EF34FD41563}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{5A658A0C-C339-4A9D-8E3B-ADCE456C7815}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Photo Viewer", "Photo Viewer\Photo Viewer.vcxproj", "{7A71E7E6-0D95-46C4-9D3E-9870239FDB5A}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Photo Viewer Installer", "Photo Viewer Installer\Photo Viewer Installer.vdproj", "{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,11 +49,44 @@ Global
 		{2C591DE8-8902-4FB3-9667-3EF34FD41563}.Release|x64.Build.0 = Release|x64
 		{2C591DE8-8902-4FB3-9667-3EF34FD41563}.Release|x86.ActiveCfg = Release|Win32
 		{2C591DE8-8902-4FB3-9667-3EF34FD41563}.Release|x86.Build.0 = Release|Win32
+		{7A71E7E6-0D95-46C4-9D3E-9870239FDB5A}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{7A71E7E6-0D95-46C4-9D3E-9870239FDB5A}.Debug|ARM.ActiveCfg = Debug|Win32
+		{7A71E7E6-0D95-46C4-9D3E-9870239FDB5A}.Debug|x64.ActiveCfg = Debug|x64
+		{7A71E7E6-0D95-46C4-9D3E-9870239FDB5A}.Debug|x64.Build.0 = Debug|x64
+		{7A71E7E6-0D95-46C4-9D3E-9870239FDB5A}.Debug|x86.ActiveCfg = Debug|Win32
+		{7A71E7E6-0D95-46C4-9D3E-9870239FDB5A}.Debug|x86.Build.0 = Debug|Win32
+		{7A71E7E6-0D95-46C4-9D3E-9870239FDB5A}.Release|Any CPU.ActiveCfg = Release|Win32
+		{7A71E7E6-0D95-46C4-9D3E-9870239FDB5A}.Release|ARM.ActiveCfg = Release|Win32
+		{7A71E7E6-0D95-46C4-9D3E-9870239FDB5A}.Release|x64.ActiveCfg = Release|x64
+		{7A71E7E6-0D95-46C4-9D3E-9870239FDB5A}.Release|x64.Build.0 = Release|x64
+		{7A71E7E6-0D95-46C4-9D3E-9870239FDB5A}.Release|x86.ActiveCfg = Release|Win32
+		{7A71E7E6-0D95-46C4-9D3E-9870239FDB5A}.Release|x86.Build.0 = Release|Win32
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Debug|Any CPU.ActiveCfg = Debug
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Debug|Any CPU.Build.0 = Debug
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Debug|ARM.ActiveCfg = Debug
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Debug|ARM.Build.0 = Debug
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Debug|x64.ActiveCfg = Debug
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Debug|x64.Build.0 = Debug
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Debug|x86.ActiveCfg = Debug
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Debug|x86.Build.0 = Debug
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Release|Any CPU.ActiveCfg = Release
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Release|Any CPU.Build.0 = Release
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Release|ARM.ActiveCfg = Release
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Release|ARM.Build.0 = Release
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Release|x64.ActiveCfg = Release
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Release|x64.Build.0 = Release
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Release|x86.ActiveCfg = Release
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9}.Release|x86.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2C591DE8-8902-4FB3-9667-3EF34FD41563} = {5A658A0C-C339-4A9D-8E3B-ADCE456C7815}
+		{7A71E7E6-0D95-46C4-9D3E-9870239FDB5A} = {5A658A0C-C339-4A9D-8E3B-ADCE456C7815}
+		{CF60F45E-64C2-45B8-AFB4-15B9BE02F7B9} = {5A658A0C-C339-4A9D-8E3B-ADCE456C7815}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8F9001B4-7F2C-4E19-A614-EB0129AC4A1F}
 	EndGlobalSection
 EndGlobal

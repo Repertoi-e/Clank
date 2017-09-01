@@ -237,9 +237,8 @@ public:
 	}
 };
 
-#ifdef _DEBUG
-	#define CONSOLE
-#endif
+#define CONSOLE
+
 #ifdef CONSOLE
 int main()
 #else

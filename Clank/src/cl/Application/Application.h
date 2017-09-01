@@ -7,6 +7,8 @@
 
 #include "Events/Events.h"
 
+#include "cl/Memory/Vector.h"
+
 #include <Windows.h>
 
 namespace cl {
@@ -39,23 +41,28 @@ namespace cl {
         u32 WindowStyle;
 		CycleDesc Cycle;
 		String Path;
+		wchar** Args;
+		s32 ArgsCount;
+		bool SleepInCycle;
+		void(*EntryPoint)(const String& exePath, wchar** args, s32 argsCount);
+		HINSTANCE HInstance;
+		HWND HWnd;
+		bool WindowFocused = FALSE;
+		bool Closed = FALSE;
+		bool AcceptDroppedFiles;
+		s32 Icon = -1;
+		s32 SmallIcon = -1;
     };
 
     class API Application : public Singleton<Application>
 	{
     private:
-        HINSTANCE m_hInstance;
-        HWND m_hWnd;
-
-		BOOL m_WindowFocused = FALSE;
-		BOOL m_Closed = FALSE;
-
         ApplicationDesc m_Desc;
 
-		std::vector<Layer*> m_Layers;
+		Vector* m_Layers = anew Vector(sizeof(Layer*));
 	public:
 		Application(void);
-	
+
 		void Create(ApplicationDesc& appDesc);
 
 		void DoWindow(void);

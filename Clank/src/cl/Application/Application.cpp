@@ -6,10 +6,11 @@
 #include "cl/Graphics/Layers/Layer.h"
 
 #include <Windowsx.h>
+#include <shellapi.h>
 
 #include <FreeImage.h>
 
-EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+extern "C" IMAGE_DOS_HEADER __ImageBase;
 
 namespace cl {
 
@@ -28,17 +29,21 @@ namespace cl {
 	{
 		SetDescription(appDesc);
 		DoWindow();
-		
-		Context::Instance().Create(m_hWnd, m_Desc);
+
+		Context::Instance().Create(m_Desc.HWnd, m_Desc);
 
 		FreeImage_Initialise();
 
-		wchar file[1024 * 10] = { 0 };
+		wchar file[1024] = { 0 };
 		GetModuleFileNameW(NULL, file, 1024);
 
 		String& path = m_Desc.Path;
 		path = String(file);
 		path = path.substr(0, path.find_last_of(L'\\') + 1);
+
+		m_Desc.Args = CommandLineToArgvW(GetCommandLineW(), &m_Desc.ArgsCount);
+
+		m_Desc.EntryPoint(path, m_Desc.Args, m_Desc.ArgsCount);
 	}
 
 	void Application::DoFPS(void)
@@ -55,7 +60,7 @@ namespace cl {
 	void Application::Start(void)
 	{
 		CycleDesc& info = m_Desc.Cycle;
-		while (!m_Closed)
+		while (!m_Desc.Closed)
 		{
 			float32 now = info.Timer->Elapsed().Millis();
 			if (now - info.UpdateTimer > info.UpdateTick)
@@ -89,7 +94,7 @@ namespace cl {
 				DoTick();
 				info.Updates = 0;
 			}
-			if (!m_WindowFocused)
+			if (m_Desc.SleepInCycle || !m_Desc.WindowFocused)
 				Sleep(5);
 		}
 	}
@@ -101,7 +106,7 @@ namespace cl {
 		{
 			if (WM_QUIT == message.message)
 			{
-				m_Closed = true;
+				m_Desc.Closed = true;
 				return;
 			}
 			TranslateMessage(&message);
@@ -114,35 +119,47 @@ namespace cl {
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<WindowFocusEvent>([&](WindowFocusEvent& e) -> BOOL
 		{
-			m_WindowFocused = e.Focused();
+			m_Desc.WindowFocused = e.Focused();
 			return FALSE;
 		});
 
-		for (auto a : m_Layers)
-			a->OnEvent(event);
+		for (u32 i = 0; i < m_Layers->Size(); i++)
+		{
+			Layer* layer = *cast(Layer**) m_Layers->Get(i);
+			layer->OnEvent(event);
+		}
 	}
 
 	void Application::DoRender(void)
 	{
-		for (auto a : m_Layers)
-			a->OnRender();
+		for (u32 i = 0; i < m_Layers->Size(); i++)
+		{
+			Layer* layer = *cast(Layer**) m_Layers->Get(i);
+			layer->OnRender();
+		}
 	}
 
 	void Application::DoUpdate(const DeltaTime& dt)
 	{
-		for (auto a : m_Layers)
-			a->OnUpdate(dt);
+		for (u32 i = 0; i < m_Layers->Size(); i++)
+		{
+			Layer* layer = *cast(Layer**) m_Layers->Get(i);
+			layer->OnUpdate(dt);
+		}
 	}
 
 	void Application::DoTick(void)
 	{
-		for (auto a : m_Layers)
-			a->OnTick();
+		for (u32 i = 0; i < m_Layers->Size(); i++)
+		{
+			Layer* layer = *cast(Layer**) m_Layers->Get(i);
+			layer->OnTick();
+		}
 	}
 
 	Layer* Application::PushLayer(Layer* layer)
 	{
-		m_Layers.push_back(layer);
+		m_Layers->PushBack(&layer);
 		layer->OnInit();
 
 		return layer;
@@ -150,17 +167,19 @@ namespace cl {
 
 	void Application::PopLayer(Layer* layer)
 	{
-		for (u32 i = 0; i < m_Layers.size(); i++)
-			if (m_Layers[i] == layer)
+		for (u32 i = 0; i < m_Layers->Size(); i++)
+		{
+			if (*cast(Layer**) m_Layers->Get(i) == layer)
 			{
-				m_Layers.erase(m_Layers.begin() + i);
+				m_Layers->Erase(i);
 				del layer;
 			}
+		}
 	}
 
 	void Application::DoWindow(void)
 	{
-		m_hInstance = (HINSTANCE)&__ImageBase;;
+		m_Desc.HInstance = (HINSTANCE)&__ImageBase;;
 
 		WNDCLASSEX wcex;
 		ZeroMemory(&wcex, sizeof(WNDCLASSEX));
@@ -168,13 +187,19 @@ namespace cl {
 		wcex.cbWndExtra = 0;
 		wcex.cbSize = sizeof(WNDCLASSEX);
 		wcex.style = CS_HREDRAW | CS_VREDRAW;
-		wcex.hInstance = m_hInstance;
+		wcex.hInstance = m_Desc.HInstance;
 		wcex.lpfnWndProc = WndProcBind;
-		wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+		if (m_Desc.Icon != -1)
+			wcex.hIcon = LoadIcon(m_Desc.HInstance, MAKEINTRESOURCE(m_Desc.Icon));
+		else
+			wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 		wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wcex.lpszClassName = m_Desc.ClassName.c_str();
 		wcex.lpszMenuName = NULL;
-		wcex.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+		if (m_Desc.SmallIcon != -1)
+			wcex.hIconSm = LoadIcon(m_Desc.HInstance, MAKEINTRESOURCE(m_Desc.SmallIcon));
+		else
+			wcex.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 
 		if (!RegisterClassEx(&wcex))
 		{
@@ -187,24 +212,27 @@ namespace cl {
 		s32 width = r.right - r.left;
 		s32 height = r.bottom - r.top;
 
-		m_hWnd = CreateWindow(m_Desc.ClassName.c_str(), m_Desc.Name.c_str(), m_Desc.WindowStyle,
+		m_Desc.HWnd = CreateWindow(m_Desc.ClassName.c_str(), m_Desc.Name.c_str(), m_Desc.WindowStyle,
 			GetSystemMetrics(SM_CXSCREEN) / 2 - width / 2,
-			GetSystemMetrics(SM_CYSCREEN) / 2 - height / 2, width, height, NULL, NULL, m_hInstance, NULL);
-		if (!m_hWnd)
+			GetSystemMetrics(SM_CYSCREEN) / 2 - height / 2, width, height, NULL, NULL, m_Desc.HInstance, NULL);
+		if (!m_Desc.HWnd)
 		{
 			MessageBox(NULL, L"Failed to create window", NULL, NULL);
 			return;
 		}
+
+		if (m_Desc.AcceptDroppedFiles)
+			DragAcceptFiles(m_Desc.HWnd, TRUE);
 	}
 
 	void Application::ShowWindow(void)
 	{
-		::ShowWindow(m_hWnd, SW_SHOW);
+		::ShowWindow(m_Desc.HWnd, SW_SHOW);
 	}
 
 	void Application::SetWindowTitle(const String& title)
 	{
-		SetWindowText(m_hWnd, title.c_str());
+		SetWindowText(m_Desc.HWnd, title.c_str());
 	}
 
 	LRESULT CALLBACK Application::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -218,15 +246,18 @@ namespace cl {
 			break;
 		case WM_SIZE:
 		{
-			WORD width = LOWORD(lParam);
-			WORD height = HIWORD(lParam);
+			if (wParam == SIZE_RESTORED || wParam == SIZE_MAXIMIZED)
+			{
+				WORD width = LOWORD(lParam);
+				WORD height = HIWORD(lParam);
 
-			m_Desc.Width = width;
-			m_Desc.Height = height;
+				m_Desc.Width = width;
+				m_Desc.Height = height;
 
-			DoEvent(WindowResizeEvent(width, height));
+				DoEvent(WindowResizeEvent(width, height));
 
-			Context::Instance().ChangeSize(m_Desc.Width, m_Desc.Height);
+				Context::Instance().ChangeSize(m_Desc.Width, m_Desc.Height);
+			}
 		}
 		break;
 		case WM_ACTIVATE:
@@ -238,7 +269,7 @@ namespace cl {
 		case WM_MOUSEMOVE:
 		{
 			POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-			ClientToScreen(m_hWnd, &pt);
+			ClientToScreen(m_Desc.HWnd, &pt);
 
 			DoEvent(MouseMovedEvent(pt.x, pt.y, GetKeyState(VK_LBUTTON) < 0));
 		}
@@ -252,7 +283,7 @@ namespace cl {
 		case WM_LBUTTONDOWN:
 		{
 			POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-			ClientToScreen(m_hWnd, &pt);
+			ClientToScreen(m_Desc.HWnd, &pt);
 
 			DoEvent(MouseClickedEvent(pt.x, pt.y, MOUSE_LEFT, GET_MODS));
 		}
@@ -260,7 +291,7 @@ namespace cl {
 		case WM_LBUTTONUP:
 		{
 			POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-			ClientToScreen(m_hWnd, &pt);
+			ClientToScreen(m_Desc.HWnd, &pt);
 
 			DoEvent(MouseReleasedEvent(pt.x, pt.y, MOUSE_LEFT, GET_MODS));
 		}
@@ -268,7 +299,7 @@ namespace cl {
 		case WM_RBUTTONDOWN:
 		{
 			POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-			ClientToScreen(m_hWnd, &pt);
+			ClientToScreen(m_Desc.HWnd, &pt);
 
 			DoEvent(MouseClickedEvent(pt.x, pt.y, MOUSE_RIGHT, GET_MODS));
 		}
@@ -276,7 +307,7 @@ namespace cl {
 		case WM_MOUSEWHEEL:
 		{
 			POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-			ClientToScreen(m_hWnd, &pt);
+			ClientToScreen(m_Desc.HWnd, &pt);
 
 			DoEvent(MouseScrollEvent(pt.x, pt.y, GET_WHEEL_DELTA_WPARAM(wParam)));
 		}
@@ -284,9 +315,23 @@ namespace cl {
 		case WM_RBUTTONUP:
 		{
 			POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-			ClientToScreen(m_hWnd, &pt);
+			ClientToScreen(m_Desc.HWnd, &pt);
 
 			DoEvent(MouseReleasedEvent(pt.x, pt.y, MOUSE_RIGHT, GET_MODS));
+		}
+		case WM_DROPFILES:
+		{
+			wchar filePaths[MAX_PATH] = { 0 };
+			u32 files = 0;
+			HDROP drop = (HDROP)wParam;
+
+			files = DragQueryFile(drop, 0xFFFFFFFF, NULL, NULL);
+			filePaths[0] = '\0';
+			if (DragQueryFile(drop, 0, filePaths, MAX_PATH))
+				DoEvent(WindowFileDropEvent(String(filePaths)));
+
+			DragFinish(drop);
+			break;
 		}
 		break;
 		default:

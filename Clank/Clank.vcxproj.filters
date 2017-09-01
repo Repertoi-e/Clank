@@ -165,6 +165,9 @@
     <ClInclude Include="src\cl\Application\ResourceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\cl\Graphics\Text\FTErrors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cl\Application\Events\KeyEvent.cpp">

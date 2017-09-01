@@ -29,4 +29,16 @@ namespace cl {
 
 		static s32 GetStaticType(void) { return EventType::WINDOW_FOCUS; }
 	};
+
+	class API WindowFileDropEvent : public Event
+	{
+	private:
+		String m_FilePath;
+	public:
+		WindowFileDropEvent(String path);
+
+		const String& GetFilePath(void) const { return m_FilePath; }
+
+		static s32 GetStaticType(void) { return EventType::WINDOW_FILEDROP; }
+	};
 }

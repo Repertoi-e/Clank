@@ -49,6 +49,7 @@
     <ClInclude Include="src\cl\Graphics\Text\Font.h" />
     <ClInclude Include="src\cl\Graphics\Text\FontTextureAtlas.h" />
     <ClInclude Include="src\cl\Graphics\Text\FontTexture.h" />
+    <ClInclude Include="src\cl\Graphics\Text\FTErrors.h" />
     <ClInclude Include="src\cl\Maths2\Rectangle.h" />
     <ClInclude Include="src\cl\Maths\mat4.h" />
     <ClInclude Include="src\cl\Maths\maths.h" />
