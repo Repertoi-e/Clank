@@ -64,7 +64,7 @@ namespace cl {
 
 		void SetData(const byte* data);
 
-		inline const String& GetName() const { return m_Desc.Name; }
+		inline TextureDesc& GetDesc() { return m_Desc; }
 		inline const TextureDesc& GetDesc() const { return m_Desc; }
 
 		inline ID3D11ShaderResourceView* GetHandle(void) { return m_Handle; }

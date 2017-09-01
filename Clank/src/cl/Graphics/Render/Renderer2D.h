@@ -77,6 +77,9 @@ namespace cl {
 		void Present(void) override;
 
 		void UpdateMatrixBuffer();
+
+		inline Renderer2DDesc& GetDesc() { return m_Desc; }
+		inline const Renderer2DDesc& GetDesc() const { return m_Desc; }
 	public:
 		static void Create(Renderer2D* renderer, Renderer2DDesc& rendererDesc);
 	};

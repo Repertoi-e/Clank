@@ -2,6 +2,9 @@
 // Microsoft Visual C++ generated include file.
 // Used by Photo Viewer.rc
 //
+#define WIDTH			800
+#define HEIGHT			600
+
 #define IDI_ICON1                       101
 #define IDI_ICON1_SMALL                 102
 

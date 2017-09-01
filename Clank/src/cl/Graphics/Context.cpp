@@ -27,14 +27,12 @@ namespace cl {
 		SafeRelease(m_RasterState);
 	}
 
-	void Context::Create(HWND hWnd, ApplicationDesc& appDesc)
+	void Context::Create(HWND hWnd)
 	{
 		m_FeatureLevel = D3D_FEATURE_LEVEL_11_0;
 
-		m_Settings = &appDesc;
-
-		u32 Width = m_Settings->Width;
-		u32 Height = m_Settings->Height;
+		u32 Width = g_ApplicationDesc.Width;
+		u32 Height = g_ApplicationDesc.Height;
 
 		IDXGIFactory* factory;
 		HR(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory));
@@ -86,8 +84,8 @@ namespace cl {
 			swapChainDesc.BufferDesc.Width = Width;
 			swapChainDesc.BufferDesc.Height = Height;
 			swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			swapChainDesc.BufferDesc.RefreshRate.Numerator = m_Settings->VSync ? numerator : 0;
-			swapChainDesc.BufferDesc.RefreshRate.Denominator = m_Settings->VSync ? denominator : 1;
+			swapChainDesc.BufferDesc.RefreshRate.Numerator = g_ApplicationDesc.VSync ? numerator : 0;
+			swapChainDesc.BufferDesc.RefreshRate.Denominator = g_ApplicationDesc.VSync ? denominator : 1;
 			swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 			swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 			swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -95,7 +93,7 @@ namespace cl {
 			swapChainDesc.SampleDesc.Quality = 0;
 			swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 			swapChainDesc.OutputWindow = hWnd;
-			swapChainDesc.Windowed = !m_Settings->Fullscreen;
+			swapChainDesc.Windowed = !g_ApplicationDesc.Fullscreen;
 			swapChainDesc.Flags = 0;
 		}
 		HR(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &m_FeatureLevel, 1, D3D11_SDK_VERSION, &swapChainDesc,
@@ -268,7 +266,7 @@ namespace cl {
 
 	void Context::Present(void)
 	{
-		m_SwapChain->Present(m_Settings->VSync ? 1 : 0, 0);
+		m_SwapChain->Present(g_ApplicationDesc.VSync ? 1 : 0, 0);
 	}
 
 	void Context::SetBlend(bool enabled)

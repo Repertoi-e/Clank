@@ -14,8 +14,6 @@ namespace cl {
 	class API Context : public Singleton<Context>
 	{
 	private:
-		ApplicationDesc* m_Settings = NULLPTR;
-
 		D3D_FEATURE_LEVEL m_FeatureLevel;
 
 		IDXGISwapChain* m_SwapChain = NULLPTR;
@@ -34,7 +32,7 @@ namespace cl {
 		Context(void);
 		~Context(void);
 
-		void Create(HWND hWnd, ApplicationDesc& appDesc);
+		void Create(HWND hWnd);
 
 		void ChangeSize(u32 width, u32 height);
 

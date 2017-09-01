@@ -40,9 +40,10 @@ namespace cl {
 		Rectangle GetBounds(const String& text) const;
 		Texture* GetTexture() const;
 	
-		inline const String& GetName() const { return m_Desc.Name; }
-		inline const FontDesc& GetDesc() const { return m_Desc; }
 		inline FontTexture* GetFTFont() const { return m_FontTexture; }
+	
+		inline FontDesc& GetDesc() { return m_Desc; }
+		inline const FontDesc& GetDesc() const { return m_Desc; }
 	private:
 		void UpdateAtlas() const;
 	public:

@@ -15,6 +15,7 @@ extern "C" IMAGE_DOS_HEADER __ImageBase;
 namespace cl {
 
 	Application& g_Application = Application::Instance();
+	ApplicationDesc& g_ApplicationDesc = Application::Instance().GetDesc();
 
 	LRESULT CALLBACK WndProcBind(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
@@ -25,12 +26,12 @@ namespace cl {
 	{
 	}
 
-	void Application::Create(ApplicationDesc& appDesc)
+	void Application::Create(const ApplicationDesc& appDesc)
 	{
-		SetDescription(appDesc);
+		m_Desc = appDesc;
 		DoWindow();
 
-		Context::Instance().Create(m_Desc.HWnd, m_Desc);
+		Context::Instance().Create(m_Desc.HWnd);
 
 		FreeImage_Initialise();
 
@@ -94,7 +95,7 @@ namespace cl {
 				DoTick();
 				info.Updates = 0;
 			}
-			if (m_Desc.SleepInCycle || !m_Desc.WindowFocused)
+			if (m_Desc.LimitCycle || !m_Desc.WindowFocused)
 				Sleep(5);
 		}
 	}

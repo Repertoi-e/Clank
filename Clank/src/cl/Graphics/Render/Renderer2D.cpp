@@ -28,7 +28,7 @@ namespace cl {
 		{
 			ZeroMemory(&shaderDesc, sizeof(ShaderDesc));
 
-			String exePath = Application::Instance().GetDescription().Path;
+			String exePath = g_ApplicationDesc.Path;
 			shaderDesc.VertexFile = exePath + rendererDesc.VertexShaderFile;
 			shaderDesc.PixelFile = exePath + rendererDesc.PixelShaderFile;
 		}
@@ -56,7 +56,7 @@ namespace cl {
 		layout.Push<u32>("ID");
 		layout.Push<byte>("COLOR", 4);
 
-		ID3D10Blob* vsData = renderer->m_Shader->GetData().vs;
+		ID3D10Blob* vsData = renderer->m_Shader->GetDesc().VSData;
 		renderer->m_VertexBuffer->SetInputLayout(layout, vsData->GetBufferPointer(), vsData->GetBufferSize());
 
 		u32* indices = anew u32[rendererDesc.MaxIndices];

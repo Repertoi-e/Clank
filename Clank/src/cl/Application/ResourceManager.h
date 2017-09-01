@@ -50,7 +50,7 @@ namespace cl {
 			for (u32 i = 0; i < m_Resources->Size(); i++)
 			{
 				T* resource = cast(T*) m_Resources->Get(i);
-				if (resource->GetName() == name)
+				if (resource->GetDesc().Name == name)
 					return resource;
 			}
 

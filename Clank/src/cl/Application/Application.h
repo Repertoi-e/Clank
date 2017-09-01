@@ -34,22 +34,23 @@ namespace cl {
 
     struct API ApplicationDesc
     {
+		HINSTANCE HInstance;
+		HWND HWnd;
 		String Name;
 		String ClassName;
 		u32 Width, Height;
-        bool VSync, Fullscreen;
-        u32 WindowStyle;
+		u32 WindowStyle;
 		CycleDesc Cycle;
+		bool LimitCycle;
+		bool VSync;
+		bool Fullscreen;
+		bool WindowFocused = false;
+		bool Closed = false;
+		bool AcceptDroppedFiles;
 		String Path;
 		wchar** Args;
-		s32 ArgsCount;
-		bool SleepInCycle;
-		void(*EntryPoint)(const String& exePath, wchar** args, s32 argsCount);
-		HINSTANCE HInstance;
-		HWND HWnd;
-		bool WindowFocused = FALSE;
-		bool Closed = FALSE;
-		bool AcceptDroppedFiles;
+		s32 ArgsCount; 
+		void(*EntryPoint)(const String& path, wchar** args, s32 argsCount);
 		s32 Icon = -1;
 		s32 SmallIcon = -1;
     };
@@ -63,7 +64,7 @@ namespace cl {
 	public:
 		Application(void);
 
-		void Create(ApplicationDesc& appDesc);
+		void Create(const ApplicationDesc& appDesc);
 
 		void DoWindow(void);
 		void ShowWindow(void);
@@ -77,11 +78,11 @@ namespace cl {
 
 		Layer* PushLayer(Layer* layer);
 		void PopLayer(Layer* layer);
+		
+		void SetWindowTitle(const String& title);
 
-		inline const ApplicationDesc& GetDescription(void) { return m_Desc; }
-		inline void SetDescription(const ApplicationDesc& settings) { m_Desc = settings; }
-
-        void SetWindowTitle(const String& title);
+		inline ApplicationDesc& GetDesc(void) { return m_Desc; }
+		inline const ApplicationDesc& GetDesc(void) const { return m_Desc; }
 
         LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	private:
@@ -89,4 +90,5 @@ namespace cl {
     };
 
     extern API Application& g_Application;
+	extern API ApplicationDesc& g_ApplicationDesc;
 }

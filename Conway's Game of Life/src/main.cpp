@@ -64,7 +64,7 @@ public:
 
 	void Init(Context* context, Renderer2D* renderer) override
 	{
-		const String& path = Application::Instance().GetDescription().Path;
+		const String& path = g_ApplicationDesc.Path;
 		
 		Renderer2DDesc desc;
 		{
@@ -152,7 +152,7 @@ public:
 		m_Camera->SetProjectionMatrix(mat4::Orthographic(-m_CameraZoom, cast(float32) WIDTH + m_CameraZoom, -m_CameraZoom, cast(float32) HEIGHT + m_CameraZoom, -1.0f, 1.0f));
 	
 		wchar buffer[1024];
-		sprint(buffer, NULL, "/% | FPS: /%", g_Application.GetDescription().Name, g_Application.GetDescription().Cycle.FPS);
+		sprint(buffer, NULL, "/% | FPS: /%", g_ApplicationDesc.Name, g_ApplicationDesc.Cycle.FPS);
 
 		g_Application.SetWindowTitle(String(buffer));
 	}

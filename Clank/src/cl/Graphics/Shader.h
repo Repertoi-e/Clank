@@ -10,31 +10,24 @@ namespace cl {
 	{
 		String VertexFile;
 		String PixelFile;
+		ID3D11VertexShader* VS = NULLPTR;
+		ID3D11PixelShader* PS = NULLPTR;
+		ID3D10Blob* VSData = NULLPTR;
+		ID3D10Blob* PSData = NULLPTR;
 	};
 
 	class API Shader
 	{
-	public:
-		struct Data
-		{
-			ID3D10Blob* vs;
-			ID3D10Blob* ps;
-		};
 	private:
-		Data m_Data;
-		ID3D11VertexShader* m_VS = NULLPTR;
-		ID3D11PixelShader* m_PS = NULLPTR;
+		ShaderDesc m_Desc;
 	public:
-		Shader(void);
 		~Shader(void);
 
-		inline Data& GetData(void) { return m_Data; }
-
-		inline ID3D11VertexShader* GetVS(void) { return m_VS; }
-		inline ID3D11PixelShader* GetPS(void) { return m_PS; }
-
 		void Bind(void);
+
+		inline ShaderDesc& GetDesc() { return m_Desc; }
+		inline const ShaderDesc& GetDesc() const { return m_Desc; }
 	public:
-		static void Create(Shader* shader, ShaderDesc& shaderDesc);
+		static void Create(Shader* shader, const ShaderDesc& shaderDesc);
 	};
 }

@@ -117,12 +117,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\PhotoViewer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Photo Viewer.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico" />
+    <Image Include="icon2.ico" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource.h" />

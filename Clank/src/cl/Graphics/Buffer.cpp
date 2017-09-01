@@ -14,26 +14,33 @@ namespace cl {
 		m_Buffer->Release();
 	}
 
-	void Buffer::Create(Buffer* buffer, BufferDesc& desc)
+	Buffer* Buffer::Create(Buffer* buffer, BufferDesc& bufferDesc)
 	{
-		ZeroMemory(buffer->m_Desc, sizeof(D3D11_BUFFER_DESC));
+		buffer->m_Desc = bufferDesc;
 
-		buffer->m_Desc->Usage = BufferUsageToD3D(desc.Usage);
-		buffer->m_Desc->ByteWidth = desc.Size;
-		buffer->m_Desc->BindFlags = BufferBindFlagToD3D(desc.BindFlag);
-		buffer->m_Desc->CPUAccessFlags = BufferAccessToD3D(desc.Access);
-
+		D3D11_BUFFER_DESC desc;
+		{
+			ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
+		
+			desc.Usage = BufferUsageToD3D(buffer->m_Desc.Usage);
+			desc.ByteWidth = buffer->m_Desc.Size;
+			desc.BindFlags = BufferBindFlagToD3D(buffer->m_Desc.BindFlag);
+			desc.CPUAccessFlags = BufferAccessToD3D(buffer->m_Desc.Access);
+		}
+		
 		D3D11_SUBRESOURCE_DATA* indataptr = NULLPTR;
-		if (desc.InitialData)
+		if (buffer->m_Desc.InitialData)
 		{
 			D3D11_SUBRESOURCE_DATA initData;
-			initData.pSysMem = desc.InitialData;
+			initData.pSysMem = buffer->m_Desc.InitialData;
 			initData.SysMemPitch = 0;
 			initData.SysMemSlicePitch = 0;
 			indataptr = &initData;
 		}
 
-		HR(Context::Instance().GetDevice()->CreateBuffer(buffer->m_Desc, indataptr, &buffer->m_Buffer));
+		HR(Context::Instance().GetDevice()->CreateBuffer(&desc, indataptr, &buffer->m_Buffer));
+
+		return buffer;
 	}
 
 	void Buffer::Destroy(void)
@@ -41,29 +48,29 @@ namespace cl {
 		m_Buffer->Release();
 	}
 
-	void Buffer::SetInputLayout(InputLayout layout, void* vsbuffer, u32 vsbufferSize)
+	void Buffer::SetInputLayout(const InputLayout& layout, void* vsbuffer, u32 vsbufferSize)
 	{
-		m_Layout = std::move(layout);
+		m_Desc.Layout = layout;
 
-		if (m_InputLayout)
-			m_InputLayout->Release();
+		if (m_Desc.Layout.m_InputLayout)
+			m_Desc.Layout.m_InputLayout->Release();
 
-		const std::vector<InputElement>& elements = m_Layout.GetElements();
+		Vector* elements = m_Desc.Layout.GetElements();
 
-		D3D11_INPUT_ELEMENT_DESC* ied = anew D3D11_INPUT_ELEMENT_DESC[elements.size()];
-		for (u32 i = 0; i < elements.size(); i++)
+		D3D11_INPUT_ELEMENT_DESC* ied = anew D3D11_INPUT_ELEMENT_DESC[elements->Size()];
+		for (u32 i = 0; i < elements->Size(); i++)
 		{
-			const InputElement& element = elements[i];
-			ied[i] = { element.name, 0, element.type, 0, element.offset, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+			InputElement* element = cast(InputElement*) elements->Get(i);
+			ied[i] = { element->name, 0, element->type, 0, element->offset, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		}
-		HR(Context::Instance().GetDevice()->CreateInputLayout(ied, elements.size(), vsbuffer, vsbufferSize, &m_InputLayout));
+		HR(Context::Instance().GetDevice()->CreateInputLayout(ied, elements->Size(), vsbuffer, vsbufferSize, &m_Desc.Layout.m_InputLayout));
 	}
 
 	void* Buffer::Map(BufferMapAccess access)
 	{
-		HR(Context::Instance().GetDeviceContext()->Map(m_Buffer, NULL, BufferMapAccessToD3D(access), NULL, m_MappedSubresource));
+		HR(Context::Instance().GetDeviceContext()->Map(m_Buffer, NULL, BufferMapAccessToD3D(access), NULL, m_MappedResource));
 		
-		return m_MappedSubresource->pData;
+		return m_MappedResource->pData;
 	}
 
 	void Buffer::Unmap(void)
@@ -76,7 +83,7 @@ namespace cl {
 		ID3D11DeviceContext* devcon = Context::Instance().GetDeviceContext();
 		devcon->IASetVertexBuffers(0, 1, &m_Buffer, &stride, &offset);
 		devcon->IASetPrimitiveTopology(topology);
-		devcon->IASetInputLayout(m_InputLayout);
+		devcon->IASetInputLayout(m_Desc.Layout.m_InputLayout);
 	}
 
 	void Buffer::VSSet(u32 position, u32 buffers)
