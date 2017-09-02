@@ -3,15 +3,15 @@
 #include "Universe.h"
 #include "Hotloader.h"
 
-constexpr u32	  WIDTH		   = 800u;
-constexpr u32	  HEIGHT	   = 600u;
+constexpr u32	  WIDTH = 800u;
+constexpr u32	  HEIGHT = 600u;
 constexpr float32 ASPECT_RATIO = WIDTH / HEIGHT;
 
 constexpr float32 MOVE_SENSITIVITY = 0.4f;
 
 using namespace cl;
 
-class Game : public Layer2D
+class Game : public Scene2D
 {
 private:
 	Universe* m_Universe = anew Universe;
@@ -20,7 +20,6 @@ private:
 	Renderable2D* m_Background;
 	Renderer2D* m_BackgroundRenderer = anew Renderer2D;
 
-	OrthographicCamera* m_Camera;
 	OrthographicCamera* m_BackgroundCamera;
 
 	vec2 m_MouseDelta;
@@ -29,15 +28,15 @@ private:
 
 	float32 m_CameraZoom = 0.0f;
 	float32 m_TargetCameraZoom;
-	
+
 	u32 m_Speed;
 	UniversePreset m_Preset = DEFAULT;
 
 	std::unordered_map<String, UniversePreset> m_Presets;
 public:
-	Game()
-		: Layer2D(mat4::Orthographic(0.0f, cast(float32) WIDTH, 0.0f, cast(float32) HEIGHT, -1.0f, 1.0f)), 
-		m_Camera(anew OrthographicCamera(m_ProjectionMatrix)), m_BackgroundCamera(anew OrthographicCamera(m_ProjectionMatrix))
+	Game(void)
+		: Scene2D(mat4::Orthographic(0.0f, cast(float32) WIDTH, 0.0f, cast(float32) HEIGHT, -1.0f, 1.0f)),
+		m_BackgroundCamera(anew OrthographicCamera(m_Camera->GetProjectionMatrix()))
 	{
 		m_Presets[L"-clear"] = CLEAR;
 		m_Presets[L"-glider"] = GLIDER;
@@ -50,10 +49,10 @@ public:
 		m_Presets[L"-random"] = RANDOM;
 	}
 
-	~Game()
+	~Game(void)
 	{
 		m_Hotloader->Join();
-		
+
 		del m_Universe;
 		del m_Hotloader;
 		del m_Background;
@@ -62,10 +61,10 @@ public:
 		del m_BackgroundCamera;
 	}
 
-	void Init(Context* context, Renderer2D* renderer) override
+	void OnPush(void) override
 	{
 		const String& path = g_ApplicationDesc.Path;
-		
+
 		Renderer2DDesc desc;
 		{
 			ZeroMemory(&desc, sizeof(Renderer2DDesc));
@@ -77,10 +76,10 @@ public:
 			desc.VertexShaderFile = L"VS_R2D.cso";
 			desc.PixelShaderFile = L"PS_R2D.cso";
 		}
-		Renderer2D::Create(renderer, desc);
+		Renderer2D::Create(m_Renderer, desc);
 		Renderer2D::Create(m_BackgroundRenderer, desc);
 
-		renderer->SetCamera(m_Camera);
+		m_Renderer->SetCamera(m_Camera);
 		m_BackgroundRenderer->SetCamera(m_BackgroundCamera);
 
 		TextureDesc textureDesc;
@@ -124,7 +123,7 @@ public:
 			if (e.IsDragged())
 			{
 				vec2 amount = m_MouseDelta - vec2(cast(float32) e.GetX(), cast(float32) e.GetY());
-			
+
 				m_TargetCameraOffset += vec2(amount.x * MOVE_SENSITIVITY, -amount.y * MOVE_SENSITIVITY);
 			}
 
@@ -150,14 +149,14 @@ public:
 		m_CameraZoom += (m_TargetCameraZoom - m_CameraZoom) * 0.3f;
 
 		m_Camera->SetProjectionMatrix(mat4::Orthographic(-m_CameraZoom, cast(float32) WIDTH + m_CameraZoom, -m_CameraZoom, cast(float32) HEIGHT + m_CameraZoom, -1.0f, 1.0f));
-	
+
 		wchar buffer[1024];
 		sprint(buffer, NULL, "/% | FPS: /%", g_ApplicationDesc.Name, g_ApplicationDesc.Cycle.FPS);
 
 		g_Application.SetWindowTitle(String(buffer));
 	}
 
-	void PreRender(Context* context, Renderer2D* renderer) override
+	void PreRender(Renderer2D* renderer, Context* context) override
 	{
 		m_BackgroundRenderer->Begin();
 		m_BackgroundRenderer->Submit(m_Background);
@@ -165,12 +164,16 @@ public:
 		m_BackgroundRenderer->Present();
 	}
 
-	void OnRender(Context* context, Renderer2D* renderer) override
+	void LateRender(Renderer2D* renderer, Context* context) override
 	{
 		// m_Universe->Draw(renderer, m_CameraOffset);
 
-		renderer->DrawString(L"I think this is some kind of a text? :^)", vec2(150, 400), *g_Fonts.Get(L"Roboto"), 0xffffffff);
-		renderer->DrawString(L"This is a strange font! (Alex Brush)", vec2(150, 300), *g_Fonts.Get(L"Alex Brush"), 0xff6b20f7);
+		for (u32 i = 0; i < 5; i++)
+		{
+			renderer->DrawString(L"Don't lie, idiot", vec2(rand() % 300, rand() % 300), *g_Fonts.Get(L"Roboto"), 0xffffffff);
+			renderer->DrawString(L"I think this is some kind of a text? :^)", vec2(rand() % 300, rand() % 300), *g_Fonts.Get(L"Roboto"), 0xffffffff);
+			renderer->DrawString(L"This is a strange font! (Alex Brush)", vec2(rand() % 300, rand() % 300), *g_Fonts.Get(L"Alex Brush"), 0xff6b20f7);
+		}
 	}
 
 	bool ChangeSpeed(u32 speed)
@@ -212,7 +215,7 @@ public:
 
 			static constexpr wchar speedField[] = L"speed:";
 			static constexpr wchar presetField[] = L"preset:";
-			
+
 			if (line.find(speedField) != String::npos)
 			{
 				line.erase(0, wcslen(speedField));
@@ -237,13 +240,18 @@ public:
 	}
 };
 
-#define CONSOLE
+void AppMain(const String& path, wchar** args, s32 argsCount)
+{
+	Game* game = cast(Game*)
+		g_Application.PushScene(anew Game());
+	g_Application.ShowWindow();
+	g_Application.Start();
+	g_Application.PopScene(game);
+}
 
-#ifdef CONSOLE
-int main()
-#else
-s32 CALLBACK WinMain(HINSTANCE, HINSTANCE, char*, s32)
-#endif
+#pragma comment(linker, "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+
+s32 main()
 {
 	SetLocale(LC_ALL);
 
@@ -256,20 +264,14 @@ s32 CALLBACK WinMain(HINSTANCE, HINSTANCE, char*, s32)
 		desc.Width = WIDTH;
 		desc.Height = HEIGHT;
 		desc.WindowStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_SIZEBOX;
+		desc.EntryPoint = AppMain;
 
 		desc.Cycle.UpdateTick = 1000.0f / 60.0f;
 		desc.Cycle.Timer = anew Timer;
 		desc.Cycle.UpdateTimer = 0.0f;
 		desc.Cycle.UpdateDeltaTime = anew DeltaTime(0.0f);
 	}
-
 	g_Application.Create(desc);
-
-	Game* game = cast(Game*)
-	g_Application.PushLayer(anew Game());
-	g_Application.ShowWindow();
-	g_Application.Start();
-	g_Application.PopLayer(game);
 
 	return EXIT_SUCCESS;
 }

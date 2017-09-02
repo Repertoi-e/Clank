@@ -1,5 +1,6 @@
 #include <Clank.h>
-#include <Shellapi.h>
+#include <ShellAPI.h>
+
 #include "../Resource.h"
 
 #define ASPECT_RATIO    (WIDTH / HEIGHT)
@@ -7,15 +8,13 @@
 using namespace cl;
 using namespace std::literals;
 
-class Viewer : public Layer2D
+class Viewer : public Scene2D
 {
 private:
 	String m_Image;
 
 	s32 m_Width = WIDTH, m_Height = HEIGHT;
 	float32 m_AspectRatio = ASPECT_RATIO;
-
-	OrthographicCamera* m_Camera;
 
 	Texture* m_ViewerTexture = NULLPTR;
 	Renderable2D* m_Viewer = NULLPTR;
@@ -24,12 +23,12 @@ private:
 	vec2 m_MouseDelta;
 public:
 	Viewer(const String& image)
-		: Layer2D(mat4::Orthographic(-cast(float32) WIDTH / 2, cast(float32) WIDTH / 2, -cast(float32) HEIGHT / 2, cast(float32) HEIGHT / 2, -1.0f, 1.0f)),
-		m_Image(image), m_Camera(anew OrthographicCamera(m_ProjectionMatrix)), m_ViewerTexture(anew Texture)
+		: Scene2D(mat4::Orthographic(-cast(float32) WIDTH / 2, cast(float32) WIDTH / 2, -cast(float32) HEIGHT / 2, cast(float32) HEIGHT / 2, -1.0f, 1.0f)),
+		m_Image(image), m_ViewerTexture(anew Texture)
 	{
 	}
 
-	void Init(Context* context, Renderer2D* renderer) override
+	void OnPush(void) override
 	{
 		const String& path = g_ApplicationDesc.Path;
 
@@ -44,14 +43,20 @@ public:
 			desc.VertexShaderFile = L"VS_R2D.cso";
 			desc.PixelShaderFile = L"PS_R2D.cso";
 		}
-		Renderer2D::Create(renderer, desc);
-		renderer->SetCamera(m_Camera);
+		Renderer2D::Create(m_Renderer, desc);
+		m_Renderer->SetCamera(m_Camera);
 
 		m_Viewer = Add(anew Renderable2D(vec2(0.0f, 0.0f), vec2(0.0f, 0.0f), m_ViewerTexture));
 		UpdateImage();
 	}
 
-	void UpdateImage()
+	void OnPop(void) override
+	{
+		Remove(m_Viewer);
+		del m_Viewer;
+	}
+
+	void UpdateImage(void)
 	{
 		TextureDesc textureDesc;
 		{
@@ -80,7 +85,7 @@ public:
 		g_Application.SetWindowTitle(g_ApplicationDesc.Name + ((m_Image != L"NULL") ? L" - "s + m_Image : L""));
 	}
 
-	void PreRender(Context* context, Renderer2D* renderer) override
+	void PreRender(Renderer2D* renderer, Context* context) override
 	{
 		context->Clear(vec4(224 / 255.0f, 249 / 255.0f, 240 / 255.0f, 255 / 255.0f));
 	}
@@ -142,7 +147,7 @@ void AppMain(const String& path, wchar** args, s32 argsCount)
 	if (argsCount > 1)
 		fileName = args[1];
 
-	g_Application.PushLayer(anew Viewer(fileName));
+	g_Application.PushScene(anew Viewer(fileName));
 
 	g_Application.ShowWindow();
 	g_Application.Start();

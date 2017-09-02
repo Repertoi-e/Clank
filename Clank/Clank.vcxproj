@@ -35,14 +35,14 @@
     <ClInclude Include="src\cl\Entity\Entity.h" />
     <ClInclude Include="src\cl\Graphics\Camera\Camera.h" />
     <ClInclude Include="src\cl\Graphics\Context.h" />
-    <ClInclude Include="src\cl\Graphics\Folder.h" />
-    <ClInclude Include="src\cl\Graphics\Layers\Layer.h" />
-    <ClInclude Include="src\cl\Graphics\Layers\Layer2D.h" />
+    <ClInclude Include="src\cl\Graphics\D3DTypes.h" />
+    <ClInclude Include="src\cl\Graphics\Render\Folder.h" />
     <ClInclude Include="src\cl\Graphics\Camera\OrthographicCamera.h" />
     <ClInclude Include="src\cl\Graphics\Render\Renderable2D.h" />
     <ClInclude Include="src\cl\Graphics\Render\Renderer.h" />
     <ClInclude Include="src\cl\Graphics\Render\Renderer2D.h" />
-    <ClInclude Include="src\cl\Graphics\Scene2D.h" />
+    <ClInclude Include="src\cl\Graphics\Scene\Scene.h" />
+    <ClInclude Include="src\cl\Graphics\Scene\Scene2D.h" />
     <ClInclude Include="src\cl\Graphics\Shader.h" />
     <ClInclude Include="src\cl\Graphics\Buffer.h" />
     <ClInclude Include="src\cl\Graphics\Texture.h" />
@@ -82,12 +82,11 @@
     <ClCompile Include="src\cl\Entity\Entity.cpp" />
     <ClCompile Include="src\cl\Graphics\Camera\Camera.cpp" />
     <ClCompile Include="src\cl\Graphics\Context.cpp" />
-    <ClCompile Include="src\cl\Graphics\Folder.cpp" />
-    <ClCompile Include="src\cl\Graphics\Layers\Layer2D.cpp" />
+    <ClCompile Include="src\cl\Graphics\Render\Folder.cpp" />
     <ClCompile Include="src\cl\Graphics\Camera\OrthographicCamera.cpp" />
     <ClCompile Include="src\cl\Graphics\Render\Renderable2D.cpp" />
     <ClCompile Include="src\cl\Graphics\Render\Renderer2D.cpp" />
-    <ClCompile Include="src\cl\Graphics\Scene2D.cpp" />
+    <ClCompile Include="src\cl\Graphics\Scene\Scene2D.cpp" />
     <ClCompile Include="src\cl\Graphics\Shader.cpp" />
     <ClCompile Include="src\cl\Graphics\Buffer.cpp" />
     <ClCompile Include="src\cl\Graphics\Texture.cpp" />
@@ -106,7 +105,6 @@
     </ClCompile>
     <ClCompile Include="src\cl\String.cpp" />
     <ClCompile Include="src\cl\Utils\FileUtils.cpp" />
-    <ClCompile Include="src\cl\Memory\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

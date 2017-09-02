@@ -93,9 +93,6 @@
     <ClInclude Include="src\cl\api.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\cl\Graphics\Layers\Layer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\cl\Utils\Log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -109,15 +106,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\cl\Graphics\Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\cl\Graphics\Layers\Layer2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\cl\Graphics\Folder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\cl\Graphics\Scene2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\cl\Entity\Entity.h">
@@ -166,6 +154,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\cl\Graphics\Text\FTErrors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cl\Graphics\Render\Folder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cl\Graphics\D3DTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cl\Graphics\Scene\Scene2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cl\Graphics\Scene\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -218,15 +218,6 @@
     <ClCompile Include="src\cl\Graphics\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cl\Graphics\Layers\Layer2D.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cl\Graphics\Folder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\cl\Graphics\Scene2D.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\cl\Entity\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -260,10 +251,13 @@
     <ClCompile Include="src\cl\Graphics\Text\FontTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cl\Memory\Vector.cpp">
+    <ClCompile Include="src\cl\Application\ResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cl\Application\ResourceManager.cpp">
+    <ClCompile Include="src\cl\Graphics\Render\Folder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cl\Graphics\Scene\Scene2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

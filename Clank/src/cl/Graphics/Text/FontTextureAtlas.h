@@ -14,7 +14,7 @@ namespace cl {
 		friend class Font;
 		friend class FontTexture;
 		
-		Vector* m_Nodes;
+		Vector<vec3i> m_Nodes;
 
 		u32 m_Width;
 		u32 m_Height;

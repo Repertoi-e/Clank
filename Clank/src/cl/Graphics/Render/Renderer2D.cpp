@@ -51,10 +51,10 @@ namespace cl {
 		renderer->m_Matrices->Projection = mat4::Identity();
 
 		InputLayout layout;
-		layout.Push<vec4>("POSITION");
-		layout.Push<vec2>("TEXCOORD");
-		layout.Push<u32>("ID");
-		layout.Push<byte>("COLOR", 4);
+		layout.Push("POSITION", Format::RGBA32_FLOAT);
+		layout.Push("TEXCOORD", Format::RG32_FLOAT);
+		layout.Push("ID", Format::R32_UINT);
+		layout.Push("COLOR", Format::RGBA8_UNORM, 4);
 
 		ID3D10Blob* vsData = renderer->m_Shader->GetDesc().VSData;
 		renderer->m_VertexBuffer->SetInputLayout(layout, vsData->GetBufferPointer(), vsData->GetBufferSize());

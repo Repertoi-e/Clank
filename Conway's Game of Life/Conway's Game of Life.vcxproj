@@ -134,7 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Conway%27s Game of Life\src\Hotloader.cpp" />
-    <ClCompile Include="..\Conway%27s Game of Life\src\main.cpp" />
+    <ClCompile Include="..\Conway%27s Game of Life\src\Main.cpp" />
     <ClCompile Include="..\Conway%27s Game of Life\src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

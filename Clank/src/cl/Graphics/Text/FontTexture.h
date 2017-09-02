@@ -42,20 +42,18 @@ namespace cl {
 		float32 s1 = 0.0f;
 		float32 t1 = 0.0f;
 
-		Vector* kerning = anew Vector(sizeof(Kerning));
+		Vector<Kerning> kerning;
 
 		s32 outline_type = 0;
 		float32 outline_thickness = 0.0f;
 	public:
-		~TextureGlyph();
-
 		float32 GetKerning(const wchar charcode);
 	};
 
 	class FontTexture
 	{
 	private:
-		Vector* m_Glyphs = anew Vector(sizeof(TextureGlyph*));
+		Vector<TextureGlyph*> m_Glyphs;
 		FontTextureAtlas* m_Atlas;
 		
 		struct Memory

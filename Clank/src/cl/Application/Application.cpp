@@ -3,10 +3,10 @@
 
 #include "cl/Maths/maths.h"
 #include "cl/Graphics/Context.h"
-#include "cl/Graphics/Layers/Layer.h"
+#include "cl/Graphics/Scene/Scene.h"
 
 #include <Windowsx.h>
-#include <shellapi.h>
+#include <ShellAPI.h>
 
 #include <FreeImage.h>
 
@@ -118,64 +118,51 @@ namespace cl {
 	void Application::DoEvent(Event& event)
 	{
 		EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<WindowFocusEvent>([&](WindowFocusEvent& e) -> BOOL
+		dispatcher.Dispatch<WindowFocusEvent>([&](WindowFocusEvent& e) -> bool
 		{
 			m_Desc.WindowFocused = e.Focused();
-			return FALSE;
+			return false;
 		});
-
-		for (u32 i = 0; i < m_Layers->Size(); i++)
-		{
-			Layer* layer = *cast(Layer**) m_Layers->Get(i);
-			layer->OnEvent(event);
-		}
+		
+		for (u32 i = 0; i < m_Scenes.Size(); i++)
+			(*m_Scenes[i])->OnEvent(event);
 	}
 
 	void Application::DoRender(void)
 	{
-		for (u32 i = 0; i < m_Layers->Size(); i++)
-		{
-			Layer* layer = *cast(Layer**) m_Layers->Get(i);
-			layer->OnRender();
-		}
+		for (u32 i = 0; i < m_Scenes.Size(); i++)
+			(*m_Scenes[i])->OnRender();
 	}
 
 	void Application::DoUpdate(const DeltaTime& dt)
 	{
-		for (u32 i = 0; i < m_Layers->Size(); i++)
-		{
-			Layer* layer = *cast(Layer**) m_Layers->Get(i);
-			layer->OnUpdate(dt);
-		}
+		for (u32 i = 0; i < m_Scenes.Size(); i++)
+			(*m_Scenes[i])->OnUpdate(dt);
 	}
 
 	void Application::DoTick(void)
 	{
-		for (u32 i = 0; i < m_Layers->Size(); i++)
-		{
-			Layer* layer = *cast(Layer**) m_Layers->Get(i);
-			layer->OnTick();
-		}
+		for (u32 i = 0; i < m_Scenes.Size(); i++)
+			(*m_Scenes[i])->OnTick();
 	}
 
-	Layer* Application::PushLayer(Layer* layer)
+	Scene* Application::PushScene(Scene* scene)
 	{
-		m_Layers->PushBack(&layer);
-		layer->OnInit();
+		m_Scenes.PushBack(&scene);
+		scene->OnPush();
 
-		return layer;
+		return scene;
 	}
 
-	void Application::PopLayer(Layer* layer)
+	void Application::PopScene(Scene* scene)
 	{
-		for (u32 i = 0; i < m_Layers->Size(); i++)
-		{
-			if (*cast(Layer**) m_Layers->Get(i) == layer)
+		for (u32 i = 0; i < m_Scenes.Size(); i++)
+			if (*m_Scenes.Get(i) == scene)
 			{
-				m_Layers->Erase(i);
-				del layer;
+				m_Scenes.Erase(i);
+				scene->OnPop();
+				del scene;
 			}
-		}
 	}
 
 	void Application::DoWindow(void)

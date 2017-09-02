@@ -7,10 +7,9 @@
 #include "cl/Graphics/Context.h"
 #include "cl/Graphics/Shader.h"
 #include "cl/Graphics/Buffer.h"
-#include "cl/Graphics/Layers/Layer.h"
-#include "cl/Graphics/Layers/Layer2D.h"
+#include "cl/Graphics/Scene/Scene2D.h"
 #include "cl/Graphics/Render/Renderer2D.h"
-#include "cl/Graphics/Folder.h"
+#include "cl/Graphics/Render/Folder.h"
 #include "cl/Graphics/Camera/OrthographicCamera.h"
 #include "cl/Graphics/Text/Font.h"
 

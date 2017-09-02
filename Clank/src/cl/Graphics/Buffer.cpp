@@ -5,6 +5,38 @@
 
 namespace cl {
 
+	void InputLayout::Push(const char* name, Format type, u32 count)
+	{
+		u32 size = FormatToSize(type);
+		
+		InputElement element = { name, type, size, count, m_Size };
+		m_Elements.PushBack(&element);
+		m_Size += size * count;
+	}
+
+	u32 InputLayout::FormatToSize(Format format)
+	{
+		switch (format)
+		{
+		case Format::R32_FLOAT:
+			return sizeof(float32);
+		case Format::RG32_FLOAT:
+			return sizeof(float32) * 2;
+		case Format::RGB32_FLOAT:
+			return sizeof(float32) * 3;
+		case Format::RGBA32_FLOAT:
+			return sizeof(float32) * 4;
+		case Format::R32_UINT:
+			return sizeof(u32);
+		case Format::RGBA8_UNORM:
+			return sizeof(byte);
+		}
+
+		ASSERT(false, "Unsupported format.");
+		
+		return 0;
+	}
+
 	Buffer::Buffer(void)
 	{
 	}
@@ -50,20 +82,20 @@ namespace cl {
 
 	void Buffer::SetInputLayout(const InputLayout& layout, void* vsbuffer, u32 vsbufferSize)
 	{
-		m_Desc.Layout = layout;
+		m_Layout = layout;
 
-		if (m_Desc.Layout.m_InputLayout)
-			m_Desc.Layout.m_InputLayout->Release();
+		if (m_Layout.m_InputLayout)
+			m_Layout.m_InputLayout->Release();
 
-		Vector* elements = m_Desc.Layout.GetElements();
+		Vector<InputElement>& elements = m_Layout.GetElements();
 
-		D3D11_INPUT_ELEMENT_DESC* ied = anew D3D11_INPUT_ELEMENT_DESC[elements->Size()];
-		for (u32 i = 0; i < elements->Size(); i++)
+		D3D11_INPUT_ELEMENT_DESC* ied = anew D3D11_INPUT_ELEMENT_DESC[elements.Size()];
+		for (u32 i = 0; i < elements.Size(); i++)
 		{
-			InputElement* element = cast(InputElement*) elements->Get(i);
-			ied[i] = { element->name, 0, element->type, 0, element->offset, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+			InputElement* element = cast(InputElement*) elements.Get(i);
+			ied[i] = { element->name, 0, FormatToD3D(element->type), 0, element->offset, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		}
-		HR(Context::Instance().GetDevice()->CreateInputLayout(ied, elements->Size(), vsbuffer, vsbufferSize, &m_Desc.Layout.m_InputLayout));
+		HR(Context::Instance().GetDevice()->CreateInputLayout(ied, elements.Size(), vsbuffer, vsbufferSize, &m_Layout.m_InputLayout));
 	}
 
 	void* Buffer::Map(BufferMapAccess access)
@@ -83,7 +115,7 @@ namespace cl {
 		ID3D11DeviceContext* devcon = Context::Instance().GetDeviceContext();
 		devcon->IASetVertexBuffers(0, 1, &m_Buffer, &stride, &offset);
 		devcon->IASetPrimitiveTopology(topology);
-		devcon->IASetInputLayout(m_Desc.Layout.m_InputLayout);
+		devcon->IASetInputLayout(m_Layout.m_InputLayout);
 	}
 
 	void Buffer::VSSet(u32 position, u32 buffers)

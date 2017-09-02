@@ -7,16 +7,11 @@
 
 namespace cl {
 
-	TextureGlyph::~TextureGlyph()
-	{
-		del kerning;
-	}
-
 	float32 TextureGlyph::GetKerning(const wchar charcode)
 	{
-		for (u32 i = 0; i < kerning->Size(); ++i)
+		for (u32 i = 0; i < kerning.Size(); ++i)
 		{
-			Kerning* kerning = cast(Kerning*) this->kerning->Get(i);
+			Kerning* kerning = cast(Kerning*) this->kerning.Get(i);
 			if (kerning->charcode == charcode)
 				return kerning->kerning;
 		}
@@ -36,21 +31,21 @@ namespace cl {
 		u32 glyph_index, prev_index;
 		FT_Vector kerning;
 
-		for (u32 i = 1; i < m_Glyphs->Size(); ++i)
+		for (u32 i = 1; i < m_Glyphs.Size(); ++i)
 		{
-			glyph = *cast(TextureGlyph**) m_Glyphs->Get(i);
+			glyph = *m_Glyphs.Get(i);
 			glyph_index = FT_Get_Char_Index(face, glyph->charcode);
-			glyph->kerning->Clear();
+			glyph->kerning.Clear();
 
-			for (u32 j = 1; j < m_Glyphs->Size(); ++j)
+			for (u32 j = 1; j < m_Glyphs.Size(); ++j)
 			{
-				prev_glyph = *cast(TextureGlyph**)m_Glyphs->Get(j);
+				prev_glyph = *m_Glyphs.Get(j);
 				prev_index = FT_Get_Char_Index(face, prev_glyph->charcode);
 				FT_Get_Kerning(face, prev_index, glyph_index, FT_KERNING_UNFITTED, &kerning);
 				if (kerning.x)
 				{
 					Kerning k = { prev_glyph->charcode, kerning.x / (float32)(HRESf*HRESf) };
-					glyph->kerning->PushBack(&k);
+					glyph->kerning.PushBack(&k);
 				}
 			}
 		}
@@ -78,13 +73,11 @@ namespace cl {
 	{
 		TextureGlyph* glyph;
 
-		for (u32 i = 0; i < m_Glyphs->Size(); ++i)
+		for (u32 i = 0; i < m_Glyphs.Size(); ++i)
 		{
-			glyph = *cast(TextureGlyph**)m_Glyphs->Get(i);
+			glyph = *m_Glyphs.Get(i);
 			del glyph;
 		}
-
-		del m_Glyphs;
 	}
 
 	s32 FontTexture::Init(void)
@@ -162,9 +155,9 @@ namespace cl {
 		for (u32 i = 0; i < wcslen(charcodes); ++i)
 		{
 			pass = 0;
-			for (u32 j = 0; j < m_Glyphs->Size(); ++j) 
+			for (u32 j = 0; j < m_Glyphs.Size(); ++j)
 			{
-				glyph = *cast(TextureGlyph**) m_Glyphs->Get(j);
+				glyph = *m_Glyphs.Get(j);
 				if ((glyph->charcode == charcodes[i]) &&
 					((charcodes[i] == cast(wchar) (-1)) ||
 					((glyph->outline_type == m_OutlineType) &&
@@ -319,7 +312,7 @@ namespace cl {
 			glyph->advance_x = ft_slot->advance.x / HRESf;
 			glyph->advance_y = ft_slot->advance.y / HRESf;
 
-			m_Glyphs->PushBack(&glyph);
+			m_Glyphs.PushBack(&glyph);
 
 			if (m_OutlineType > 0)
 				FT_Done_Glyph(ft_glyph);
@@ -340,9 +333,9 @@ namespace cl {
 		wchar buffer[2] = { 0,0 };
 		TextureGlyph* glyph;
 
-		for (u32 i = 0; i<m_Glyphs->Size(); ++i)
+		for (u32 i = 0; i < m_Glyphs.Size(); ++i)
 		{
-			glyph = *cast(TextureGlyph**) m_Glyphs->Get(i);
+			glyph = *m_Glyphs.Get(i);
 			if ((glyph->charcode == charcode) &&
 				((charcode == (wchar)(-1)) ||
 				((glyph->outline_type == m_OutlineType) &&
@@ -377,13 +370,13 @@ namespace cl {
 			glyph->t0 = (region.y + 2) / cast(float32) height;
 			glyph->s1 = (region.x + 3) / cast(float32) width;
 			glyph->t1 = (region.y + 3) / cast(float32) height;
-			m_Glyphs->PushBack(&glyph);
+			m_Glyphs.PushBack(&glyph);
 			return glyph;
 		}
 
 		buffer[0] = charcode;
 		if (LoadGlyphs(buffer) == 0)
-			return *cast(TextureGlyph**)m_Glyphs->Back();
+			return *m_Glyphs.Back();
 		
 		return NULL;
 	}

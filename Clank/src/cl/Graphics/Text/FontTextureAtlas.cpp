@@ -14,23 +14,21 @@ namespace cl {
 
 		ASSERT((depth == 1) || (depth == 2) || (depth == 3) || (depth == 4), "Invalid depth");
 		
-		m_Nodes = anew Vector(sizeof(vec3i));
-		m_Nodes->PushBack(&node);
+		m_Nodes.PushBack(&node);
 
 		m_Data = anew byte[m_Width * m_Height * m_Depth];
 	}
 
 	FontTextureAtlas::~FontTextureAtlas()
 	{
-		del m_Nodes;
 		del m_Data;
 	}
 
 	void FontTextureAtlas::Clear(void)
 	{
 		vec3i node = vec3i(1, 1, m_Width - 2);
-		m_Nodes->Clear();
-		m_Nodes->PushBack(&node);
+		m_Nodes.Clear();
+		m_Nodes.PushBack(&node);
 
 		m_Used = 0;
 
@@ -75,14 +73,14 @@ namespace cl {
 		vec3i* node;
 		vec3i* next;
 
-		for (u32 i = 0; i< m_Nodes->Size() - 1; ++i)
+		for (u32 i = 0; i< m_Nodes.Size() - 1; ++i)
 		{
-			node = cast(vec3i*) m_Nodes->Get(i);
-			next = cast(vec3i*) m_Nodes->Get(i + 1);
+			node = cast(vec3i*) m_Nodes.Get(i);
+			next = cast(vec3i*) m_Nodes.Get(i + 1);
 			if (node->y == next->y)
 			{
 				node->z += next->z;
-				m_Nodes->Erase(i + 1);
+				m_Nodes.Erase(i + 1);
 				--i;
 			}
 		}
@@ -90,7 +88,7 @@ namespace cl {
 
 	s32 FontTextureAtlas::Fit(u32 index, u32 width, u32 height)
 	{
-		vec3i* node = cast(vec3i*) m_Nodes->Get(index);
+		vec3i* node = m_Nodes.Get(index);
 
 		s32 x = node->x;
 		s32 y = node->y;
@@ -102,7 +100,7 @@ namespace cl {
 		s32 width_left = width;
 		while (width_left > 0)
 		{
-			node = cast(vec3i*) m_Nodes->Get(i);
+			node = m_Nodes.Get(i);
 			if (node->y > y)
 				y = node->y;
 			if ((y + height) > (m_Height - 1))
@@ -123,12 +121,12 @@ namespace cl {
 		s32 best_height = INT_MAX;
 		s32 best_index = -1;
 		s32 best_width = INT_MAX;
-		for (u32 i = 0; i< m_Nodes->Size(); ++i)
+		for (u32 i = 0; i< m_Nodes.Size(); ++i)
 		{
 			s32 y = Fit(i, width, height);
 			if (y >= 0)
 			{
-				node = cast(vec3i*) m_Nodes->Get(i);
+				node = m_Nodes.Get(i);
 				if (((y + cast(s32) height) < best_height) ||
 					(((y + cast(s32) height) == best_height) && (node->z < best_width)))
 				{
@@ -151,13 +149,13 @@ namespace cl {
 		}
 
 		node = anew vec3i(region.x, region.y + height, width);
-		m_Nodes->Insert(best_index, node);
+		m_Nodes.Insert(best_index, node);
 		del node;
 
-		for (u32 i = best_index + 1; i < m_Nodes->Size(); ++i)
+		for (u32 i = best_index + 1; i < m_Nodes.Size(); ++i)
 		{
-			node = cast(vec3i*) m_Nodes->Get(i);
-			prev = cast(vec3i*) m_Nodes->Get(i - 1);
+			node = m_Nodes.Get(i);
+			prev = m_Nodes.Get(i - 1);
 
 			if (node->x < (prev->x + prev->z))
 			{
@@ -166,7 +164,7 @@ namespace cl {
 				node->z -= shrink;
 				if (node->z <= 0)
 				{
-					m_Nodes->Erase(i);
+					m_Nodes.Erase(i);
 					--i;
 				}
 				else

@@ -5,11 +5,13 @@
 #include "cl/Maths/maths.h"
 #include "cl/Memory/Vector.h"
 
+#include "D3DTypes.h"
+
 #include <d3d11.h>
 
 namespace cl {
 
-	enum class BufferUsage
+	enum class BufferUsage : u8
 	{				/// CPU:           GPU:
 		DEFAULT,	//  None		   Read / Write
 		IMMUTABLE,	//  None		   Read Only
@@ -17,14 +19,14 @@ namespace cl {
 		STAGING		//  Read / Write   Read / Write
 	};
 
-	enum class BufferAccess
+	enum class BufferAccess : u8
 	{
 		ZERO,
 		READ,
 		WRITE
 	};
 
-	enum class BufferMapAccess
+	enum class BufferMapAccess : u8
 	{
 		READ,				// Buffer can only be read by the CPU.
 		WRITE,				// Buffer can only be written to by the CPU.
@@ -33,7 +35,7 @@ namespace cl {
 		WRITE_NO_OVERWRITE	// An advanced flag that allows you to add more data to the buffer even while the GPU is using parts. However, you must not work with the parts the GPU is using.
 	};
 
-	enum class BufferBindFlag
+	enum class BufferBindFlag : u8
 	{
 		VERTEX_BUFFER,
 		INDEX_BUFFER,
@@ -46,7 +48,7 @@ namespace cl {
 	struct API InputElement
 	{
 		const char* name;
-		DXGI_FORMAT type;
+		Format type;
 		u32 size;
 		u32 count;
 		u32 offset;
@@ -60,58 +62,14 @@ namespace cl {
 		u32 m_Size = 0;
 		ID3D11InputLayout* m_InputLayout = NULLPTR;
 
-		Vector* m_Elements = anew Vector(sizeof(InputElement));
+		Vector<InputElement> m_Elements;
 	public:
-		template<typename T>
-		void Push(const char* name, u32 count = 1)
-		{
-		}
-
-		template<>
-		void Push<float32>(const char* name, u32 count)
-		{
-			Push(name, DXGI_FORMAT_R32_FLOAT, sizeof(float), count);
-		}
-
-		template<>
-		void Push<u32>(const char* name, u32 count)
-		{
-			Push(name, DXGI_FORMAT_R32_UINT, sizeof(u32), count);
-		}
-
-		template<>
-		void Push<byte>(const char* name, u32 count)
-		{
-			Push(name, DXGI_FORMAT_R8G8B8A8_UNORM, sizeof(byte), count);
-		}
-
-		template<>
-		void Push<vec2>(const char* name, u32 count)
-		{
-			Push(name, DXGI_FORMAT_R32G32_FLOAT, sizeof(vec2), count);
-		}
-
-		template<>
-		void Push<vec3>(const char* name, u32 count)
-		{
-			Push(name, DXGI_FORMAT_R32G32B32_FLOAT, sizeof(vec3), count);
-		}
-
-		template<>
-		void Push<vec4>(const char* name, u32 count)
-		{
-			Push(name, DXGI_FORMAT_R32G32B32A32_FLOAT, sizeof(vec4), count);
-		}
+		void Push(const char* name, Format type, u32 count = 1);
 
 		inline u32 GetSize(void) const { return m_Size; }
-		inline Vector* GetElements(void) { return m_Elements; }
-	private:
-		void Push(const char* name, DXGI_FORMAT type, u32 size, u32 count)
-		{
-			InputElement element = { name, type, size, count, m_Size };
-			m_Elements->PushBack(&element);
-			m_Size += size * count;
-		}
+		inline Vector<InputElement>& GetElements(void) { return m_Elements; }		
+	public:
+		static u32 FormatToSize(Format format);
 	};
 
 	struct API BufferDesc
@@ -121,7 +79,6 @@ namespace cl {
 		u32 Size;
 		BufferAccess Access;
 		void* InitialData = NULLPTR;
-		InputLayout Layout;
 	};
 
 	class API Buffer
@@ -131,6 +88,7 @@ namespace cl {
 		D3D11_MAPPED_SUBRESOURCE* m_MappedResource = anew D3D11_MAPPED_SUBRESOURCE;
 
 		BufferDesc m_Desc;
+		InputLayout m_Layout;
 	public:
 		Buffer(void);
 		~Buffer(void);

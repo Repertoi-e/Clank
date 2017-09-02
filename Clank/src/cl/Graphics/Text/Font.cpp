@@ -104,11 +104,13 @@ namespace cl {
 
 	Font* Font::CreateFromFile(Font* font, const FontDesc& desc)
 	{
+		font->m_Desc = desc;
+		
 		u32 dataSize = 0;
-		byte* fontData = ReadFile(desc.FileName, &dataSize);
+		byte* fontData = ReadFile(font->m_Desc.FileName, &dataSize);
 
 		font->m_FontTextureAtlas = anew FontTextureAtlas(512, 512, 2);
-		font->m_FontTexture = anew FontTexture(font->m_FontTextureAtlas, desc.Size, fontData, dataSize);
+		font->m_FontTexture = anew FontTexture(font->m_FontTextureAtlas, font->m_Desc.Size, fontData, dataSize);
 
 		TextureDesc textureDesc;
 		{
@@ -120,8 +122,6 @@ namespace cl {
 			textureDesc.Height = 512u;
 		}
 		Texture::CreateFromMemory(font->m_Texture, textureDesc, font->m_FontTextureAtlas->m_Data);
-
-		font->m_Desc = desc;
 
 		return font;
 	}

@@ -13,7 +13,7 @@
 
 namespace cl {
 
-	class Layer;
+	class Scene;
 
 	struct API CycleDesc
 	{
@@ -60,7 +60,7 @@ namespace cl {
     private:
         ApplicationDesc m_Desc;
 
-		Vector* m_Layers = anew Vector(sizeof(Layer*));
+		Vector<Scene*> m_Scenes;
 	public:
 		Application(void);
 
@@ -76,8 +76,8 @@ namespace cl {
 		void DoUpdate(const DeltaTime& dt);
 		void DoTick(void);
 
-		Layer* PushLayer(Layer* layer);
-		void PopLayer(Layer* layer);
+		Scene* PushScene(Scene* scene);
+		void PopScene(Scene* scene);
 		
 		void SetWindowTitle(const String& title);
 
