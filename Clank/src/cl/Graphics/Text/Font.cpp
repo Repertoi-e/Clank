@@ -2,7 +2,6 @@
 #include "Font.h"
 
 #include "cl/Utils/FileUtils.h"
-#include "cl/Utils/Log.h"
 
 namespace cl {
 

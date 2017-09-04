@@ -93,9 +93,6 @@
     <ClInclude Include="src\cl\api.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\cl\Utils\Log.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\cl\Maths2\Rectangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -166,6 +163,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\cl\Graphics\Scene\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cl\System\Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -258,6 +258,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cl\Graphics\Scene\Scene2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cl\System\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

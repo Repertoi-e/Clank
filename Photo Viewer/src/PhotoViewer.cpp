@@ -60,6 +60,8 @@ public:
 	{
 		TextureDesc textureDesc;
 		{
+			ZeroMemory(&textureDesc, sizeof(TextureDesc));
+
 			textureDesc.Name = L"Image";
 			textureDesc.Filter = TextureFilter::LINEAR;
 		}
@@ -148,7 +150,6 @@ void AppMain(const String& path, wchar** args, s32 argsCount)
 		fileName = args[1];
 
 	g_Application.PushScene(anew Viewer(fileName));
-
 	g_Application.ShowWindow();
 	g_Application.Start();
 }

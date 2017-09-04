@@ -3,9 +3,21 @@
 
 #include <malloc.h>
 
-#include "cl/utils/Log.h"
+#include "cl/System/Logger.h"
 
 namespace cl {
+	
+	void* Allocator::Allocate(u32 size)
+	{
+		ASSERT(size < 1024 * 1024 * 1024, "Allocation > 1gb");
+		
+		u32 actualSize = size + sizeof(u32);
+		byte* result = cast(byte*) _aligned_malloc(actualSize, 16);
+		memset(result, 0, actualSize);
+		memcpy(result, &size, sizeof(u32));
+		result += sizeof(u32);
+		return result;
+	}
 
 	void* Allocator::Allocate(u32 size, const char* file, u32 line)
 	{
@@ -13,16 +25,10 @@ namespace cl {
 
 		if (size > 1024 * 1024)
 		{
-			// !!
-			LOG_WARN("Allocation larger than 1 MB at ", file, " [", line, "]\n");
+			DEBUG_LOG(WARN, "Allocation larger than 1 MB at ", file, " [", line, "]\n");
 		}
 
-		u32 actualSize = size + sizeof(u32);
-		byte* result = cast(byte*) _aligned_malloc(actualSize, 16);
-		memset(result, 0, actualSize);
-		memcpy(result, &size, sizeof(u32));
-		result += sizeof(u32);
-		return result;
+		return Allocate(size);
 	}
 
 	void Allocator::Free(void* block)

@@ -2,7 +2,7 @@
 
 #include "cl/stdafx.h"
 
-#include "cl/Utils/Log.h"
+#include "cl/System/Logger.h"
 
 namespace cl {
 

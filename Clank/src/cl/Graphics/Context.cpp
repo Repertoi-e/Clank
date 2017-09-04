@@ -1,7 +1,7 @@
 #include "cl/stdafx.h"
 #include "Context.h"
 
-#include "cl/Utils/Log.h"
+#include "cl/System/Logger.h"
 
 namespace cl {
 
@@ -64,11 +64,11 @@ namespace cl {
 		DXGI_ADAPTER_DESC adapterDesc;
 		HR(adapter->GetDesc(&adapterDesc));
 
-		LOG_WARN("----------------------------------\n");
-		LOG_WARN(" Direct3D ", D3DFeatureLevelToString(m_FeatureLevel), ":\n");
-		LOG_WARN("    ", adapterDesc.Description, "\n");
-		LOG_WARN("    ", "VRAM: ", adapterDesc.DedicatedVideoMemory / 1024 / 1024, " MB\n");
-		LOG_WARN("----------------------------------\n\n");
+		DEBUG_LOG(WARN, "----------------------------------\n");
+		DEBUG_LOG(WARN, " Direct3D ", D3DFeatureLevelToString(m_FeatureLevel), ":\n");
+		DEBUG_LOG(WARN, "    ", adapterDesc.Description, "\n");
+		DEBUG_LOG(WARN, "    ", "VRAM: ", cast(u32) adapterDesc.DedicatedVideoMemory / 1024 / 1024, " MB\n");
+		DEBUG_LOG(WARN, "----------------------------------\n\n");
 
 		SafeRelease(adapterOutput);
 		SafeRelease(adapter);

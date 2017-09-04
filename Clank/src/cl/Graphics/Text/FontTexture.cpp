@@ -3,7 +3,7 @@
 
 #include <assert.h>
 
-#include "cl/Utils/Log.h"
+#include "cl/System/Logger.h"
 
 namespace cl {
 
@@ -65,7 +65,7 @@ namespace cl {
 
 		if (Init())
 		{
-			LOG_ERROR("Failed init");
+			DEBUG_LOG(ERROR, "Failed init");
 		}
 	}
 
@@ -190,7 +190,7 @@ namespace cl {
 			FT_Error error = FT_Load_Glyph(face, glyph_index, flags);
 			if (error)
 			{
-				LOG_ERROR("FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
+				DEBUG_LOG(ERROR, "FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
 				FT_Done_Face(face);
 				FT_Done_FreeType(library);
 				return wcslen(charcodes) - i;
@@ -211,7 +211,7 @@ namespace cl {
 				error = FT_Stroker_New(library, &stroker);
 				if (error)
 				{
-					LOG_ERROR("FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
+					DEBUG_LOG(ERROR, "FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
 					FT_Done_Face(face);
 					FT_Stroker_Done(stroker);
 					FT_Done_FreeType(library);
@@ -222,7 +222,7 @@ namespace cl {
 				error = FT_Get_Glyph(face->glyph, &ft_glyph);
 				if (error)
 				{
-					LOG_ERROR("FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
+					DEBUG_LOG(ERROR, "FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
 					FT_Done_Face(face);
 					FT_Stroker_Done(stroker);
 					FT_Done_FreeType(library);
@@ -238,7 +238,7 @@ namespace cl {
 				
 				if (error)
 				{
-					LOG_ERROR("FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
+					DEBUG_LOG(ERROR, "FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
 					FT_Done_Face(face);
 					FT_Stroker_Done(stroker);
 					FT_Done_FreeType(library);
@@ -250,7 +250,7 @@ namespace cl {
 					error = FT_Glyph_To_Bitmap(&ft_glyph, FT_RENDER_MODE_NORMAL, 0, 1);
 					if (error)
 					{
-						LOG_ERROR("FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
+						DEBUG_LOG(ERROR, "FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
 						FT_Done_Face(face);
 						FT_Stroker_Done(stroker);
 						FT_Done_FreeType(library);
@@ -262,7 +262,7 @@ namespace cl {
 					error = FT_Glyph_To_Bitmap(&ft_glyph, FT_RENDER_MODE_LCD, 0, 1);
 					if (error)
 					{
-						LOG_ERROR("FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
+						DEBUG_LOG(ERROR, "FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
 						FT_Done_Face(face);
 						FT_Stroker_Done(stroker);
 						FT_Done_FreeType(library);
@@ -283,7 +283,7 @@ namespace cl {
 			if (region.x < 0)
 			{
 				missed++;
-				LOG_ERROR("Texture atlas is full!\n");
+				DEBUG_LOG(ERROR, "Texture atlas is full!\n");
 				continue;
 			}
 			
@@ -358,7 +358,7 @@ namespace cl {
 				 i, i, i, i, i, i, i, i, i, i, i, i };
 			if (region.x < 0)
 			{
-				LOG_ERROR("Texture atlas is full!\n");
+				DEBUG_LOG(ERROR, "Texture atlas is full!\n");
 				return NULL;
 			}
 
@@ -395,7 +395,7 @@ namespace cl {
 		FT_Error error = FT_Init_FreeType(library);
 		if (error) 
 		{
-			LOG_ERROR("FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
+			DEBUG_LOG(ERROR, "FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
 			return 0;
 		}
 
@@ -403,7 +403,7 @@ namespace cl {
 
 		if (error) 
 		{
-			LOG_ERROR("FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
+			DEBUG_LOG(ERROR, "FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
 			FT_Done_FreeType(*library);
 			return 0;
 		}
@@ -411,7 +411,7 @@ namespace cl {
 		error = FT_Select_Charmap(*face, FT_ENCODING_UNICODE);
 		if (error) 
 		{
-			LOG_ERROR("FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
+			DEBUG_LOG(ERROR, "FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
 			FT_Done_Face(*face);
 			FT_Done_FreeType(*library);
 			return 0;
@@ -421,7 +421,7 @@ namespace cl {
 
 		if (error) 
 		{
-			LOG_ERROR("FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
+			DEBUG_LOG(ERROR, "FT_Error (", FT_Errors[error].code, " : ", FT_Errors[error].message, "\n");
 			FT_Done_Face(*face);
 			FT_Done_FreeType(*library);
 			return 0;

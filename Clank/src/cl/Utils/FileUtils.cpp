@@ -4,7 +4,7 @@
 #include <FreeImage.h>
 #include <FreeImage/Utilities.h>
 
-#include "Log.h"
+#include "cl/System/Logger.h"
 
 namespace cl {
 

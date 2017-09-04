@@ -64,8 +64,8 @@ namespace cl {
 		{
 			ZeroMemory(&desc, sizeof(D3D11_TEXTURE2D_DESC));
 
-			desc.Width = m_Desc.Width;
-			desc.Height = m_Desc.Height;
+			desc.Width = m_Desc.Width == 0 ? 1 : m_Desc.Width;
+			desc.Height = m_Desc.Height == 0 ? 1 : m_Desc.Height;
 			desc.MipLevels = mipLevels;
 			desc.ArraySize = 1;
 			desc.Format = format;

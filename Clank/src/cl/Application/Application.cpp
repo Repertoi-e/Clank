@@ -4,6 +4,7 @@
 #include "cl/Maths/maths.h"
 #include "cl/Graphics/Context.h"
 #include "cl/Graphics/Scene/Scene.h"
+#include "cl/System/Logger.h"
 
 #include <Windowsx.h>
 #include <ShellAPI.h>
@@ -43,6 +44,8 @@ namespace cl {
 		path = path.substr(0, path.find_last_of(L'\\') + 1);
 
 		m_Desc.Args = CommandLineToArgvW(GetCommandLineW(), &m_Desc.ArgsCount);
+
+		g_Logger.Start();
 
 		m_Desc.EntryPoint(path, m_Desc.Args, m_Desc.ArgsCount);
 	}

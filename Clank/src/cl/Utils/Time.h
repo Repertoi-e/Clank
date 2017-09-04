@@ -2,8 +2,6 @@
 
 #include "cl/stdafx.h"
 
-#include "Log.h"
-
 #include <Windows.h>
 
 namespace cl {

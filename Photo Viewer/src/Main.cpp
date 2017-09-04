@@ -2,16 +2,16 @@
 
 #include "../Resource.h"
 
+#include <type_traits>
+
 using namespace cl;
 
 void AppMain(const String& path, wchar** args, s32 argsCount);
 
-#pragma comment(linker, "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+// #pragma comment(linker, "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 
 s32 main()
 {
-	SetLocale(LC_ALL);
-
 	ApplicationDesc desc;
 	{
 		ZeroMemory(&desc, sizeof(ApplicationDesc));
