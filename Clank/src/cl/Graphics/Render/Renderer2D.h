@@ -71,6 +71,10 @@ namespace cl {
 
 		void Submit(Renderable2D* renderable);
 		void DrawLine(const vec2& p1, const vec2& p2, u32 color, float32 thickness);
+		void DrawRect(const vec2& position, const vec2& size, u32 color = 0xffffffff);
+		void DrawRect(const Rectangle& rectangle, u32 color = 0xffffffff);
+		void FillRect(const vec2& position, const vec2& size, u32 color = 0xffffffff);
+		void FillRect(const Rectangle& rectangle, u32 color = 0xffffffff);
 		void DrawString(const String& text, const vec2& position, const Font& font, u32 color);
 
 		void End(void) override;

@@ -10,20 +10,20 @@ namespace cl {
 		m_LogLevel = INFO; 
 		m_HConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	
-		print("Starting Logging system...\n");
+		Print("Starting Logging system...\n");
 
 		SetLocale(LC_ALL);
 	}
 
 	void Logger::Shutdown(void)
 	{
-		print(L"Shutting down Logging system...\n");
+		Print(L"Shutting down Logging system...\n");
 	}
 
 	void Logger::SetLocale(s32 locale)
 	{
 		const char* l = setlocale(locale, "");
-		print(!l ? "Locale not set\n" : "Locale set to %\n", l);
+		Print(!l ? "Locale not set\n" : "Locale set to %\n", l);
 	}
 
 	void Logger::SetLogLevel(LogLevel level)
@@ -31,21 +31,7 @@ namespace cl {
 		m_LogLevel = level;
 	}
 
-	void Logger::print_string(const wchar* wstr, u32& index)
-	{
-		s32 size = wcslen(wstr);
-		wmemcpy(&m_Buffer[index], wstr, size);
-		index += size;
-	}
-
-	void Logger::print_string(const char* str, u32& index)
-	{
-		wchar buffer[1024 * 10] = { 0 };
-		mbstowcs(buffer, str, strlen(str) + 1);
-		print_string(buffer, index);
-	}
-
-	void Logger::print_u64(u64 number, u64 base, u32& index)
+	void Logger::PrintNumber(StringBuffer& buffer, u64 number, u64 base)
 	{
 		constexpr wchar* table = L"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_#";
 
@@ -75,8 +61,8 @@ namespace cl {
 		}
 
 		u32 size = u32(end - p);
-		wmemcpy(&m_Buffer[index], p, size);
-		index += size;
+		wmemcpy(&buffer.Data[buffer.Occupied], p, size);
+		buffer.Occupied += size;
 	}
 
 	void print_u64_dec(u64 number, u32& index, bool printLeadingZeroes)
@@ -133,8 +119,10 @@ namespace cl {
 		}
 	}
 
-	void Logger::handle_arg(const PrintArg& arg, void* value, u32& index)
+	void Logger::HandleArgument(StringBuffer& buffer, const PrintArg& arg)
 	{
+		void* value = arg.m_Value;
+
 		switch (arg.m_Type)
 		{
 		case PrintArg::INTEGER:
@@ -144,9 +132,9 @@ namespace cl {
 			{
 			case 10:
 				if (integer.m_Negative)
-					m_Buffer[index++] = L'-';
+					buffer.Append(L"-");
 			default:
-				print_u64(integer.m_IntegerValue, integer.m_Base, index);
+				PrintNumber(buffer, integer.m_IntegerValue, integer.m_Base);
 				break;
 			}
 
@@ -155,19 +143,16 @@ namespace cl {
 			break;
 		}
 		case PrintArg::WSTRING:
-			print_string(cast(const wchar*) value, index);
+			buffer.Append(cast(const wchar*) value);
 			break;
 		case PrintArg::STRING:
-			print_string(cast(const char*) value, index);
+			buffer.Append(cast(const char*) value);
 			break;
 		}
 	}
 
-	void Logger::print_internal(const PrintArg* args, u32 argc)
+	void Logger::PrintInternal(StringBuffer& buffer, const PrintArg* args, u32 argc)
 	{
-		memset(m_Buffer, 0, sizeof(m_Buffer));
-		u32 index = 0;
-
 		const PrintArg& first = args[0];
 
 		// If there is only one argument,
@@ -177,13 +162,12 @@ namespace cl {
 			switch (first.m_Type)
 			{
 			case PrintArg::WSTRING:
-				print_string(cast(wchar*) first.m_Value, index);
+				buffer.Append(cast(wchar*) first.m_Value);
 				break;
 			case PrintArg::STRING:
-				print_string(cast(char*) first.m_Value, index);
+				buffer.Append(cast(char*) first.m_Value);
 				break;
 			}
-			m_Buffer[index] = 0;
 			return;
 		}
 
@@ -214,10 +198,7 @@ namespace cl {
 		{
 			if (*it == L'%' && hasArgs)
 			{
-				const PrintArg& currentArg = args[arg++];
-				void* value = currentArg.m_Value;
-
-				handle_arg(currentArg, value, index);
+				HandleArgument(buffer, args[arg++]);
 
 				if (arg + 1 > argc)
 				{
@@ -226,23 +207,35 @@ namespace cl {
 				}
 				it++;
 			}
-			m_Buffer[index++] = *it;
+			buffer.AppendChar(*it);
 		}
-		m_Buffer[index] = 0;
 
 		if (format != cast(wchar*) first.m_Value)
 			del format;
 	}
 
-	void Logger::print_sequence_internal(const PrintArg* args, u32 argc)
+	void Logger::PrintSequenceInternal(StringBuffer& buffer, const PrintArg* args, u32 argc)
 	{
 		u32 index = 0;
 		for (u32 i = 0; i < argc; i++)
-		{
-			const PrintArg& currentArg = args[i];
-			void* value = currentArg.m_Value;
+			HandleArgument(buffer, args[i]);
+	}
 
-			handle_arg(currentArg, value, index);
+	void Logger::PrintColored(StringBuffer& buffer, LogLevel level)
+	{
+		switch (level)
+		{
+		case FATAL:
+			SetConsoleTextAttribute(m_HConsole, BACKGROUND_RED | BACKGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+			break;
+		case ERROR:
+			SetConsoleTextAttribute(m_HConsole, FOREGROUND_RED | FOREGROUND_INTENSITY);
+			break;
+		case WARN:
+			SetConsoleTextAttribute(m_HConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+			break;
 		}
+		wprintf(buffer.Data);
+		SetConsoleTextAttribute(m_HConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 	}
 }

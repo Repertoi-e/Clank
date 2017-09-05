@@ -45,7 +45,7 @@ namespace cl {
 	public:
 		enum ArgType
 		{
-			INTEGER, WSTRING, STRING
+			INTEGER, WSTRING, STRING, PRINTER
 		};
 		ArgType m_Type;
 
@@ -102,100 +102,100 @@ namespace cl {
 		LogLevel m_LogLevel;
 
 		HANDLE m_HConsole;
-
-		wchar m_Buffer[1024 * 10];
 	public:
 		void Start(void) override;
 		void Shutdown(void) override;
 
 		void SetLocale(s32 locale);
 		void SetLogLevel(LogLevel level);
-	private:
-		void print_colored(LogLevel level)
-		{
-			switch (level)
-			{
-			case FATAL:
-				SetConsoleTextAttribute(m_HConsole, BACKGROUND_RED | BACKGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-				break;
-			case ERROR:
-				SetConsoleTextAttribute(m_HConsole, FOREGROUND_RED | FOREGROUND_INTENSITY);
-				break;
-			case WARN:
-				SetConsoleTextAttribute(m_HConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-				break;
-			}
-			wprintf(m_Buffer);
-			SetConsoleTextAttribute(m_HConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
-		}
 	public:
 		template <typename... Args>
-		void print(const Args&... args) 
+		void Print(const Args&... args) 
 		{
 			if (m_LogLevel >= INFO)
 			{
+				StringBuffer buffer;
+				
 				PrintArg arg_array[] = { args... };
-				print_internal(arg_array, sizeof...(Args));
-				print_colored(INFO);
+				PrintInternal(buffer, arg_array, sizeof...(Args));
+				PrintColored(buffer, INFO);
 			}
 		}
 	
 		template <typename... Args>
-		void print(LogLevel level, const Args&... args)
+		void Print(LogLevel level, const Args&... args)
 		{
 			if (m_LogLevel >= level)
 			{
+				StringBuffer buffer;
+				
 				PrintArg arg_array[] = { args... };
-				print_internal(arg_array, sizeof...(Args));
-				print_colored(level);
+				PrintInternal(buffer, arg_array, sizeof...(Args));
+				PrintColored(buffer, level);
 			}
 		}
 
 		template <typename... Args>
-		void print_sequence(const Args&... args)
+		void PrintSequence(const Args&... args)
 		{
 			if (m_LogLevel >= INFO)
 			{
+				StringBuffer buffer;
+				
 				PrintArg arg_array[] = { args... };
-				print_sequence_internal(arg_array, sizeof...(Args));
-				print_colored(INFO);
+				PrintSequenceInternal(buffer, arg_array, sizeof...(Args));
+				PrintColored(buffer, INFO);
 			}
 		}
 
 		template <typename... Args>
-		void print_sequence(LogLevel level, const Args&... args)
+		void PrintSequence(LogLevel level, const Args&... args)
 		{
 			if (m_LogLevel >= level)
 			{
+				StringBuffer buffer;
+				
 				PrintArg arg_array[] = { args... };
-				print_sequence_internal(arg_array, sizeof...(Args));
-				print_colored(level);
+				PrintSequenceInternal(buffer, arg_array, sizeof...(Args));
+				PrintColored(buffer, level);
 			}
 		}
 
 		template <typename... Args>
-		String sprint(const Args&... args)
+		wchar* StringPrint(const Args&... args)
 		{
+			StringBuffer buffer;
+
 			PrintArg arg_array[] = { args... };
-			print_internal(arg_array, sizeof...(Args));
-			return String(m_Buffer);
+			PrintInternal(buffer, arg_array, sizeof...(Args));
+			return buffer.Data;
+		}
+
+		template <typename... Args>
+		wchar* StringPrintSequence(const Args&... args)
+		{
+			StringBuffer buffer;
+
+			PrintArg arg_array[] = { args... };
+			PrintInternal(buffer, arg_array, sizeof...(Args));
+			return buffer.Data;
 		}
 	private:
-		void print_string(const wchar* wstr, u32& index);
-		void print_string(const char* str, u32& index);
-		void print_u64(u64 number, u64 base, u32& index);
+		void PrintNumber(StringBuffer& buffer, u64 number, u64 base);
 
-		void handle_arg(const PrintArg& arg, void* value, u32& index);
+		void HandleArgument(StringBuffer& buffer, const PrintArg& arg);
 		
-		void print_internal(const PrintArg* args, u32 argc);
-		void print_sequence_internal(const PrintArg* args, u32 argc);
+		void PrintInternal(StringBuffer& buffer, const PrintArg* args, u32 argc);
+		void PrintSequenceInternal(StringBuffer& buffer, const PrintArg* args, u32 argc);
+
+		void PrintColored(StringBuffer& buffer, LogLevel level);
 	};
 
 	extern Logger& g_Logger;
 }
 
 #ifdef _DEBUG
-	#define DEBUG_LOG(level, ...) g_Logger.print_sequence(level, __FUNCTION__, " [", __LINE__, "]: ", __VA_ARGS__)
+	#define DEBUG_LOG(level, ...) g_Logger.PrintSequence(level, __FUNCTION__, " [", __LINE__, "]: ", __VA_ARGS__)
 
 	#define ASSERT(x, ...) \
 		if (!(x)) {\
@@ -207,6 +207,7 @@ namespace cl {
 			DEBUG_LOG(FATAL, __VA_ARGS__, "\n"); \
 			__debugbreak(); \
 		}
+
 #else
 	#define DEBUG_LOG(level, ...)
 

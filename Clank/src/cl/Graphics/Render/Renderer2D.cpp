@@ -222,6 +222,66 @@ namespace cl {
 		m_Indices += 6;
 	}
 
+	void Renderer2D::DrawRect(const vec2& position, const vec2& size, u32 color)
+	{
+		float32 x = position.x;
+		float32 y = position.y;
+
+		float32 width = size.x;
+		float32 height = size.y;
+
+		DrawLine(vec2(x, y), vec2(x + width, y), color, 0.02f);
+		DrawLine(vec2(x + width, y), vec2(x + width, y + height), color, 0.02f);
+		DrawLine(vec2(x + width, y + height), vec2(x, y + height), color, 0.02f);
+		DrawLine(vec2(x, y + height), vec2(x, y), color, 0.02f);
+	}
+
+	void Renderer2D::DrawRect(const Rectangle& rectangle, u32 color)
+	{
+		DrawRect(rectangle.GetMin(), rectangle.size * 2.0f, color);
+	}
+
+	void Renderer2D::FillRect(const vec2& position, const vec2& size, u32 color)
+	{
+		vec2 min = position;
+		vec2 max = position + size;
+
+		vec4 vertex = vec4(min.x, min.y, 0.0f, 1.0f);
+		m_Map->position = *m_TransformationBack * vertex;
+		m_Map->uv = vec2();
+		m_Map->tid = 0;
+		m_Map->color = color;
+		m_Map++;
+
+		vertex = vec4(max.x, min.y, 0.0f, 1.0f);
+		m_Map->position = *m_TransformationBack * vertex;
+		m_Map->uv = vec2();
+		m_Map->tid = 0;
+		m_Map->color = color;
+		m_Map++;
+
+		vertex = vec4(max.x, max.y, 0.0f, 1.0f);
+		m_Map->position = *m_TransformationBack * vertex;
+		m_Map->uv = vec2();
+		m_Map->tid = 0;
+		m_Map->color = color;
+		m_Map++;
+
+		vertex = vec4(min.x, max.y, 0.0f, 1.0f);
+		m_Map->position = *m_TransformationBack * vertex;
+		m_Map->uv = vec2();
+		m_Map->tid = 0;
+		m_Map->color = color;
+		m_Map++;
+
+		m_Indices += 6;
+	}
+
+	void Renderer2D::FillRect(const Rectangle& rectangle, u32 color)
+	{
+		FillRect(rectangle.GetMin(), rectangle.size * 2.0f, color);
+	}
+
 	void Renderer2D::DrawString(const String& text, const vec2& position, const Font& font, u32 color)
 	{
 		Texture* texture = font.GetTexture();

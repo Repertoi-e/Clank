@@ -49,7 +49,7 @@ namespace cl {
 		DXGI_MODE_DESC* displayModeList = anew DXGI_MODE_DESC[numModes];
 		HR(adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList));
 
-		u32 numerator, denominator;
+		u32 numerator = 0, denominator = 0;
 		for (u32 i = 0; i < numModes; i++)
 		{
 			if (displayModeList[i].Width == Width)
