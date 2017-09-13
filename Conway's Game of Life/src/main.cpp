@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 #include "Universe.h"
 #include "Hotloader.h"
@@ -150,10 +150,8 @@ public:
 
 		m_Camera->SetProjectionMatrix(mat4::Orthographic(-m_CameraZoom, cast(float32) WIDTH + m_CameraZoom, -m_CameraZoom, cast(float32) HEIGHT + m_CameraZoom, -1.0f, 1.0f));
 
-		wchar buffer[1024];
-		sprint(buffer, NULL, "/% | FPS: /%", g_ApplicationDesc.Name, g_ApplicationDesc.Cycle.FPS);
-
-		g_Application.SetWindowTitle(String(buffer));
+		String str = g_Logger.StringPrint(L"% | FPS: %", g_ApplicationDesc.Name, g_ApplicationDesc.Cycle.FPS);
+		g_Application.SetWindowTitle(str);
 	}
 
 	void PreRender(Renderer2D* renderer, Context* context) override
@@ -166,7 +164,7 @@ public:
 
 	void LateRender(Renderer2D* renderer, Context* context) override
 	{
-		// m_Universe->Draw(renderer, m_CameraOffset);
+		m_Universe->Draw(renderer, m_CameraOffset);
 
 		for (u32 i = 0; i < 5; i++)
 		{
@@ -221,7 +219,7 @@ public:
 				line.erase(0, wcslen(speedField));
 
 				if (ChangeSpeed(std::stoi(line)))
-					print("[Config] Setting speed to /%\n", m_Speed);
+					g_Logger.Print("[Config] Setting speed to /%\n", m_Speed);
 			}
 
 			if (line.find(presetField) != String::npos)
@@ -232,16 +230,40 @@ public:
 
 				auto it = m_Presets.find(line);
 				if (it == m_Presets.end())
-					print("[Config] Invalid preset: /%\n", line);
+					g_Logger.Print("[Config] Invalid preset: /%\n", line);
 				else if (ChangePreset(it->second))
-					print("[Config] Setting preset to /%\n", line);
+					g_Logger.Print("[Config] Setting preset to /%\n", line);
 			}
 		}
 	}
 };
 
+struct A : public IPrintable
+{
+	float32 x, y, z;
+
+	A() : x(0), y(0), z(0) {}
+	A(float32 x, float32 y, float32 z) : x(x), y(y), z(z) { }
+
+	void Print(StringBuffer& buffer) const override
+	{
+		String str = g_Logger.StringPrint(L"{ struct: A, x: %, y: %, z: % }", FormatFloat(x, 10, 1), y, z);
+		buffer.AppendString(str.c_str());
+	}
+};
+
 void AppMain(const String& path, wchar** args, s32 argsCount)
 {
+	std::any m_Value;
+
+	A a(12.2361236f, 1.0f, 3.14592f);
+
+	Timer timer;
+	for (u32 i = 0; i < 2000; i++)
+		g_Logger.Print(L"This is cool: %\n", a);
+	float32 elapsed = timer.Elapsed().Millis();
+	g_Logger.Print("Took % ms\n", elapsed);
+
 	Game* game = cast(Game*)
 		g_Application.PushScene(anew Game());
 	g_Application.ShowWindow();
@@ -249,12 +271,10 @@ void AppMain(const String& path, wchar** args, s32 argsCount)
 	g_Application.PopScene(game);
 }
 
-#pragma comment(linker, "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+// #pragma comment(linker, "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 
 s32 main()
 {
-	SetLocale(LC_ALL);
-
 	ApplicationDesc desc;
 	{
 		ZeroMemory(&desc, sizeof(ApplicationDesc));

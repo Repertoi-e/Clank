@@ -1,23 +1,45 @@
 #include "cl/stdafx.h"
-#include "String.h"
 
 namespace cl {
 
+	SmartString::SmartString(const wchar* data, bool owned)
+		: Owned(owned)
+	{
+		if (Owned)
+		{
+			String = anew wchar[wcslen(data)];
+			wcscpy(String, data);
+		}
+		else
+			String = cast(wchar*) data;
+	}
+
+	void SmartString::TryFree(void)
+	{
+		if (Owned)
+			del String;
+	}
+
+	StringBuffer::StringBuffer(void)
+		: Data(anew wchar[Size])
+	{
+	}
+	
 	StringBuffer::~StringBuffer(void)
 	{
 		del Data;
 	}
 	
-	void StringBuffer::Append(const char* str)
+	void StringBuffer::AppendString(const char* str, u32 len)
 	{
 		wchar buffer[1024 * 10] = { 0 };
 		mbstowcs(buffer, str, strlen(str) + 1);
-		Append(buffer);
+		AppendString(buffer, len);
 	}
 	
-	void StringBuffer::Append(const wchar* str)
+	void StringBuffer::AppendString(const wchar* str, u32 len)
 	{
-		s32 size = wcslen(str);
+		s32 size = len == cast(u32) -1 ? wcslen(str) : len;
 		
 		HandleMemory(size);
 

@@ -9,12 +9,12 @@
 
 #define WIN32_LEAN_AND_MEAN     // Exclude rarely-used stuff from Windows headers
 
-#include "Memory/Memory.h"
-
+#include <any>
 #include <algorithm>
 #include <functional>
-#include <iostream>
+
 #include <string>
+#include <iostream>
 #include <sstream>
 #include <fstream>
 
@@ -26,16 +26,16 @@
 #include <map>
 #include <unordered_map>
 #include <memory>
-#include <cstdint>
 
+#include <cstdint>
 #include <cstddef>
 #include <stdio.h>
 #include <math.h>
 
 #include "String.h"
-#include "types.h"
 
-#include "api.h"
+#include "Memory/Memory.h"
+
 #include "dxerr.h"
 
 // Define common macros 
@@ -57,14 +57,16 @@
 #define NULLPTR 0
 #define cast(x) (x)  
 
-#pragma warning(disable: 4595)
-#pragma warning(disable: 4251)
-
-#pragma comment(lib, "dxgi.lib")
-
 #define SafeRelease(x)	\
 	if (x)				\
 	{					\
 		x->Release();	\
 		x = NULLPTR;	\
 	}
+
+// Disable annoying useless warnings...
+#pragma warning(disable: 4595)
+#pragma warning(disable: 4251)
+#pragma warning(disable: 4984)
+
+#pragma comment(lib, "dxgi.lib")

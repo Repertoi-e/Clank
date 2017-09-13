@@ -142,8 +142,20 @@ public:
 	}
 };
 
+struct A : public IPrintable
+{
+	void Print(StringBuffer& buffer) const override
+	{
+		buffer.AppendString(g_Logger.StringPrint("{ vec3: %, %, % }", 1, 4, 9));
+	}
+};
+
 void AppMain(const String& path, wchar** args, s32 argsCount)
 {
+	A a;
+
+	g_Logger.Print("This is like: %\n", a);
+
 	String fileName = L"NULL";
 
 	if (argsCount > 1)

@@ -11,6 +11,9 @@ namespace cl {
 	API String GetFilenameFromPath(const wchar* path);
 	API String GetFilenameFromPath(const String& path);
 
+	API String GetDirectoryFromPath(const wchar* path);
+	API String GetDirectoryFromPath(const String& path);
+
 	API byte* ReadFile(const wchar* filename, u32* readBytes = NULLPTR);
 	API byte* ReadFile(const String& filename, u32* readBytes = NULLPTR);
 

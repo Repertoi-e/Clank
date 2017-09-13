@@ -1,6 +1,9 @@
 #pragma once
 
 #include <cstdint>
+
+#include <type_traits>
+
 #include <string>
 
 typedef int8_t	 s8;
@@ -25,51 +28,44 @@ typedef std::wstring String;
 
 namespace cl {
 
-	template<class T>
-	class Type
+	template <typename T>
+	struct Type { _STCONS(bool, Integer, false); 
+				  _STCONS(bool, String, false);
+				  _STCONS(u32, Size, 0);
+				  _STCONS(u32, Signed, 0); };
+
+	template <typename T, u32 S>
+	struct IntType
 	{
-	public:
-		static constexpr bool Integer = false;
-		static constexpr bool Signed = false;
+		_STCONS(bool, Integer, true); 
+		_STCONS(bool, String, false);
+		_STCONS(u32, Size, sizeof(T));
+		_STCONS(u32, Signed, S);
 	};
 
-	#define INTEGER_TYPE(type, sign) template<> class Type<type> \
-	{ \
-	public: \
-		static constexpr bool Integer = true; \
-		static constexpr bool Signed = sign; \
-	}; \
-	template<> class Type<const type> \
-	{ \
-	public: \
-		static constexpr bool Integer = true; \
-		static constexpr bool Signed = sign; \
-	}; \
-	template<> class Type<type&> \
-	{ \
-	public: \
-		static constexpr bool Integer = true; \
-		static constexpr bool Signed = sign; \
-	}; \
-	template<> class Type<const type&> \
-	{ \
-	public: \
-		static constexpr bool Integer = true; \
-		static constexpr bool Signed = sign; \
+	template <> struct Type<s8>  : public IntType<s8, 1>  {  };
+	template <> struct Type<s16> : public IntType<s16, 1> {  };
+	template <> struct Type<s32> : public IntType<s32, 1> {  };
+	template <> struct Type<s64> : public IntType<s64, 1> {  };
+													
+	template <> struct Type<u8>  : public IntType<u8, 0>  {  };
+	template <> struct Type<u16> : public IntType<u16, 0> {  };
+	template <> struct Type<u32> : public IntType<u32, 0> {  };
+	template <> struct Type<u64> : public IntType<u64, 0> {  };
+
+	template <typename T>
+	struct StringType
+	{
+		_STCONS(bool, Integer, false);
+		_STCONS(bool, String, true);
+		_STCONS(u32, Size, sizeof(T));
+		_STCONS(u32, Signed, 0);
 	};
 
-	INTEGER_TYPE(s8, true);
-	INTEGER_TYPE(s16, true);
-	INTEGER_TYPE(s32, true);
-	INTEGER_TYPE(s64, true);
+	template <> struct Type<char> : public StringType<char> { };
+	template <> struct Type<wchar> : public StringType<wchar> { };
+	template <> struct Type<String> : public StringType<String> { };
 
-	INTEGER_TYPE(u8, false);
-	INTEGER_TYPE(u16, false);
-	INTEGER_TYPE(u32, false);
-	INTEGER_TYPE(u64, false);
-
-	constexpr u32 Base(u32 base)
-	{
-		return base;
-	}
+#define STRIP_CVREF(ty) std::remove_cv<std::remove_reference<ty>::type>::type
+#define STRIP_CVPREF(ty) std::remove_cv<std::remove_pointer<std::remove_reference<ty>::type>::type>::type
 }

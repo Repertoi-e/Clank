@@ -3,7 +3,7 @@
 #include "Allocator.h"
 
 #ifdef _DEBUG
-	#define anew    new(__FILE__, __LINE__)
+	#define anew    new
 #else
 	#define anew    new
 #endif

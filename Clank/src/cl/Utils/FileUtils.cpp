@@ -26,6 +26,24 @@ namespace cl {
 		return result;
 	}
 
+	API String GetDirectoryFromPath(const wchar* path)
+	{
+		return GetDirectoryFromPath(String(path));
+	}
+
+	API String GetDirectoryFromPath(const String& path)
+	{
+		String result;
+
+		const u32 lastSlash = path.find_last_of(L'\\');
+		const u32 length = path.length();
+
+		if (lastSlash < length)
+			result = path.substr(0, lastSlash + 1);
+
+		return result;
+	}
+
 	byte* ReadFile(const wchar* filename, u32* readBytes)
 	{
 		FILE* file = _wfopen(filename, L"rb");

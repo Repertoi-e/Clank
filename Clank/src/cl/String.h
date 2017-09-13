@@ -1,20 +1,31 @@
 #pragma once
 
-#include "cl/api.h"
+#include "cl/types.h"
 
 namespace cl {
+
+	struct SmartString
+	{
+		wchar* String;
+		bool Owned;
+
+		SmartString(const wchar* data, bool owned);
+
+		void TryFree(void);
+	};
 
 	struct StringBuffer
 	{
 		u32 Size = 1024;
 		u32 Occupied = 0;
-		wchar* Data = anew wchar[Size];
+		wchar* Data;
 
+		StringBuffer(void);
 		~StringBuffer(void);
 
 		// Converts chars to wide chars 
-		void Append(const char* str);
-		void Append(const wchar* str);
+		void AppendString(const char* str, u32 len = -1);
+		void AppendString(const wchar* str, u32 len = -1);
 
 		void AppendChar(wchar ch);
 	private:

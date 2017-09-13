@@ -1,0 +1,16 @@
+
+Clank TO-DO List:
+
+
+
+- Random number framework
+
+- Virtual File System
+- Asset Changes Events
+
+- Entity Component System
+- GUI using ECS
+- Scenes using ECS
+
+- Print floats (without using sprintf) (HARD)
+- Custom strings (?)

@@ -10,81 +10,111 @@
 namespace cl {
 
 #ifdef ERROR
-	#undef ERROR
+#undef ERROR
 #endif
 
 	class FormatInt
 	{
 	public:
 		friend class Logger;
+		friend class PrintArg;
 	private:
 		u32 m_Base;
-
+		u32 m_Negative;
+		
 		u64 m_IntegerValue;
-		bool m_Negative;
 	public:
 		template <typename T>
-		FormatInt(T&& t, const u32 base = Base(10))
+		FormatInt(T&& t, const u32 base = 10)
 			: m_Base(base)
 		{
-			if (Type<T>::Integer)
+			if constexpr(Type<STRIP_CVREF(T)>::Signed)
 			{
-				if (Type<T>::Signed)
-				{
-					m_IntegerValue = cast(u64) (t < 0 ? -cast(s64) t : t);
-					m_Negative = t < 0;
-				}
-				else
-					m_IntegerValue = t;
+				m_IntegerValue = cast(u64) (t < 0 ? -cast(s64)t : t);
+				m_Negative = t < 0;
 			}
+			else
+				m_IntegerValue = t;
 		}
+	};
+
+	class FormatFloat
+	{
+	public:
+		friend class Logger;
+		friend class PrintArg;
+	private:
+		s32 m_Precision;
+		s32 m_FieldWidth;
+		
+		float64 m_FloatValue;
+	public:
+		template <typename T>
+		FormatFloat(T&& t, const s32 precision = -1, const s32 fieldWidth = -1)
+			: m_Precision(precision), m_FieldWidth(fieldWidth)
+		{
+			m_FloatValue = cast(float64) t;
+		}
+	};
+
+	class IPrintable
+	{
+	public:
+		virtual void Print(StringBuffer& buffer) const = 0;
 	};
 
 	class PrintArg
 	{
 	public:
-		enum ArgType
+		enum TypeEnum
 		{
-			INTEGER, WSTRING, STRING, PRINTER
+			INTEGER = 0,
+			FLOAT,
+			STRING,
+			BOOL
 		};
-		ArgType m_Type;
+		TypeEnum m_Type;
 
-		void* m_Value;
-		u32 m_ShouldFree = false;
+		std::any m_Value;
 	public:
-		template <typename T>
-		void HandleInt(T&& t)
-		{
-			m_Type = INTEGER;
-			m_Value = anew FormatInt(t, Base(10));
-			m_ShouldFree = true;
-		}
+#define CTOR_TYPE(type, enumType, body) \
+		PrintArg(type& t) { m_Type = enumType; body; } \
+		PrintArg(const type& t) { m_Type = enumType; body; } \
+		PrintArg(type&& t) { m_Type = enumType; body; } \
+		PrintArg(const type&& t) { m_Type = enumType; body; } \
 
-#define CTOR_INT(type) PrintArg(type i) { HandleInt(i); }
+		CTOR_TYPE(s8, INTEGER, m_Value =  { FormatInt(t) })
+		CTOR_TYPE(s16, INTEGER, m_Value = { FormatInt(t) })
+		CTOR_TYPE(s32, INTEGER, m_Value = { FormatInt(t) })
+		CTOR_TYPE(s64, INTEGER, m_Value = { FormatInt(t) })
+		CTOR_TYPE(u8, INTEGER, m_Value =  { FormatInt(t) })
+		CTOR_TYPE(u16, INTEGER, m_Value = { FormatInt(t) })
+		CTOR_TYPE(u32, INTEGER, m_Value = { FormatInt(t) })
+		CTOR_TYPE(u64, INTEGER, m_Value = { FormatInt(t) })
+		CTOR_TYPE(FormatInt, INTEGER, m_Value = { CopyFInt(t) })
 
-		CTOR_INT(s8)
-		CTOR_INT(s16)
-		CTOR_INT(s32)
-		CTOR_INT(s64)
-		CTOR_INT(u8)
-		CTOR_INT(u16)
-		CTOR_INT(u32)
-		CTOR_INT(u64)
+		CTOR_TYPE(float32, FLOAT, m_Value = { FormatFloat(t) })
+		CTOR_TYPE(float64, FLOAT, m_Value = { FormatFloat(t) })
+		CTOR_TYPE(FormatFloat, FLOAT, m_Value = { CopyFFloat(t) } )
 
-#define CTOR_TYPE(type, enumType, value) \
-			PrintArg(type& t) { m_Type = enumType; m_Value = cast(void*) value; } \
-			PrintArg(const type& t) { m_Type = enumType; m_Value = cast(void*) value; } \
-			PrintArg(type&& t) { m_Type = enumType; m_Value = cast(void*) value; } \
-			PrintArg(const type&& t) { m_Type = enumType; m_Value = cast(void*) value; } \
+		CTOR_TYPE(String, STRING, m_Value = { SmartString(t.c_str(), false) })
+		CTOR_TYPE(wchar, STRING, m_Value = { SmartString(&t, false) })
+		CTOR_TYPE(wchar* const, STRING, m_Value = { SmartString(t, false) })
 
-		CTOR_TYPE(String, WSTRING, t.c_str())
-		CTOR_TYPE(wchar, WSTRING, &t)
-		CTOR_TYPE(wchar* const, WSTRING, t)
-		CTOR_TYPE(char, STRING, &t)
-		CTOR_TYPE(char* const, STRING, t)
+		CTOR_TYPE(char, STRING, HandleString(t))
+		CTOR_TYPE(char* const, STRING, HandleString(t))
 
-		CTOR_TYPE(FormatInt, INTEGER, &t)
-		CTOR_TYPE(FormatInt* const, INTEGER, &t)
+		CTOR_TYPE(bool, BOOL, m_Value = { t })
+
+		CTOR_TYPE(IPrintable, STRING, HandlePrinter(t))
+	private:
+		FormatInt CopyFInt(const FormatInt& fint) { return fint; }
+		FormatFloat CopyFFloat(const FormatFloat& ffloat) { return ffloat; }
+
+		void HandleString(const char ch);
+		void HandleString(const char* str);
+
+		void HandlePrinter(const IPrintable& printable);
 	};
 
 	enum LogLevel : u8
@@ -115,20 +145,20 @@ namespace cl {
 			if (m_LogLevel >= INFO)
 			{
 				StringBuffer buffer;
-				
+
 				PrintArg arg_array[] = { args... };
 				PrintInternal(buffer, arg_array, sizeof...(Args));
 				PrintColored(buffer, INFO);
 			}
 		}
-	
+
 		template <typename... Args>
 		void Print(LogLevel level, const Args&... args)
 		{
 			if (m_LogLevel >= level)
 			{
 				StringBuffer buffer;
-				
+
 				PrintArg arg_array[] = { args... };
 				PrintInternal(buffer, arg_array, sizeof...(Args));
 				PrintColored(buffer, level);
@@ -141,7 +171,7 @@ namespace cl {
 			if (m_LogLevel >= INFO)
 			{
 				StringBuffer buffer;
-				
+
 				PrintArg arg_array[] = { args... };
 				PrintSequenceInternal(buffer, arg_array, sizeof...(Args));
 				PrintColored(buffer, INFO);
@@ -154,7 +184,7 @@ namespace cl {
 			if (m_LogLevel >= level)
 			{
 				StringBuffer buffer;
-				
+
 				PrintArg arg_array[] = { args... };
 				PrintSequenceInternal(buffer, arg_array, sizeof...(Args));
 				PrintColored(buffer, level);
@@ -162,29 +192,31 @@ namespace cl {
 		}
 
 		template <typename... Args>
-		wchar* StringPrint(const Args&... args)
+		String StringPrint(const Args&... args)
 		{
 			StringBuffer buffer;
 
 			PrintArg arg_array[] = { args... };
 			PrintInternal(buffer, arg_array, sizeof...(Args));
-			return buffer.Data;
+
+			return String(buffer.Data);
 		}
 
 		template <typename... Args>
-		wchar* StringPrintSequence(const Args&... args)
+		String StringPrintSequence(const Args&... args)
 		{
 			StringBuffer buffer;
 
 			PrintArg arg_array[] = { args... };
 			PrintInternal(buffer, arg_array, sizeof...(Args));
-			return buffer.Data;
+
+			return String(buffer.Data);
 		}
 	private:
 		void PrintNumber(StringBuffer& buffer, u64 number, u64 base);
 
 		void HandleArgument(StringBuffer& buffer, const PrintArg& arg);
-		
+
 		void PrintInternal(StringBuffer& buffer, const PrintArg* args, u32 argc);
 		void PrintSequenceInternal(StringBuffer& buffer, const PrintArg* args, u32 argc);
 

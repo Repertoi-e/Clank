@@ -33,22 +33,22 @@
     <ClInclude Include="src\cl\dxerr.h" />
     <ClInclude Include="src\cl\Entity\Component.h" />
     <ClInclude Include="src\cl\Entity\Entity.h" />
+    <ClInclude Include="src\cl\Graphics\Buffer.h" />
     <ClInclude Include="src\cl\Graphics\Camera\Camera.h" />
+    <ClInclude Include="src\cl\Graphics\Camera\OrthographicCamera.h" />
     <ClInclude Include="src\cl\Graphics\Context.h" />
     <ClInclude Include="src\cl\Graphics\D3DTypes.h" />
     <ClInclude Include="src\cl\Graphics\Render\Folder.h" />
-    <ClInclude Include="src\cl\Graphics\Camera\OrthographicCamera.h" />
     <ClInclude Include="src\cl\Graphics\Render\Renderable2D.h" />
     <ClInclude Include="src\cl\Graphics\Render\Renderer.h" />
     <ClInclude Include="src\cl\Graphics\Render\Renderer2D.h" />
     <ClInclude Include="src\cl\Graphics\Scene\Scene.h" />
     <ClInclude Include="src\cl\Graphics\Scene\Scene2D.h" />
     <ClInclude Include="src\cl\Graphics\Shader.h" />
-    <ClInclude Include="src\cl\Graphics\Buffer.h" />
     <ClInclude Include="src\cl\Graphics\Texture.h" />
     <ClInclude Include="src\cl\Graphics\Text\Font.h" />
-    <ClInclude Include="src\cl\Graphics\Text\FontTextureAtlas.h" />
     <ClInclude Include="src\cl\Graphics\Text\FontTexture.h" />
+    <ClInclude Include="src\cl\Graphics\Text\FontTextureAtlas.h" />
     <ClInclude Include="src\cl\Graphics\Text\FTErrors.h" />
     <ClInclude Include="src\cl\Maths2\Rectangle.h" />
     <ClInclude Include="src\cl\Maths\mat4.h" />
@@ -59,17 +59,17 @@
     <ClInclude Include="src\cl\Maths\vec4.h" />
     <ClInclude Include="src\cl\Memory\Allocator.h" />
     <ClInclude Include="src\cl\Memory\Memory.h" />
+    <ClInclude Include="src\cl\Memory\Vector.h" />
     <ClInclude Include="src\cl\stdafx.h" />
+    <ClInclude Include="src\cl\String.h" />
     <ClInclude Include="src\cl\System\Logger.h" />
     <ClInclude Include="src\cl\targetver.h" />
     <ClInclude Include="src\cl\types.h" />
     <ClInclude Include="src\cl\Utils\FileUtils.h" />
-    <ClInclude Include="src\cl\Utils\ISystem.h" />
     <ClInclude Include="src\cl\Utils\INoCopy.h" />
+    <ClInclude Include="src\cl\Utils\ISystem.h" />
     <ClInclude Include="src\cl\Utils\Singleton.h" />
-    <ClInclude Include="src\cl\String.h" />
     <ClInclude Include="src\cl\Utils\Time.h" />
-    <ClInclude Include="src\cl\Memory\Vector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\cl\Application\Application.cpp" />
@@ -80,15 +80,15 @@
     <ClCompile Include="src\cl\dxerr.cpp" />
     <ClCompile Include="src\cl\Entity\Component.cpp" />
     <ClCompile Include="src\cl\Entity\Entity.cpp" />
+    <ClCompile Include="src\cl\Graphics\Buffer.cpp" />
     <ClCompile Include="src\cl\Graphics\Camera\Camera.cpp" />
+    <ClCompile Include="src\cl\Graphics\Camera\OrthographicCamera.cpp" />
     <ClCompile Include="src\cl\Graphics\Context.cpp" />
     <ClCompile Include="src\cl\Graphics\Render\Folder.cpp" />
-    <ClCompile Include="src\cl\Graphics\Camera\OrthographicCamera.cpp" />
     <ClCompile Include="src\cl\Graphics\Render\Renderable2D.cpp" />
     <ClCompile Include="src\cl\Graphics\Render\Renderer2D.cpp" />
     <ClCompile Include="src\cl\Graphics\Scene\Scene2D.cpp" />
     <ClCompile Include="src\cl\Graphics\Shader.cpp" />
-    <ClCompile Include="src\cl\Graphics\Buffer.cpp" />
     <ClCompile Include="src\cl\Graphics\Texture.cpp" />
     <ClCompile Include="src\cl\Graphics\Text\Font.cpp" />
     <ClCompile Include="src\cl\Graphics\Text\FontTexture.cpp" />
@@ -100,19 +100,15 @@
     <ClCompile Include="src\cl\Maths\vec4.cpp" />
     <ClCompile Include="src\cl\Memory\Allocator.cpp" />
     <ClCompile Include="src\cl\stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\cl\String.cpp" />
     <ClCompile Include="src\cl\System\Logger.cpp" />
     <ClCompile Include="src\cl\Utils\FileUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\cl\BuiltIn\Shaders\Renderer2D.hlsl">
-      <FileType>Document</FileType>
-    </None>
+    <Text Include="TODO.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -187,6 +183,8 @@
       <AdditionalIncludeDirectories>src\;..\Dependencies\FreeImage\include;..\Dependencies\FreeType\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>cl/stdafx.h</PrecompiledHeaderFile>
       <OpenMPSupport>true</OpenMPSupport>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <EnableModules>false</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -221,6 +219,8 @@ fxc.exe /Zi /Od /T vs_4_0 /E"VSMain" /Fo "$(TargetDir)VS_R2D.cso" "src/cl/BuiltI
       <FloatingPointModel>Fast</FloatingPointModel>
       <OpenMPSupport>true</OpenMPSupport>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <EnableModules>false</EnableModules>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

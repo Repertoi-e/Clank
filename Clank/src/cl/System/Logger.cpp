@@ -1,16 +1,19 @@
 #include "cl/stdafx.h"
 #include "Logger.h"
 
+#include <filesystem>
+#include <cstddef>
+
 namespace cl {
 
 	Logger& g_Logger = Logger::Instance();
-	
+
 	void Logger::Start(void)
 	{
 		m_LogLevel = INFO; 
 		m_HConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	
-		Print("Starting Logging system...\n");
+
+		Print(L"Starting Logging system...% % % %\n", 5, true, false, 4);
 
 		SetLocale(LC_ALL);
 	}
@@ -23,7 +26,7 @@ namespace cl {
 	void Logger::SetLocale(s32 locale)
 	{
 		const char* l = setlocale(locale, "");
-		Print(!l ? "Locale not set\n" : "Locale set to %\n", l);
+		//Print(!l ? "Locale not set\n" : "Locale set to %\n", l);
 	}
 
 	void Logger::SetLogLevel(LogLevel level)
@@ -53,100 +56,52 @@ namespace cl {
 			p -= 1;
 			*p = table[place];
 		}
-		
+
 		if (p == end)
 		{
 			p -= 1;
 			*p = L'0';
 		}
 
-		u32 size = u32(end - p);
-		wmemcpy(&buffer.Data[buffer.Occupied], p, size);
-		buffer.Occupied += size;
-	}
-
-	void print_u64_dec(u64 number, u32& index, bool printLeadingZeroes)
-	{
-		u64 divisor = 10000000000000000000u;
-
-		bool allZeroes = true;
-
-		while (divisor)
-		{
-			u64 place = number / divisor;
-			number %= divisor;
-			divisor /= 10;
-
-			if (!printLeadingZeroes)
-			{
-				if (allZeroes)
-				{
-					if (!divisor || place != 0)
-						allZeroes = false;
-				}
-				if (allZeroes)
-					continue;
-			}
-			// m_Buffer[index++] = wchar(L'0' + place);
-		}
-	}
-
-	void print_u64_hex(u64 number, u32& index, bool printLeadingZeroes)
-	{
-		u64 mask = 0xf000000000000000;
-
-		bool allZeroes = true;
-
-		for (u32 i = 0; i < 16; i++)
-		{
-			u64 place = number & mask;
-			place >>= 60;
-			number <<= 4;
-
-			if (!printLeadingZeroes)
-			{
-				if (allZeroes)
-				{
-					if (i == 15 || place != 0)
-						allZeroes = false;
-				}
-				if (allZeroes)
-					continue;
-			}
-			// m_Buffer[index++] = [&]() -> wchar {
-			// 	return place < 10 ? wchar(L'0' + place) : wchar(L'a' + place - 10);
-			// }();
-		}
+		buffer.AppendString(p, u32(end - p));
 	}
 
 	void Logger::HandleArgument(StringBuffer& buffer, const PrintArg& arg)
 	{
-		void* value = arg.m_Value;
+		const std::any& value = arg.m_Value;
 
 		switch (arg.m_Type)
 		{
-		case PrintArg::INTEGER:
+		case PrintArg::TypeEnum::INTEGER:
 		{
-			FormatInt& integer = *cast(FormatInt*) value;
-			switch (integer.m_Base)
 			{
-			case 10:
-				if (integer.m_Negative)
-					buffer.Append(L"-");
-			default:
-				PrintNumber(buffer, integer.m_IntegerValue, integer.m_Base);
-				break;
-			}
+				FormatInt& formatInt = std::any_cast<FormatInt>(value);
 
-			if (arg.m_ShouldFree)
-				del value;
+				if (formatInt.m_Base == 10 && formatInt.m_Negative)
+					buffer.AppendString(L"-");
+				PrintNumber(buffer, formatInt.m_IntegerValue, formatInt.m_Base);
+			}
 			break;
 		}
-		case PrintArg::WSTRING:
-			buffer.Append(cast(const wchar*) value);
-			break;
-		case PrintArg::STRING:
-			buffer.Append(cast(const char*) value);
+		case PrintArg::TypeEnum::FLOAT:
+		{
+			FormatFloat& formatFloat = std::any_cast<FormatFloat>(value);
+
+			wchar temp[512] = { 0 };
+			swprintf(temp, L"%*.*f", formatFloat.m_FieldWidth, formatFloat.m_Precision, formatFloat.m_FloatValue);
+			buffer.AppendString(temp);
+		}
+		break;
+		case PrintArg::TypeEnum::STRING:
+		{
+			SmartString& str = std::any_cast<SmartString>(value);
+			buffer.AppendString(str.String);
+
+			str.TryFree();
+		}
+		break;
+		case PrintArg::TypeEnum::BOOL:
+			buffer.AppendString(std::any_cast<bool>(value) ? L"true" : L"false");
 			break;
 		}
 	}
@@ -155,70 +110,39 @@ namespace cl {
 	{
 		const PrintArg& first = args[0];
 
-		// If there is only one argument,
-		// then there is no need for formatting.
-		if (argc == 1)
+		if (u32 arg = 1; first.m_Type == PrintArg::TypeEnum::STRING)
 		{
-			switch (first.m_Type)
+			SmartString& str = std::any_cast<SmartString>(first.m_Value);
+
+			wchar* s = str.String;
+			wchar* t = s;
+
+			while (*t)
 			{
-			case PrintArg::WSTRING:
-				buffer.Append(cast(wchar*) first.m_Value);
-				break;
-			case PrintArg::STRING:
-				buffer.Append(cast(char*) first.m_Value);
-				break;
-			}
-			return;
-		}
-
-		wchar* format = NULLPTR;
-
-		if (first.m_Type == PrintArg::STRING)
-		{
-			const char* str = cast(const char*) first.m_Value;
-			wchar buffer[1024 * 10] = { 0 };
-			mbstowcs(buffer, str, strlen(str) + 1);
-			u32 len = wcslen(buffer);
-
-			format = anew wchar[len];
-			wmemcpy(format, buffer, len);
-		}
-		if (first.m_Type == PrintArg::WSTRING)
-		{
-			format = cast(wchar*) first.m_Value;
-		}
-
-		if (format == NULLPTR)
-			return;
-
-		u32 arg = 1;
-
-		bool hasArgs = true;
-		for (const wchar* it = format; *it; it++)
-		{
-			if (*it == L'%' && hasArgs)
-			{
-				HandleArgument(buffer, args[arg++]);
-
-				if (arg + 1 > argc)
+				if (*t == L'%')
 				{
-					hasArgs = false;
-					continue;
-				}
-				it++;
-			}
-			buffer.AppendChar(*it);
-		}
+					if (arg < argc)
+					{
+						buffer.AppendString(s, u32(t - s));
+						HandleArgument(buffer, args[arg]);
 
-		if (format != cast(wchar*) first.m_Value)
-			del format;
+						t++;
+						s = t;
+
+						arg++;
+					}
+				}
+				t++;
+			}
+			buffer.AppendString(s, u32(t - s));
+			str.TryFree();
+		}
 	}
 
 	void Logger::PrintSequenceInternal(StringBuffer& buffer, const PrintArg* args, u32 argc)
 	{
-		u32 index = 0;
-		for (u32 i = 0; i < argc; i++)
-			HandleArgument(buffer, args[i]);
+		for (u32 arg = 0; arg < argc; arg++)
+			HandleArgument(buffer, args[arg]);
 	}
 
 	void Logger::PrintColored(StringBuffer& buffer, LogLevel level)
@@ -237,5 +161,29 @@ namespace cl {
 		}
 		wprintf(buffer.Data);
 		SetConsoleTextAttribute(m_HConsole, FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
+	}
+
+	void PrintArg::HandleString(const char ch)
+	{
+		StringBuffer buffer;
+		buffer.AppendChar(ch);
+
+		m_Value = std::any(SmartString(buffer.Data, true));
+	}
+
+	void PrintArg::HandleString(const char* str)
+	{
+		StringBuffer buffer;
+		buffer.AppendString(str);
+
+		m_Value = std::any(SmartString(buffer.Data, true));
+	}
+
+	void PrintArg::HandlePrinter(const IPrintable& printable)
+	{
+		StringBuffer buffer;
+		printable.Print(buffer);
+
+		m_Value = std::any(SmartString(buffer.Data, true));
 	}
 }
